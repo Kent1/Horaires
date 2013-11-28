@@ -6,6 +6,8 @@
  *
  */
 
+#include "conflict.h"
+
 /**
  * Compute conflict between two exams. The exam->students array
  * MUST be sorted.
