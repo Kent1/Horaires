@@ -41,7 +41,7 @@ For resolve the coloring problem, we use ordering heuristics. We considered thre
 
  * **Largest Degree** : Exams are ranked in descending order by the number of exams in conflict -- i.e. priority is given to exams with the greatest number of exams in conflict.
  * **Largest Enrollment** : Exams are ranked in descending order by the number of students enrolled in each of the exam -- i.e. exams with the highest number of students are given the highest priority.
- * **Saturation Degree** : Exams are ranked in increasing order by the number of valid time slots remaining in the timetable for each exam -- priority is given to exams with fewer time slots available.
+ * **Saturation Degree** : Exams are ranked in increasing order by the number of valid timeslots remaining in the timetable for each exam -- priority is given to exams with fewer time slots available.
 
 We decided to use Saturation Degree for our principal heuristic because its fits well with our hard constraints (especially with exam avaibility). We also decided to use Largest Enrollment in last resort (in the case of ex-aequo).
 

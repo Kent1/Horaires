@@ -1,5 +1,5 @@
 /*
- * This file is part of UMons - horaires projects
+ * This file is part of UMons - horaires project
  *
  *	Created on: 28/11/2013
  *		Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
@@ -9,13 +9,7 @@
 #ifndef EXAM_H_
 #define EXAM_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef unsigned char uchar;
-typedef uchar* puchar;
-typedef ushort* pushort;
-typedef uint* puint;
+#include "../util.h"
 
 typedef struct {
 	ushort exam_id;
