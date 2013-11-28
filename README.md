@@ -25,13 +25,37 @@ The best solution is the solution with the lowest penalty. An optimal solution i
  * **Full association**: Each exam *e* have to be associated with a time period *t*.
  * **Room capacity**: A room must have enough capacity to contain the class (the group of student) for associated exam *e*.
  * **Room compatibility**: A room must satisfy specified features. (Mandatory & optional features ?)
- * **Exam availability**: An exam can only be schedule in some periods. (day off ? prof availabilities ?)
+ * **Exam availability**: An exam can only be scheduled in some periods. (day off ? prof availabilities ?)
  * **Room availability**: A room can only be available in some periods. (room already reserved ?)
  * **Scheduling compatibility**: Each exam may have to be scheduled before other exams (e.g. a thesis submission before its presentation)
  
 ### Soft constraints
  * **Uniformability**: Students should have these exams uniformally distributed
  * **Large exams**: Large exams must be in first.
+
+### Construction of the timetable
+
+First, we need to construct a faesible timetable (i.e. a timetable which does not violate any hard constraints). To do this, we transform the examination timetable problem to a coloring graph problem. The vertex of the graph are the exams and the edges are hard constraints. For example, two exams with students in common are linked with an edge.
+
+For resolve the coloring problem, we use ordering heuristics. We considered three ordering heuristics which are :
+
+ * **Largest Degree** : Exams are ranked in descending order by the number of exams in conflict -- i.e. priority is given to exams with the greatest number of exams in conflict.
+ * **Largest Enrollment** : Exams are ranked in descending order by the number of students enrolled in each of the exam -- i.e. exams with the highest number of students are given the highest priority.
+ * **Saturation Degree** : Exams are ranked in increasing order by the number of valid time slots remaining in the timetable for each exam -- priority is given to exams with fewer time slots available.
+
+We decided to use Saturation Degree for our principal heuristic because its fits well with our hard constraints (especially with exam avaibility). We also decided to use Largest Enrollment in last resort (in the case of ex-aequo).
+
+### Data structures
+
+#### Struct : exam
+ * exam_id (ushort)
+ * teacher_id (uint)
+ * timeslot (uchar)
+ * enrollment (ushort)
+ * unavaibilities (uchar*)
+ * dependancies (ushort*)
+ * students (uint*)
+ * conflicts (ushort*)
 
 ## Requirements
 
@@ -40,3 +64,5 @@ The best solution is the solution with the lowest penalty. An optimal solution i
 
 
 ## References
+
+[1] Asmuni, Hishammudin and Burke, Edmund K and Garibaldi, Jonathan M and McCollum, Barry and Parkes, Andrew J, *An investigation of fuzzy multiple heuristic orderings in the construction of university examination timetables*, Computers & Operations Research 2009
