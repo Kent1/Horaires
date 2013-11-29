@@ -28,7 +28,7 @@ The best solution is the solution with the lowest penalty. An optimal solution i
  * **Exam availability**: An exam can only be scheduled in some periods. (day off ? prof availabilities ?)
  * **Room availability**: A room can only be available in some periods. (room already reserved ?)
  * **Scheduling compatibility**: Each exam may have to be scheduled before other exams (e.g. a thesis submission before its presentation)
- 
+
 ### Soft constraints
  * **Uniformability**: Students should have these exams uniformally distributed
  * **Large exams**: Large exams must be in first.

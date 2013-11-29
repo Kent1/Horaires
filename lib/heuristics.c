@@ -93,7 +93,7 @@ bool set_possible_timeslot(exam* exam_, exam* exams, ushort size,
     int i;
     bool timeslot_available[max_timeslot];
 
-    // Store all of timeslots use by neighbors (i.e. vertex in conflict)
+    // Store all the timeslots used by neighbors (i.e. vertex in conflict)
     for (i = 0; i < size; i++) {
         if (exam_->conflicts[i])
             timeslot_available[exams[i]->timeslot] = false;
@@ -115,7 +115,7 @@ bool set_possible_timeslot(exam* exam_, exam* exams, ushort size,
 
 /**
  * Try to set a correct timeslot to all exams. Correct means
- * that any student have to exams scheduled in the same period.
+ * that any students have two exams scheduled in the same period.
  *
  * @param exams Array of all exams
  * @param size Size of the array of exams
