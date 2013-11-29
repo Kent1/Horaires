@@ -99,13 +99,14 @@ bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
     uint16_t i;
     bool timeslot_available[max_timeslot];
 
-    // Store all the timeslots not used by neighbors (i.e. vertex in conflict)
+    for (i = 0; i < max_timeslot; i++)
+        timeslot_available[i] = exam_->availabilities[i];
+
+    // Store all the timeslots used by neighbors (i.e. vertex in conflict)
     for (i = 0; i < size; i++) {
-        if (exam_->conflicts[i] || !exam_->availabilities[i])
-            timeslot_available[exams[i].timeslot] = false;
-        else
-            timeslot_available[exams[i].timeslot] = true;
-        printf("%d", timeslot_available[exams[i].timeslot]);
+        if (exam_->conflicts[i] && exams[i].timeslot != 0)
+            // If i is a neighbor and i is scheduled
+            timeslot_available[exams[i].timeslot - 1] = false;
     }
 
     // Iterate the array to search which is the minimal timeslot available
@@ -133,7 +134,6 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     exam* exam_ = get_first_exam(exams, size, max_timeslot);
     if (exam_ == NULL)
         return true;
-    printf("%d\n", exam_->exam_id);
 
     uint8_t min_timeslot = 1;
     bool success         = false;
