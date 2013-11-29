@@ -18,11 +18,17 @@ typedef struct {
 	uint8_t timeslot; // assigned timeslot
 	uint16_t enrollment; // number of students, also sizeof students
 
-	uint8_t* unavailabilities; // list of unavailabilities
+    // Bool array, describing a list of all timeslots in which
+    // the i-th index is true if the exam can be sheduled at
+    // the i-th timeslot, false otherwhise
+	uint8_t* availabilities;
 	uint16_t* deps; // list of prerequisites
 	uint32_t* students; // list of students enrolled in the event
 
-	uint16_t* conflicts; // list of events in conflicts with this
+    // Bool array, describing a list of adjacencies for conflicting
+    // exams in which true means there is a conflict with the i-th exam,
+    // false otherwhise
+	uint16_t* conflicts;
 } exam;
 
 #endif /*EXAM_H_*/

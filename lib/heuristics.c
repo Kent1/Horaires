@@ -96,7 +96,7 @@ bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
 
     // Store all the timeslots used by neighbors (i.e. vertex in conflict)
     for (i = 0; i < size; i++) {
-        if (exam_->conflicts[i])
+        if (exam_->conflicts[i] || !exam_->availabilities[i])
             timeslot_available[exams[i].timeslot] = false;
         else
             timeslot_available[exams[i].timeslot] = true;
