@@ -12,8 +12,8 @@
 #include "util.h"
 #include "structs/exam.h"
 
-exam* get_first_exam(exam*, ushort);
+exam* get_first_exam(exam*, uint16_t);
 
-puchar get_exams_saturation_degree(exam*, ushort);
+uint8_t* get_exams_saturation_degree(exam*, uint16_t);
 
 #endif /*HEURISTICS_H_*/

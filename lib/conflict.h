@@ -12,6 +12,6 @@
 #include "structs/exam.h"
 
 bool compute_conflict(exam* exam1, exam* exam2);
-void compute_conflicts(exam* exams, ushort nbr_exam);
+void compute_conflicts(exam* exams, uint16_t nbr_exam);
 
 #endif /*CONFLICT_H_*/

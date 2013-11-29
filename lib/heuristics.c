@@ -20,13 +20,14 @@
  * @param exams An array of exams.
  * @return The next exam to schedule following our heuristics.
  */
-exam* get_first_exam(exam* exams, ushort size) {
+exam* get_first_exam(exam* exams, uint16_t size) {
     // Initialization
-    int i, best = -1;
+    uint16_t i;
+    int16_t best = -1;
     exam* first = NULL;
 
     // Compute all saturation degrees for the given exams
-    puchar sat_degree = get_exams_saturation_degree(exams, size);
+    uint8_t* sat_degree = get_exams_saturation_degree(exams, size);
 
     // Find the exam with the max saturation degree and resolve
     // tie-break with largest enrollment
@@ -56,9 +57,9 @@ exam* get_first_exam(exam* exams, ushort size) {
  * @param exams An array of exams.
  * @return An array regrouping saturation degree for the given parameter.
  */
-puchar get_exams_saturation_degree(exam* exams, ushort size) {
-    int i, j;
-    puchar sat_degree = calloc(size, sizeof(uchar));
+uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size) {
+    uint16_t i, j;
+    uint8_t* sat_degree = calloc(size, sizeof(uint8_t));
 
     for (i = 0; i < size; i++) {
         // already scheduled
@@ -88,29 +89,28 @@ puchar get_exams_saturation_degree(exam* exams, ushort size) {
  * @param max_timeslot Maximum timeslot
  * @return true if timeslot is assigned, false otherwise
  */
-bool set_possible_timeslot(exam* exam_, exam* exams, ushort size,
-                           uchar min_timeslot, uchar max_timeslot) {
-    int i;
+bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
+                           uint8_t min_timeslot, uint8_t max_timeslot) {
+    uint16_t i;
     bool timeslot_available[max_timeslot];
 
     // Store all the timeslots used by neighbors (i.e. vertex in conflict)
     for (i = 0; i < size; i++) {
         if (exam_->conflicts[i])
-            timeslot_available[exams[i]->timeslot] = false;
+            timeslot_available[exams[i].timeslot] = false;
         else
-            timeslot_available[exams[i]->timeslot] = true;
+            timeslot_available[exams[i].timeslot] = true;
     }
 
     // Iterate the array to search which is the minimal timeslot available
     // and set it to the exam
     for (i = min_timeslot; i <= max_timeslot; i++) {
-        if (array[i] == true) {
+        if (timeslot_available[i] == true) {
             exam_->timeslot = i;
             return true;
         }
         return false;
     }
-
 }
 
 /**
@@ -122,14 +122,14 @@ bool set_possible_timeslot(exam* exam_, exam* exams, ushort size,
  * @param max_timeslot Maximum timeslot
  * @return True if a correct assignement is found, false otherwise
  */
-bool color_graph_backtrack(exam* exams, ushort size, uchar max_timeslot) {
+bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     exam* exam_ = get_first_exam(exams, size);
     if (exam_ == NULL)
         return true;
 
-    uchar min_timeslot = 1;
-    bool success       = false;
-    bool backtrack     = false;
+    uint8_t min_timeslot = 1;
+    bool success         = false;
+    bool backtrack       = false;
 
     do {
         backtrack = !set_possible_timeslot(exam_, exams, size,
