@@ -20,23 +20,23 @@
  * @param exams An array of exams.
  * @return The next exam to schedule following our heuristics.
  */
-exam* get_first_exam(exam* exams, uint16_t size) {
+exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
     // Initialization
     uint16_t i;
-    int16_t best = -1;
+    uint16_t best = 256;
     exam* first = NULL;
 
     // Compute all saturation degrees for the given exams
-    uint8_t* sat_degree = get_exams_saturation_degree(exams, size);
+    uint8_t* sat_degree = get_exams_saturation_degree(exams, size, max_timeslot);
 
     // Find the exam with the max saturation degree and resolve
     // tie-break with largest enrollment
     for (i = 1; i < size; i++) {
         // Exam 'i' already scheduled
-        if(sat_degree[i] == 255)
+        if(sat_degree[i] == 0)
             continue;
 
-        if(sat_degree[i] > best) {
+        if(sat_degree[i] < best) {
             best  = sat_degree[i];
             first = &exams[i];
         } else if(sat_degree[i] == best &&
@@ -57,22 +57,27 @@ exam* get_first_exam(exam* exams, uint16_t size) {
  * @param exams An array of exams.
  * @return An array regrouping saturation degree for the given parameter.
  */
-uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size) {
+uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_timeslot) {
     uint16_t i, j;
     uint8_t* sat_degree = calloc(size, sizeof(uint8_t));
 
     for (i = 0; i < size; i++) {
         // already scheduled
         if(exams[i].timeslot != 0) {
-            sat_degree[i] = 255;
-        } else { // not scheduled, compute all conflicts
             sat_degree[i] = 0;
+        } else { // not scheduled, compute all conflicts
+            sat_degree[i] = max_timeslot;
+
+            for (j = 0; j < max_timeslot; j++) {
+                if(exams[i].availabilities[j] == false)
+                    sat_degree[i]--;
+            }
 
             for (j = 0; j < size; j++) {
                 // A conflict represents an edge between i and j,
                 // then if j has a timeslot => j is scheduled
-                if(exams[i].conflicts[j] && exams[j].timeslot != 0)
-                    sat_degree[i]++;
+                if(exams[i].conflicts[j] && exams[j].timeslot != 0 && exams[i].availabilities[exams[j].timeslot] == true)
+                    sat_degree[i]--;
             }
         }
     }
@@ -109,8 +114,9 @@ bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
             exam_->timeslot = i;
             return true;
         }
-        return false;
     }
+
+    return false;
 }
 
 /**
