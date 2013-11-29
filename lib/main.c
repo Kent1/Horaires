@@ -150,11 +150,43 @@ void main() {
 
 	exam exams[MAX_EXAM] = {exam1, exam2, exam3, exam4, exam5, exam6, exam7, exam8};
 
+	// Preprocessing
+	compute_conflicts(exams, MAX_EXAM);
+
 	bool a = color_graph_backtrack(exams, MAX_EXAM, MAX_TIMESLOT);
 	printf("%d\n", a);
 
-	int i = 0;
+	int i, j, k;
 	for (i = 0; i < MAX_EXAM; i++) {
-		printf("Exam %d : %d\n", i, exams[i].timeslot);
+		printf("Exam %d : %d\n", i+1, exams[i].timeslot);
+	}
+
+	for (i = 0; i < MAX_TIMESLOT; i++) {
+		printf("Timeslot %d\n", i+1);
+		printf("------------\n\n");
+
+		for (j = 0; j < MAX_EXAM; j++) {
+			if(exams[j].timeslot == i+1) {
+				printf("  Exam %d :\n", j+1);
+				printf("      -> Prof : %d\n", exams[j].teacher_id);
+
+				printf("      -> Timeslots available : (");
+				for (k = 0; k < MAX_TIMESLOT; k++) {
+					printf("%d ", exams[j].availabilities[k]);
+				}
+				printf(")\n");
+
+				printf("      -> Conflicts detected : (");
+				for (k = 0; k < MAX_EXAM; k++) {
+					printf("%d ", exams[j].conflicts[k]);
+				}
+				printf(")\n");
+
+				printf("      -> Students :\n");
+				for (k = 0; k < exams[j].enrollment; k++) {
+					printf("            %d\n", exams[j].students[k]);
+				}
+			}
+		}
 	}
 }

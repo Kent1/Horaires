@@ -31,7 +31,7 @@ exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
 
     // Find the exam with the max saturation degree and resolve
     // tie-break with largest enrollment
-    for (i = 1; i < size; i++) {
+    for (i = 0; i < size; i++) {
         // Exam 'i' already scheduled
         if(sat_degree[i] == 0)
             continue;
@@ -76,7 +76,7 @@ uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_tim
             for (j = 0; j < size; j++) {
                 // A conflict represents an edge between i and j,
                 // then if j has a timeslot => j is scheduled
-                if(exams[i].conflicts[j] && exams[j].timeslot != 0 && exams[i].availabilities[exams[j].timeslot] == true)
+                if(exams[i].conflicts[j] && exams[j].timeslot != 0 && exams[i].availabilities[exams[j].timeslot-1] == true)
                     sat_degree[i]--;
             }
         }
@@ -111,9 +111,9 @@ bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
 
     // Iterate the array to search which is the minimal timeslot available
     // and set it to the exam
-    for (i = min_timeslot; i <= max_timeslot; i++) {
+    for (i = min_timeslot-1; i < max_timeslot; i++) {
         if (timeslot_available[i] == true) {
-            exam_->timeslot = i;
+            exam_->timeslot = i+1;
             return true;
         }
     }

@@ -43,19 +43,19 @@ void compute_conflicts(exam* exams, uint16_t nbr_exam) {
 	for (i = 0; i < nbr_exam; i++) {
 		exam* exam1 = &exams[i];
 		// Exam is not in conflict with itself
-		exam1->conflicts[exam1->exam_id] = 0;
+		exam1->conflicts[exam1->exam_id-1] = 0;
 		for (j = i+1; j < nbr_exam; j++) {
 			exam* exam2 = &exams[j];
 			if(compute_conflict(exam1, exam2)) {
 				// If the two exams are in conflict
 				// i.e. there are at least one student in common
-				exam1->conflicts[exam2->exam_id] = 1;
-				exam2->conflicts[exam1->exam_id] = 1;
+				exam1->conflicts[exam2->exam_id-1] = 1;
+				exam2->conflicts[exam1->exam_id-1] = 1;
 			}
 			else {
 				// Else, they are not in conflict
-				exam1->conflicts[exam2->exam_id] = 0;
-				exam2->conflicts[exam1->exam_id] = 0;
+				exam1->conflicts[exam2->exam_id-1] = 0;
+				exam2->conflicts[exam1->exam_id-1] = 0;
 			}
 		}
 	}
