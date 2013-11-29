@@ -129,7 +129,7 @@ bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
  * @return True if a correct assignement is found, false otherwise
  */
 bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
-    exam* exam_ = get_first_exam(exams, size);
+    exam* exam_ = get_first_exam(exams, size, max_timeslot);
     if (exam_ == NULL)
         return true;
 

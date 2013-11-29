@@ -12,9 +12,9 @@
 #include "util.h"
 #include "structs/exam.h"
 
-exam* get_first_exam(exam*, uint16_t);
+exam* get_first_exam(exam*, uint16_t, uint8_t);
 
-uint8_t* get_exams_saturation_degree(exam*, uint16_t);
+uint8_t* get_exams_saturation_degree(exam*, uint16_t, uint8_t);
 
 bool set_possible_timeslot(exam*, exam*, uint16_t, uint8_t, uint8_t);
 
