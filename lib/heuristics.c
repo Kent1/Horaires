@@ -33,7 +33,7 @@ exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
     // tie-break with largest enrollment
     for (i = 0; i < size; i++) {
         // Exam 'i' already scheduled
-        if(sat_degree[i] == 255)
+        if(sat_degree[i] == NOT_SCHEDULED)
             continue;
 
         if(sat_degree[i] < best) {
@@ -63,8 +63,8 @@ uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_tim
 
     for (i = 0; i < size; i++) {
         // already scheduled
-        if(exams[i].timeslot != 0) {
-            sat_degree[i] = 255;
+        if(exams[i].timeslot != NOT_SCHEDULED) {
+            sat_degree[i] = NOT_SCHEDULED;
         } else { // not scheduled, compute all conflicts
             sat_degree[i] = max_timeslot;
 
@@ -76,7 +76,7 @@ uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_tim
             for (j = 0; j < size; j++) {
                 // A conflict represents an edge between i and j,
                 // then if j has a timeslot => j is scheduled
-                if(exams[i].conflicts[j] && exams[j].timeslot != 0 && exams[i].availabilities[exams[j].timeslot-1] == true)
+                if(exams[i].conflicts[j] && exams[j].timeslot != 0 && exams[i].availabilities[exams[j].timeslot] == true)
                     sat_degree[i]--;
             }
         }
@@ -104,16 +104,16 @@ bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
 
     // Store all the timeslots used by neighbors (i.e. vertex in conflict)
     for (i = 0; i < size; i++) {
-        if (exam_->conflicts[i] && exams[i].timeslot != 0)
+        if (exam_->conflicts[i] && exams[i].timeslot != NOT_SCHEDULED)
             // If i is a neighbor and i is scheduled
-            timeslot_available[exams[i].timeslot - 1] = false;
+            timeslot_available[exams[i].timeslot] = false;
     }
 
     // Iterate the array to search which is the minimal timeslot available
     // and set it to the exam
-    for (i = min_timeslot-1; i < max_timeslot; i++) {
+    for (i = min_timeslot; i < max_timeslot; i++) {
         if (timeslot_available[i] == true) {
-            exam_->timeslot = i+1;
+            exam_->timeslot = i;
             return true;
         }
     }
@@ -135,7 +135,7 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     if (exam_ == NULL)
         return true;
 
-    uint8_t min_timeslot = 1;
+    uint8_t min_timeslot = 0;
     bool success         = false;
     bool backtrack       = false;
 
@@ -151,7 +151,7 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     } while (!backtrack && !success);
 
     if (backtrack)
-        exam_->timeslot = 0;
+        exam_->timeslot = NOT_SCHEDULED;
 
     return success;
 }

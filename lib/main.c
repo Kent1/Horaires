@@ -147,7 +147,7 @@ exam* get_example1() {
     exam1->exam_id = 1;
     exam1->teacher_id = 555000;
 
-    exam1->timeslot = 0;
+    exam1->timeslot = NOT_SCHEDULED;
 
     exam1->enrollment = 3;
     exam1->students = init_students(3, 10000, 10001, 10002);
@@ -160,7 +160,7 @@ exam* get_example1() {
     exam2->exam_id = 2;
     exam2->teacher_id = 555001;
 
-    exam2->timeslot = 0;
+    exam2->timeslot = NOT_SCHEDULED;
 
     exam2->enrollment = 2;
     exam2->students = init_students(2, 10000, 10003);
@@ -174,7 +174,7 @@ exam* get_example1() {
     exam3->exam_id = 3;
     exam3->teacher_id = 555002;
 
-    exam3->timeslot = 0;
+    exam3->timeslot = NOT_SCHEDULED;
 
     exam3->enrollment = 2;
 
@@ -189,7 +189,7 @@ exam* get_example1() {
     exam4->exam_id = 4;
     exam4->teacher_id = 555003;
 
-    exam4->timeslot = 0;
+    exam4->timeslot = NOT_SCHEDULED;
 
     exam4->enrollment = 4;
     exam4->students = init_students(4, 10003, 10004, 10005, 10006);
@@ -203,7 +203,7 @@ exam* get_example1() {
     exam5->exam_id = 5;
     exam5->teacher_id = 555001;
 
-    exam5->timeslot = 0;
+    exam5->timeslot = NOT_SCHEDULED;
 
     exam5->enrollment = 3;
     exam5->students = init_students(3, 10000, 10001, 10003);
@@ -217,7 +217,7 @@ exam* get_example1() {
     exam6->exam_id = 6;
     exam6->teacher_id = 555004;
 
-    exam6->timeslot = 0;
+    exam6->timeslot = NOT_SCHEDULED;
 
     exam6->enrollment = 1;
     exam6->students = init_students(1, 10004);
@@ -231,7 +231,7 @@ exam* get_example1() {
     exam7->exam_id = 7;
     exam7->teacher_id = 555005;
 
-    exam7->timeslot = 0;
+    exam7->timeslot = NOT_SCHEDULED;
 
     exam7->enrollment = 1;
     exam7->students = init_students(1, 10001);
@@ -244,7 +244,7 @@ exam* get_example1() {
     exam8->exam_id = 8;
     exam8->teacher_id = 555006;
 
-    exam8->timeslot = 0;
+    exam8->timeslot = NOT_SCHEDULED;
 
     exam8->enrollment = 1;
     exam8->students = init_students(1, 10002);
@@ -273,7 +273,7 @@ exam* get_example2() {
     exam1->exam_id = 1;
     exam1->teacher_id = 555000;
 
-    exam1->timeslot = 0;
+    exam1->timeslot = NOT_SCHEDULED;
 
     exam1->enrollment = 3;
     exam1->students = init_students(3, 10000, 10001, 10002);
@@ -287,7 +287,7 @@ exam* get_example2() {
     exam2->exam_id = 2;
     exam2->teacher_id = 555001;
 
-    exam2->timeslot = 0;
+    exam2->timeslot = NOT_SCHEDULED;
 
     exam2->enrollment = 2;
     exam2->students = init_students(2, 10000, 10003);
@@ -392,6 +392,6 @@ void main() {
     if(a == true) {
         print_summary_schedule(exams);
 
-        print_detailed_schedule(exams);
+        //print_detailed_schedule(exams);
     }
 }

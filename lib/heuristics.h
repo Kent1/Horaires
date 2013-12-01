@@ -12,6 +12,8 @@
 #include "util.h"
 #include "structs/exam.h"
 
+#define NOT_SCHEDULED 255
+
 exam* get_first_exam(exam*, uint16_t, uint8_t);
 
 uint8_t* get_exams_saturation_degree(exam*, uint16_t, uint8_t);
