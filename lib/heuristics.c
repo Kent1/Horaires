@@ -23,7 +23,7 @@
 exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
     // Initialization
     uint16_t i;
-    uint16_t best = 256;
+    uint8_t best = 255;
     exam* first = NULL;
 
     // Compute all saturation degrees for the given exams
@@ -33,7 +33,7 @@ exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
     // tie-break with largest enrollment
     for (i = 0; i < size; i++) {
         // Exam 'i' already scheduled
-        if(sat_degree[i] == 0)
+        if(sat_degree[i] == 255)
             continue;
 
         if(sat_degree[i] < best) {
@@ -64,7 +64,7 @@ uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_tim
     for (i = 0; i < size; i++) {
         // already scheduled
         if(exams[i].timeslot != 0) {
-            sat_degree[i] = 0;
+            sat_degree[i] = 255;
         } else { // not scheduled, compute all conflicts
             sat_degree[i] = max_timeslot;
 
