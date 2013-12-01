@@ -1,3 +1,11 @@
+/*
+ * This file is part of UMons - horaires project
+ *
+ *	Created on: 29/11/2013
+ *		Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
+ *
+ */
+
 #include "heuristics.h"
 #include "conflict.h"
 
