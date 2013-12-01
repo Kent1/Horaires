@@ -9,6 +9,7 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
