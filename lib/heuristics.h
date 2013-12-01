@@ -18,7 +18,7 @@ exam* get_first_exam(exam*, uint16_t, uint8_t);
 
 uint8_t* get_exams_saturation_degree(exam*, uint16_t, uint8_t);
 
-bool set_possible_timeslot(exam*, exam*, uint16_t, uint8_t, uint8_t);
+bool* set_possible_timeslot(exam*, exam*, uint16_t, uint8_t, uint8_t);
 
 bool color_graph_backtrack(exam*, uint16_t, uint8_t);
 

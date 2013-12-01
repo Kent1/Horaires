@@ -46,6 +46,8 @@ exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
         }
     }
 
+    free(sat_degree);
+
     return first;
 }
 
@@ -86,44 +88,37 @@ uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_tim
 }
 
 /**
- * Try to set the minimal available timeslot
+ * Computes all available timeslots, knowing all those who
+ * have already been scheduled and the possibilities of that exam.
  *
  * @param exam_ The exam to schedule
  * @param exams Array of all exams
  * @param size Size of array of exams
  * @param max_timeslot Maximum timeslot
- * @return true if timeslot is assigned, false otherwise
+ * @return An array of boolean with real available timeslots.
  */
-bool set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
+bool* set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
                            uint8_t min_timeslot, uint8_t max_timeslot) {
     uint16_t i;
-    bool timeslot_available[max_timeslot];
+    bool *timeslots_available = calloc(max_timeslot, sizeof(bool));
 
     for (i = 0; i < max_timeslot; i++)
-        timeslot_available[i] = exam_->availabilities[i];
+        timeslots_available[i] = exam_->availabilities[i];
 
     // Store all the timeslots used by neighbors (i.e. vertex in conflict)
     for (i = 0; i < size; i++) {
         if (exam_->conflicts[i] && exams[i].timeslot != NOT_SCHEDULED)
             // If i is a neighbor and i is scheduled
-            timeslot_available[exams[i].timeslot] = false;
+            timeslots_available[exams[i].timeslot] = false;
     }
 
-    // Iterate the array to search which is the minimal timeslot available
-    // and set it to the exam
-    for (i = min_timeslot; i < max_timeslot; i++) {
-        if (timeslot_available[i] == true) {
-            exam_->timeslot = i;
-            return true;
-        }
-    }
-
-    return false;
+    return timeslots_available;
 }
 
 /**
  * Try to set a correct timeslot to all exams. Correct means
- * that any students have two exams scheduled in the same period.
+ * that any students/teachers have two exams scheduled in
+ * the same period.
  *
  * @param exams Array of all exams
  * @param size Size of the array of exams
@@ -135,13 +130,27 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     if (exam_ == NULL)
         return true;
 
-    uint8_t min_timeslot = 0;
+    uint8_t min_timeslot = 0, i = 0;
     bool success         = false;
     bool backtrack       = false;
 
+    bool *timeslots_available = set_possible_timeslot(exam_, exams, size,
+                                                min_timeslot, max_timeslot);
+
     do {
-        backtrack = !set_possible_timeslot(exam_, exams, size,
-                                           min_timeslot, max_timeslot);
+        // Iterate the array to search which is the minimal timeslot
+        // available and set it to the exam
+        for (i = min_timeslot; i < max_timeslot; i++) {
+            if (timeslots_available[i] == true) {
+                exam_->timeslot = i;
+                break;
+            }
+        }
+
+        // If i == max_timeslot,
+        // there is no more available timeslots => need backtrack
+        backtrack = (i == max_timeslot);
+
         if (!backtrack) {
             success = color_graph_backtrack(exams, size, max_timeslot);
             if (!success) {
@@ -151,7 +160,9 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     } while (!backtrack && !success);
 
     if (backtrack)
-        exam_->timeslot = NOT_SCHEDULED;
+        exam_->timeslot = NOT_SCHEDULED; // reset the timeslot
+
+    free(timeslots_available);
 
     return success;
 }
