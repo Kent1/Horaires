@@ -11,7 +11,7 @@
 
 #include "../util.h"
 
-#define MAX_ROOMS 4
+#define MAX_ROOM_TYPE 4
 
 typedef enum { /* Defines an enumeration type */
     amphitheater,

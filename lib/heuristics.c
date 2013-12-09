@@ -199,7 +199,7 @@ bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
             for (j = 0; j < exams_size; j++)
                 exams[i].room_id = -1;
 
-            for (j = 0; j < room_type_indices[MAX_ROOMS]; j++) {
+            for (j = 0; j < room_type_indices[MAX_ROOM_TYPE]; j++) {
                 for (i = 0; i < max_timeslot; i++)
                     rooms[j].assignation[i] == -1;
             }
