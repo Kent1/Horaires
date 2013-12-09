@@ -29,6 +29,8 @@ typedef struct {
     // exams in which true means there is a conflict with the i-th exam,
     // false otherwhise
 	uint16_t* conflicts;
+    room_type room_type; // Room type needed
+    uint16_t room_id; // Room id assigned
 } exam;
 
 #endif /*EXAM_H_*/
