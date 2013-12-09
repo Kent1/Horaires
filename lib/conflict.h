@@ -1,8 +1,8 @@
 /*
  * This file is part of Umons - horaires project
  *
- *	Created on: 28/11/2013
- *		Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
+ *  Created on: 28/11/2013
+ *      Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
  *
  */
 
@@ -11,7 +11,7 @@
 
 #include "structs/exam.h"
 
-bool compute_conflict(exam*, exam*);
-void compute_conflicts(exam*, uint16_t);
+bool compute_conflict(exam *, exam *);
+void compute_conflicts(exam *, uint16_t);
 
 #endif /*CONFLICT_H_*/

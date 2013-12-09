@@ -10,6 +10,8 @@
  *
  */
 
+#include "structs/exam.h"
+#include "structs/room.h"
 #include "heuristics.h"
 
 /**
@@ -20,27 +22,27 @@
  * @param exams An array of exams.
  * @return The next exam to schedule following our heuristics.
  */
-exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
+exam *get_first_exam(exam *exams, uint16_t size, uint8_t max_timeslot) {
     // Initialization
     uint16_t i;
     uint8_t best = 255;
-    exam* first = NULL;
+    exam *first = NULL;
 
     // Compute all saturation degrees for the given exams
-    uint8_t* sat_degree = get_exams_saturation_degree(exams, size, max_timeslot);
+    uint8_t *sat_degree = get_exams_saturation_degree(exams, size, max_timeslot);
 
     // Find the exam with the max saturation degree and resolve
     // tie-break with largest enrollment
     for (i = 0; i < size; i++) {
         // Exam 'i' already scheduled & so we don't care about sat_degree
-        if(sat_degree[i] == NO_SAT)
+        if (sat_degree[i] == NO_SAT)
             continue;
 
-        if(sat_degree[i] < best) {
+        if (sat_degree[i] < best) {
             best  = sat_degree[i];
             first = &exams[i];
-        } else if(sat_degree[i] == best &&
-                    exams[i].enrollment > first->enrollment) {
+        } else if (sat_degree[i] == best &&
+                   exams[i].enrollment > first->enrollment) {
             best  = sat_degree[i];
             first = &exams[i];
         }
@@ -59,26 +61,28 @@ exam* get_first_exam(exam* exams, uint16_t size, uint8_t max_timeslot) {
  * @param exams An array of exams.
  * @return An array regrouping saturation degree for the given parameter.
  */
-uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_timeslot) {
+uint8_t *get_exams_saturation_degree(exam *exams, uint16_t size,
+                                     uint8_t max_timeslot) {
     uint16_t i, j;
-    uint8_t* sat_degree = calloc(size, sizeof(uint8_t));
+    uint8_t *sat_degree = calloc(size, sizeof(uint8_t));
 
     for (i = 0; i < size; i++) {
         // already scheduled
-        if(exams[i].timeslot != NOT_SCHEDULED) {
+        if (exams[i].timeslot != NOT_SCHEDULED) {
             sat_degree[i] = NO_SAT;
         } else { // not scheduled, compute all conflicts
             sat_degree[i] = max_timeslot;
 
             for (j = 0; j < max_timeslot; j++) {
-                if(exams[i].availabilities[j] == false)
+                if (exams[i].availabilities[j] == false)
                     sat_degree[i]--;
             }
 
             for (j = 0; j < size; j++) {
                 // A conflict represents an edge between i and j,
                 // then if j has a timeslot => j is scheduled
-                if(exams[i].conflicts[j] && exams[j].timeslot != 0 && exams[i].availabilities[exams[j].timeslot] == true)
+                if (exams[i].conflicts[j] && exams[j].timeslot != 0 &&
+                        exams[i].availabilities[exams[j].timeslot] == true)
                     sat_degree[i]--;
             }
         }
@@ -97,8 +101,8 @@ uint8_t* get_exams_saturation_degree(exam* exams, uint16_t size, uint8_t max_tim
  * @param max_timeslot Maximum timeslot
  * @return An array of boolean with real available timeslots.
  */
-bool* set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
-                           uint8_t min_timeslot, uint8_t max_timeslot) {
+bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t size,
+                            uint8_t min_timeslot, uint8_t max_timeslot) {
     uint16_t i;
     bool *timeslots_available = calloc(max_timeslot, sizeof(bool));
 
@@ -125,8 +129,9 @@ bool* set_possible_timeslot(exam* exam_, exam* exams, uint16_t size,
  * @param max_timeslot Maximum timeslot
  * @return True if a correct assignement is found, false otherwise
  */
-bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
-    exam* exam_ = get_first_exam(exams, size, max_timeslot);
+bool color_graph_backtrack(exam *exams, uint16_t size, uint8_t max_timeslot) {
+    exam *exam_ = get_first_exam(exams, size, max_timeslot);
+
     if (exam_ == NULL)
         return true;
 
@@ -135,7 +140,7 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     bool backtrack       = false;
 
     bool *timeslots_available = set_possible_timeslot(exam_, exams, size,
-                                                min_timeslot, max_timeslot);
+                                min_timeslot, max_timeslot);
 
     do {
         // Iterate the array to search which is the minimal timeslot
@@ -153,8 +158,9 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
 
         if (!backtrack) {
             success = color_graph_backtrack(exams, size, max_timeslot);
+
             if (!success) {
-                min_timeslot = exam_->timeslot+1;
+                min_timeslot = exam_->timeslot + 1;
             }
         }
     } while (!backtrack && !success);
@@ -165,4 +171,42 @@ bool color_graph_backtrack(exam* exams, uint16_t size, uint8_t max_timeslot) {
     free(timeslots_available);
 
     return success;
+}
+
+
+bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
+                 uint16_t *room_type_indices, uint8_t max_timeslot) {
+    uint16_t i, j;
+
+    for (i = 0; i < exams_size; i++) {
+        exam exam_ = exams[i];
+        j = exam_.room_type ? room_type_indices[exam_.room_type] : 0;
+
+        for (; j < room_type_indices[exam_.room_type]; j++) {
+            room room_ = rooms[j];
+
+            if (room_.assignation[exam_.timeslot] == -1 &&
+                    room_.capacity >= exam_.enrollment) {
+                room_.assignation[exam_.timeslot] = exam_.exam_id;
+                exam_.room_id = room_.room_id;
+                break;
+            }
+
+        }
+
+        if (exam_.room_id == -1) {
+
+            for (j = 0; j < exams_size; j++)
+                exams[i].room_id = -1;
+
+            for (j = 0; j < room_type_indices[MAX_ROOMS]; j++) {
+                for (i = 0; i < max_timeslot; i++)
+                    rooms[j].assignation[i] == -1;
+            }
+
+            return false;
+        }
+    }
+
+    return true;
 }

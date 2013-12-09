@@ -1,8 +1,8 @@
 /*
  * This file is part of UMons - horaires project
  *
- *	Created on: 28/11/2013
- *		Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
+ *  Created on: 28/11/2013
+ *      Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
  *
  */
 
