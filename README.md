@@ -45,17 +45,29 @@ For resolve the coloring problem, we use ordering heuristics. We considered thre
 
 We decided to use Saturation Degree for our principal heuristic because its fits well with our hard constraints (especially with exam avaibility). We also decided to use Largest Enrollment in last resort (in the case of ex-aequo).
 
+For the room-type constraints, after computing the feasible timetable for the timeslot, we try to assigned a room to all scheduled exams (and all exams are scheduled). For the assignement, for each exam, we consider each room of desired type. If a room of the right type is available and it has enough capacity, we assign this room to the exam. If no solution is found, we do backtrack on the timeslot assignement.
+
 ### Data structures
 
 #### Struct : exam
- * exam_id (ushort)
- * teacher_id (uint)
- * timeslot (uchar)
- * enrollment (ushort)
- * unavaibilities (uchar*)
- * dependancies (ushort*)
- * students (uint*)
- * conflicts (ushort*)
+ * exam_id (uint16_t)
+ * teacher_id (uint32_t)
+ * timeslot (uint8_t)              // assigned timeslot
+ * enrollment (uint16_t)        // number of students, also sizeof students
+ * availabilities (uint8_t*)      // bool array for the availabilities
+ * dependancies (uint16_t*) // list of prerequisites
+ * students (uint32_t*)         // list of students enrolled in the event
+ * conflicts (uint16_t*)          // bool array describing the list of conflicting exams
+ * room_type room_type;     // Room type needed
+ * uint16_t room_id;             // Room id assigned
+
+#### Struct : room
+ * room_id (uint16_t)
+ * type (enum room_type) // Type of the room (Amphitheater, computer room)
+ * capacity (uint16_t)         // Number of seats
+ * faculty (uint8_t)              // Faculty which owns the room
+ * assignation (uint16_t*)  // contains for each timeslot the assigned exam_id
+
 
 ## Requirements
 
@@ -66,3 +78,5 @@ We decided to use Saturation Degree for our principal heuristic because its fits
 ## References
 
 [1] Asmuni, Hishammudin and Burke, Edmund K and Garibaldi, Jonathan M and McCollum, Barry and Parkes, Andrew J, *An investigation of fuzzy multiple heuristic orderings in the construction of university examination timetables*, Computers & Operations Research 2009
+
+[2] Qu, Rong and Burke, EK and McCollum, Barry and Merlot, Liam TG and Lee, Sau Y, *A survey of search methodologies and automated approaches for examination timetabling*, Computer Science Technical Report No. NOTTCS-TR-2006-4, UK, 2006
