@@ -9,8 +9,6 @@
 #ifndef CONFLICT_H_
 #define CONFLICT_H_
 
-#include "structs/exam.h"
-
 bool compute_conflict(exam *, exam *);
 void compute_conflicts(exam *, uint16_t);
 

@@ -9,8 +9,6 @@
 #ifndef HEURISTICS_H_
 #define HEURISTICS_H_
 
-#include "util.h"
-
 #define NOT_SCHEDULED 255
 #define NO_SAT        255
 

@@ -10,6 +10,7 @@
  *
  */
 
+#include "util.h"
 #include "structs/exam.h"
 #include "structs/room.h"
 #include "heuristics.h"
