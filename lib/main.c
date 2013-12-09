@@ -37,10 +37,8 @@ uint32_t* init_students(int size, ...) {
     va_list para;
     va_start(para, size);
 
-    for (i=0; i < size; i++) {
-        uint32_t tmp = va_arg(para, uint32_t);
-        new_tab[i] = tmp;
-    }
+    for (i=0; i < size; i++)
+        new_tab[i] = va_arg(para, uint32_t);;
 
     va_end(para);
 
@@ -61,10 +59,8 @@ uint8_t* init_availabilities(int size, ...) {
     va_list para;
     va_start(para, size);
 
-    for (i=0; i < size; i++) {
-        uint8_t tmp = (uint8_t) va_arg(para, uint32_t);
-        new_tab[i] = tmp;
-    }
+    for (i=0; i < size; i++)
+        new_tab[i] = (uint8_t) va_arg(para, uint32_t);
 
     va_end(para);
 
@@ -78,14 +74,7 @@ uint8_t* init_availabilities(int size, ...) {
  * @return An array containing 0s.
  */
 uint16_t* init_conflicts(int size) {
-    int i;
-    uint16_t *new_tab = calloc(size, sizeof(uint16_t));
-
-    for (i=0; i < size; i++) {
-        new_tab[i] = 0;
-    }
-
-    return new_tab;
+    return calloc(size, sizeof(uint16_t));
 }
 
 /**
@@ -102,10 +91,8 @@ exam* init_exams(int size, ...) {
     va_list para;
     va_start(para, size);
 
-    for (i=0; i < size; i++) {
-        exam *tmp = va_arg(para, exam*);
-        exams[i] = *tmp;
-    }
+    for (i=0; i < size; i++)
+        exams[i] = *va_arg(para, exam*);
 
     va_end(para);
 
@@ -134,7 +121,7 @@ exam* init_exams(int size, ...) {
     exam->conflicts = init_conflicts(va_arg(para, int));
 
     return exam;
-}/**/
+}*/
 
 /**
  * Creates and initializes an problem instance, having a solution.
@@ -254,7 +241,7 @@ exam* get_example1() {
 
 
     return init_exams(MAX_EXAM, exam1, exam2, exam3, exam4, exam5, exam6, exam7, exam8);
-}/**/
+}
 
 /**
  * Creates and initializes an problem instance, having a solution.
@@ -263,11 +250,13 @@ exam* get_example1() {
  */
 exam* get_example2() {
     // exam1 - Analyse
-    /*int number_of_exams = 2;
+    /*
+    int number_of_exams = 2;
     exam *exam1 = init_exam(1, 555000,                  // exam id, teacher id
                             3, 10000, 10001, 10002,    // nb + enrollments
                             2, 1, 0,                    // nb + availabilities
-                            number_of_exams);           // nb of exams/**/
+                            number_of_exams);           // nb of exams
+    */
 
     exam *exam1 = calloc(1, sizeof(exam));
     exam1->exam_id = 1;
@@ -376,7 +365,7 @@ void print_detailed_schedule(exam *exams) {
  * Main function, execute the heuristics on a simple example.
  *
  */
-void main() {
+int main() {
     // Collect a sample of exams
     exam *exams = get_example();
 
@@ -394,4 +383,6 @@ void main() {
 
         //print_detailed_schedule(exams);
     }
+
+    return 0;
 }
