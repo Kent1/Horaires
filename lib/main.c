@@ -80,7 +80,7 @@ uint16_t *init_conflicts(int size) {
  * @param id the exam id.
  * @return a struct exam allocated and initialized.
  */
-exam* init_exam(uint16_t id, ...) {
+exam *init_exam(uint16_t id, ...) {
     va_list para;
     va_start(para, id);
 
@@ -102,25 +102,75 @@ exam* init_exam(uint16_t id, ...) {
 }
 
 /**
- * Make allocation for an array of exams given in
- * parameters but with a variable length to be flexible.
  *
- * @param size Size of the array
- * @return An array containing all the given parameters
+ * Make allocation and initialization of a room with the specified
+ * parameters.
+ *
+ * @param id the room ID.
+ * @param type the room type.
+ * @param capacity the capacity of the room.
+ * @param faculty the faculty in charge of the room.
+ * @return a struct room allocated and initialized.
+ */
+room *init_room(uint16_t id, room_type type, uint16_t capacity, uint8_t faculty) {
+    room *room_ = calloc(1, sizeof(room));
+
+    room_->room_id     = id;
+    room_->type        = type;
+    room_->capacity    = capacity;
+    room_->faculty     = faculty;
+    room_->assignation = calloc(MAX_TIMESLOT, sizeof(uint16_t));
+
+    int i;
+
+    for (i = 0; i < MAX_TIMESLOT; i++)
+        room_->assignation[i] = -1;
+
+    return room_;
+}
+
+/**
+ * Make allocation for an array of exams given in parameters
+ * but with a variable length to be flexible.
+ *
+ * @param size Size of the array to alloc.
+ * @return An array containing all the given parameters.
  */
 exam *init_exams(int size, ...) {
-    int i;
     exam *exams = calloc(size, sizeof(exam));
 
     va_list para;
     va_start(para, size);
 
+    int i;
     for (i = 0; i < size; i++)
         exams[i] = *va_arg(para, exam *);
 
     va_end(para);
 
     return exams;
+}
+
+/**
+ * Make allocation for an array of rooms given in parameters
+ * but with a variable length to be flexible.
+ *
+ * @param size Size of the array to alloc.
+ * @return An array containing all the given parameters.
+ */
+room *init_rooms(int size, ...) {
+    room *rooms = calloc(size, sizeof(room));
+
+    va_list para;
+    va_start(para, size);
+
+    int i;
+    for(i = 0; i < size; i++)
+        rooms[i] = *va_arg(para, room *);
+
+    va_end(para);
+
+    return rooms;
 }
 
 /**
@@ -219,6 +269,43 @@ exam *get_example() {
 }
 
 /**
+ * Create an array of rooms to use with the two first example.
+ *
+ * @return An array of rooms
+ */
+room *get_rooms() {
+    // R1 - Salon bleu
+    room *room1 = init_room(0, class, 1, 0);
+    // R2 - Plisnier
+    room *room2 = init_room(1, class, 2, 0);
+    // R3 - Van Gogh
+    room *room3 = init_room(2, amphitheater, 5, 0);
+    // R4 - Pascal
+    room *room4 = init_room(3, lab, 4, 0);
+
+    return init_rooms(4, room3, room1, room2, room4);
+}
+
+uint16_t *get_room_type_indices(int size, room *rooms) {
+    uint16_t *indices = calloc(size, sizeof(uint16_t));
+
+    int i = 0, j = 0;
+    for(i; i < size; i++) {
+        if(rooms[i].type != j) {
+            indices[j] = i;
+            j++;
+        }
+    }
+
+    while(j < 4) {
+        indices[j] = i;
+        j++;
+    }
+
+    return indices;
+}
+
+/**
  * Prints which timeslot have been attributed to each exams.
  *
  * @param exams An array of scheduled exams
@@ -291,11 +378,14 @@ int main() {
     // Collect a sample of exams
     exam *exams = get_example();
 
+    room *rooms = get_rooms();
+    uint16_t *indices = get_room_type_indices(4, rooms);
+
     // Preprocessing to the coloring graph heuristics
     compute_conflicts(exams, MAX_EXAM);
 
     // Main heuristic
-    bool a = color_graph_backtrack(exams, MAX_EXAM, MAX_TIMESLOT);
+    bool a = color_graph_backtrack(exams, MAX_EXAM, rooms, indices, MAX_TIMESLOT);
 
     printf("%s\n", (a == true) ? "A schedule has been found!\n" :
            "No schedule has been found!\n");
