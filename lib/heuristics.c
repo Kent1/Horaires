@@ -121,26 +121,32 @@ bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t size,
 }
 
 /**
- * Try to set a correct timeslot to all exams. Correct means
- * that any students/teachers have two exams scheduled in
- * the same period.
+ * Try to set a correct timeslot to all exams and then assign them a room.
+ * Correct means that any students/teachers have two exams scheduled in
+ * the same period. Same thing for the room, it must be a room compatible
+ * for the exam (with the correct room_type) and with enough capacity
  *
- * @param exams Array of all exams
- * @param size Size of the array of exams
- * @param max_timeslot Maximum timeslot
- * @return True if a correct assignement is found, false otherwise
+ * @param  exams Array of all exams
+ * @param  exams_size Size of the array of exams
+ * @param  rooms An array of rooms. This array is sorted by type and for each
+ *               type, the rooms are sorted by capacity
+ * @param  room_type_indices An array filled with start indices of each type
+ *                           in the rooms array
+ * @param  max_timeslot Maximum available timeslots
+ * @return true if a correct assignement is found, false otherwise
  */
-bool color_graph_backtrack(exam *exams, uint16_t size, uint8_t max_timeslot) {
-    exam *exam_ = get_first_exam(exams, size, max_timeslot);
+bool color_graph_backtrack(exam *exams, uint16_t exams_size, room *rooms,
+                           uint16_t *room_type_indices, uint8_t max_timeslot) {
+    exam *exam_ = get_first_exam(exams, exams_size, max_timeslot);
 
     if (exam_ == NULL)
-        return true;
+        return room_assign(exams, exams_size, rooms, room_type_indices, max_timeslot);
 
     uint8_t min_timeslot = 0, i = 0;
     bool success         = false;
     bool backtrack       = false;
 
-    bool *timeslots_available = set_possible_timeslot(exam_, exams, size,
+    bool *timeslots_available = set_possible_timeslot(exam_, exams, exams_size,
                                 min_timeslot, max_timeslot);
 
     do {
@@ -158,7 +164,8 @@ bool color_graph_backtrack(exam *exams, uint16_t size, uint8_t max_timeslot) {
         backtrack = (i == max_timeslot);
 
         if (!backtrack) {
-            success = color_graph_backtrack(exams, size, max_timeslot);
+            success = color_graph_backtrack(exams, exams_size, rooms, room_type_indices,
+                                            max_timeslot);
 
             if (!success) {
                 min_timeslot = exam_->timeslot + 1;
@@ -217,7 +224,7 @@ bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
 
             for (j = 0; j < room_type_indices[MAX_ROOM_TYPE]; j++) {
                 for (i = 0; i < max_timeslot; i++)
-                    rooms[j].assignation[i] == -1;
+                    rooms[j].assignation[i] = -1;
             }
 
             return false;

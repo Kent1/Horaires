@@ -290,7 +290,7 @@ uint16_t *get_room_type_indices(int size, room *rooms) {
     uint16_t *indices = calloc(size, sizeof(uint16_t));
 
     int i = 0, j = 0;
-    for(i; i < size; i++) {
+    for(; i < size; i++) {
         if(rooms[i].type != j) {
             indices[j] = i;
             j++;
