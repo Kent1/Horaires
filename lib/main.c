@@ -32,17 +32,12 @@
  * @param size Size of the array
  * @return An array containing all the given parameters
  */
-uint32_t *init_students(int size, ...) {
+uint32_t *init_students(int size, va_list *para) {
     int i;
     uint32_t *new_tab = calloc(size, sizeof(uint32_t));
 
-    va_list para;
-    va_start(para, size);
-
     for (i = 0; i < size; i++)
-        new_tab[i] = va_arg(para, uint32_t);;
-
-    va_end(para);
+        new_tab[i] = va_arg(*para, uint32_t);
 
     return new_tab;
 }
@@ -54,17 +49,12 @@ uint32_t *init_students(int size, ...) {
  * @param size Size of the array
  * @return An array containing all the given parameters
  */
-uint8_t *init_availabilities(int size, ...) {
+uint8_t *init_availabilities(int size, va_list *para) {
     int i;
     uint8_t *new_tab = calloc(size, sizeof(uint8_t));
 
-    va_list para;
-    va_start(para, size);
-
     for (i = 0; i < size; i++)
-        new_tab[i] = (uint8_t) va_arg(para, uint32_t);
-
-    va_end(para);
+        new_tab[i] = (uint8_t) va_arg(*para, uint32_t);
 
     return new_tab;
 }
@@ -77,6 +67,38 @@ uint8_t *init_availabilities(int size, ...) {
  */
 uint16_t *init_conflicts(int size) {
     return calloc(size, sizeof(uint16_t));
+}
+
+/**
+ * Make the allocation and initialization of an exam. The parameters are
+ * length variable, to have this function dynamic. It takes, in this order,
+ * the 'exam id', the 'teacher id', the 'number of enrollment' followed by
+ * the specified number of enrollment, the 'number of availabilities'
+ * followed by the specified number of availabilities and the 'number of
+ * exams'.
+ *
+ * @param id the exam id.
+ * @return a struct exam allocated and initialized.
+ */
+exam* init_exam(uint16_t id, ...) {
+    va_list para;
+    va_start(para, id);
+
+    exam *exam_ = calloc(1, sizeof(exam));
+    exam_->exam_id    = id;
+    exam_->teacher_id = (uint32_t) va_arg(para, int);
+
+    exam_->timeslot = NOT_SCHEDULED; // Default value for non-assigned exam
+
+    exam_->enrollment = (uint16_t) va_arg(para, int);
+    // problem with the two lines below
+    exam_->students = init_students(exam_->enrollment, &para);
+
+    exam_->availabilities = init_availabilities(va_arg(para, int), &para);
+
+    exam_->conflicts = init_conflicts(va_arg(para, int));
+
+    return exam_;
 }
 
 /**
@@ -101,30 +123,6 @@ exam *init_exams(int size, ...) {
     return exams;
 }
 
-// Simpler method, but still bugs
-/*exam* init_exam(uint16_t id, ...) {
-    int i;
-    va_list para;
-    va_start(para, id);
-
-    exam *exam = calloc(1, sizeof(exam));
-    exam->exam_id    = id;
-    exam->teacher_id = (uint32_t) va_arg(para, int);
-
-    exam->timeslot = 0; // Default value for non-assigned exam
-
-    exam->enrollment = (uint16_t) va_arg(para, int);
-    // problem with the two lines below
-    uint32_t *test = init_students2(exam->enrollment, &para);
-    exam->students = test;
-
-    exam->availabilities = init_availabilities2(va_arg(para, int), &para);
-
-    exam->conflicts = init_conflicts(va_arg(para, int));
-
-    return exam;
-}*/
-
 /**
  * Creates and initializes an problem instance, having a solution.
  *
@@ -132,115 +130,51 @@ exam *init_exams(int size, ...) {
  */
 exam *get_example1() {
     // exam1 - Analyse
-    exam *exam1 = calloc(1, sizeof(exam));
-    exam1->exam_id = 1;
-    exam1->teacher_id = 555000;
-
-    exam1->timeslot = NOT_SCHEDULED;
-
-    exam1->enrollment = 3;
-    exam1->students = init_students(3, 10000, 10001, 10002);
-
-    exam1->availabilities = init_availabilities(MAX_TIMESLOT, 1, 1, 1, 0, 0, 0);
-    exam1->conflicts = init_conflicts(MAX_EXAM);
+    exam *exam1 = init_exam(1, 555000,                      // exam id, teacher id
+                            3, 10000, 10001, 10002,         // nb + enrollments
+                            MAX_TIMESLOT, 1, 1, 1, 0, 0, 0, // nb + availabilities
+                            MAX_EXAM);                      // nb of exams
 
     // exam2 - Fonctionnement des ordis
-    exam *exam2 = calloc(1, sizeof(exam));
-    exam2->exam_id = 2;
-    exam2->teacher_id = 555001;
-
-    exam2->timeslot = NOT_SCHEDULED;
-
-    exam2->enrollment = 2;
-    exam2->students = init_students(2, 10000, 10003);
-
-    exam2->availabilities = init_availabilities(MAX_TIMESLOT, 0, 1, 1, 0, 0, 0);
-    exam2->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam2 = init_exam(2, 555001,
+                            2, 10000, 10003,
+                            MAX_TIMESLOT, 0, 1, 1, 0, 0, 0,
+                            MAX_EXAM);
 
     // exam3 - MATH1
-    exam *exam3 = calloc(1, sizeof(exam));
-    exam3->exam_id = 3;
-    exam3->teacher_id = 555002;
-
-    exam3->timeslot = NOT_SCHEDULED;
-
-    exam3->enrollment = 2;
-
-    exam3->students = init_students(2, 10002, 10004);
-
-    exam3->availabilities = init_availabilities(MAX_TIMESLOT, 0, 1, 1, 1, 0, 0);
-    exam3->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam3 = init_exam(3, 555002,
+                            2, 10002, 10004,
+                            MAX_TIMESLOT, 0, 1, 1, 1, 0, 0,
+                            MAX_EXAM);
 
     // exam4 - Anglais
-    exam *exam4 = calloc(1, sizeof(exam));
-    exam4->exam_id = 4;
-    exam4->teacher_id = 555003;
-
-    exam4->timeslot = NOT_SCHEDULED;
-
-    exam4->enrollment = 4;
-    exam4->students = init_students(4, 10003, 10004, 10005, 10006);
-
-    exam4->availabilities = init_availabilities(MAX_TIMESLOT, 0, 0, 1, 0, 0, 0);
-    exam4->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam4 = init_exam(4, 555003,
+                            4, 10003, 10004, 10005, 10006,
+                            MAX_TIMESLOT, 1, 0, 1, 0, 0, 0,
+                            MAX_EXAM);
 
     // exam5 - Anglais
-    exam *exam5 = calloc(1, sizeof(exam));
-    exam5->exam_id = 5;
-    exam5->teacher_id = 555001;
-
-    exam5->timeslot = NOT_SCHEDULED;
-
-    exam5->enrollment = 3;
-    exam5->students = init_students(3, 10000, 10001, 10003);
-
-    exam5->availabilities = init_availabilities(MAX_TIMESLOT, 0, 0, 1, 1, 0, 0);
-    exam5->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam5 = init_exam(5, 555001,
+                            3, 10000, 10001, 10003,
+                            MAX_TIMESLOT, 0, 0, 1, 1, 0, 0,
+                            MAX_EXAM);
 
     // exam6 - chimir
-    exam *exam6 = calloc(1, sizeof(exam));
-    exam6->exam_id = 6;
-    exam6->teacher_id = 555004;
-
-    exam6->timeslot = NOT_SCHEDULED;
-
-    exam6->enrollment = 1;
-    exam6->students = init_students(1, 10004);
-
-    exam6->availabilities = init_availabilities(MAX_TIMESLOT, 0, 0, 0, 1, 1, 1);
-    exam6->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam6 = init_exam(6, 555004,
+                            1, 10004,
+                            MAX_TIMESLOT, 0, 0, 0, 1, 1, 1,
+                            MAX_EXAM);
 
     // exam7 - algèbre
-    exam *exam7 = calloc(1, sizeof(exam));
-    exam7->exam_id = 7;
-    exam7->teacher_id = 555005;
-
-    exam7->timeslot = NOT_SCHEDULED;
-
-    exam7->enrollment = 1;
-    exam7->students = init_students(1, 10001);
-
-    exam7->availabilities = init_availabilities(MAX_TIMESLOT, 0, 0, 0, 0, 1, 1);
-    exam7->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam7 = init_exam(7, 555005,
+                            1, 10001,
+                            MAX_TIMESLOT, 0, 0, 0, 0, 1, 1,
+                            MAX_EXAM);
     // exam8 - jesaispaslire
-    exam *exam8 = calloc(1, sizeof(exam));
-    exam8->exam_id = 8;
-    exam8->teacher_id = 555006;
-
-    exam8->timeslot = NOT_SCHEDULED;
-
-    exam8->enrollment = 1;
-    exam8->students = init_students(1, 10002);
-
-    exam8->availabilities = init_availabilities(MAX_TIMESLOT, 1, 1, 0, 0, 1, 1);
-    exam8->conflicts = init_conflicts(MAX_EXAM);
-
+    exam *exam8 = init_exam(8, 555006,
+                            1, 10002,
+                            MAX_TIMESLOT, 1, 1, 0, 0, 1, 1,
+                            MAX_EXAM);
 
     return init_exams(MAX_EXAM, exam1, exam2, exam3, exam4, exam5, exam6, exam7,
                       exam8);
@@ -253,39 +187,16 @@ exam *get_example1() {
  */
 exam *get_example2() {
     // exam1 - Analyse
-    /*
-    int number_of_exams = 2;
     exam *exam1 = init_exam(1, 555000,                  // exam id, teacher id
                             3, 10000, 10001, 10002,    // nb + enrollments
                             2, 1, 0,                    // nb + availabilities
-                            number_of_exams);           // nb of exams
-    */
-
-    exam *exam1 = calloc(1, sizeof(exam));
-    exam1->exam_id = 1;
-    exam1->teacher_id = 555000;
-
-    exam1->timeslot = NOT_SCHEDULED;
-
-    exam1->enrollment = 3;
-    exam1->students = init_students(3, 10000, 10001, 10002);
-
-    exam1->availabilities = init_availabilities(MAX_TIMESLOT, 1, 0);
-
-    exam1->conflicts = init_conflicts(MAX_EXAM);
+                            MAX_EXAM);           // nb of exams
 
     // exam2 - Fonctionnement des ordis
-    exam *exam2 = calloc(1, sizeof(exam));
-    exam2->exam_id = 2;
-    exam2->teacher_id = 555001;
-
-    exam2->timeslot = NOT_SCHEDULED;
-
-    exam2->enrollment = 2;
-    exam2->students = init_students(2, 10000, 10003);
-
-    exam2->availabilities = init_availabilities(MAX_TIMESLOT, 1, 1);
-    exam2->conflicts = init_conflicts(MAX_EXAM);
+    exam *exam2 = init_exam(2, 555001,
+                            2, 10000, 10003,
+                            MAX_TIMESLOT, 1, 1,
+                            MAX_EXAM);
 
     return init_exams(MAX_EXAM, exam1, exam2);
 }
@@ -342,7 +253,7 @@ void print_detailed_schedule(exam *exams) {
         printf("------------\n\n");
 
         for (j = 0; j < MAX_EXAM; j++) {
-            if (exams[j].timeslot == i + 1) {
+            if (exams[j].timeslot == i) {
                 printf("  Exam %d :\n", j + 1);
                 printf("      -> Prof : %d\n", exams[j].teacher_id);
 
@@ -393,7 +304,7 @@ int main() {
     if (a == true) {
         print_summary_schedule(exams);
 
-        //print_detailed_schedule(exams);
+        print_detailed_schedule(exams);
     }
 
     return 0;
