@@ -9,8 +9,6 @@
 #ifndef ROOM_H_
 #define ROOM_H_
 
-#include "../util.h"
-
 #define MAX_ROOM_TYPE 4
 
 typedef enum { /* Defines an enumeration type */

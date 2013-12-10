@@ -9,7 +9,6 @@
 #ifndef EXAM_H_
 #define EXAM_H_
 
-#include "../util.h"
 #include "room.h"
 
 typedef struct {

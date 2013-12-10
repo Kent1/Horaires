@@ -6,6 +6,8 @@
  *
  */
 
+#include "util.h"
+#include "structs/exam.h"
 #include "conflict.h"
 
 /**
