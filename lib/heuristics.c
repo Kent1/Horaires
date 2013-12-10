@@ -203,28 +203,28 @@ bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
     uint16_t i, j;
 
     for (i = 0; i < exams_size; i++) {
-        exam exam_ = exams[i];
-        j = exam_.room_type ? room_type_indices[exam_.room_type] : 0;
+        exam *exam_ = &exams[i];
+        j = exam_->room_type ? room_type_indices[exam_->room_type - 1] : 0;
 
-        for (; j < room_type_indices[exam_.room_type]; j++) {
-            room room_ = rooms[j];
+        for (; j < room_type_indices[exam_->room_type]; j++) {
+            room *room_ = &rooms[j];
 
-            if (room_.assignation[exam_.timeslot] == -1 &&
-                    room_.capacity >= exam_.enrollment) {
-                room_.assignation[exam_.timeslot] = exam_.exam_id;
-                exam_.room_id = room_.room_id;
+            if (room_->assignation[exam_->timeslot] == UINT16_MAX &&
+                    room_->capacity >= exam_->enrollment) {
+                room_->assignation[exam_->timeslot] = exam_->exam_id;
+                exam_->room_id = room_->room_id;
                 break;
             }
         }
 
-        if (exam_.room_id == -1) {
-
+        if (exam_->room_id == UINT16_MAX) {
             for (j = 0; j < exams_size; j++)
-                exams[i].room_id = -1;
+                exams[i].room_id = UINT16_MAX;
 
-            for (j = 0; j < room_type_indices[MAX_ROOM_TYPE]; j++) {
-                for (i = 0; i < max_timeslot; i++)
-                    rooms[j].assignation[i] = -1;
+            for (j = 0; j < room_type_indices[MAX_ROOM_TYPE - 1]; j++) {
+                for (i = 0; i < max_timeslot; i++) {
+                    rooms[j].assignation[i] = UINT16_MAX;
+                }
             }
 
             return false;

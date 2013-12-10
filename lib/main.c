@@ -98,6 +98,11 @@ exam *init_exam(uint16_t id, ...) {
 
     exam_->conflicts = init_conflicts(va_arg(para, int));
 
+    exam_->room_id   = UINT16_MAX;
+    exam_->room_type = va_arg(para, room_type);
+
+    va_end(para);
+
     return exam_;
 }
 
@@ -112,7 +117,8 @@ exam *init_exam(uint16_t id, ...) {
  * @param faculty the faculty in charge of the room.
  * @return a struct room allocated and initialized.
  */
-room *init_room(uint16_t id, room_type type, uint16_t capacity, uint8_t faculty) {
+room *init_room(uint16_t id, room_type type, uint16_t capacity,
+                uint8_t faculty) {
     room *room_ = calloc(1, sizeof(room));
 
     room_->room_id     = id;
@@ -143,6 +149,7 @@ exam *init_exams(int size, ...) {
     va_start(para, size);
 
     int i;
+
     for (i = 0; i < size; i++)
         exams[i] = *va_arg(para, exam *);
 
@@ -165,7 +172,8 @@ room *init_rooms(int size, ...) {
     va_start(para, size);
 
     int i;
-    for(i = 0; i < size; i++)
+
+    for (i = 0; i < size; i++)
         rooms[i] = *va_arg(para, room *);
 
     va_end(para);
@@ -182,49 +190,49 @@ exam *get_example1() {
     // exam1 - Analyse
     exam *exam1 = init_exam(1, 555000,                      // exam id, teacher id
                             3, 10000, 10001, 10002,         // nb + enrollments
-                            MAX_TIMESLOT, 1, 1, 1, 0, 0, 0, // nb + availabilities
-                            MAX_EXAM);                      // nb of exams
+                            MAX_TIMESLOT, 1, 1, 1, 0, 0, // nb + availabilities
+                            MAX_EXAM, amphitheater);        // nb of exams + room type
 
     // exam2 - Fonctionnement des ordis
     exam *exam2 = init_exam(2, 555001,
                             2, 10000, 10003,
-                            MAX_TIMESLOT, 0, 1, 1, 0, 0, 0,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 0, 1, 1, 0, 0,
+                            MAX_EXAM, class);
 
     // exam3 - MATH1
     exam *exam3 = init_exam(3, 555002,
                             2, 10002, 10004,
-                            MAX_TIMESLOT, 0, 1, 1, 1, 0, 0,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 0, 1, 1, 1, 0,
+                            MAX_EXAM, class);
 
     // exam4 - Anglais
     exam *exam4 = init_exam(4, 555003,
                             4, 10003, 10004, 10005, 10006,
-                            MAX_TIMESLOT, 1, 0, 1, 0, 0, 0,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 0, 0, 1, 0, 0,
+                            MAX_EXAM, amphitheater);
 
     // exam5 - Anglais
     exam *exam5 = init_exam(5, 555001,
                             3, 10000, 10001, 10003,
-                            MAX_TIMESLOT, 0, 0, 1, 1, 0, 0,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 0, 0, 1, 1, 0,
+                            MAX_EXAM, lab);
 
     // exam6 - chimir
     exam *exam6 = init_exam(6, 555004,
                             1, 10004,
-                            MAX_TIMESLOT, 0, 0, 0, 1, 1, 1,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 0, 0, 0, 1, 1,
+                            MAX_EXAM, lab);
 
     // exam7 - algèbre
     exam *exam7 = init_exam(7, 555005,
                             1, 10001,
-                            MAX_TIMESLOT, 0, 0, 0, 0, 1, 1,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 0, 0, 0, 0, 1,
+                            MAX_EXAM, class);
     // exam8 - jesaispaslire
     exam *exam8 = init_exam(8, 555006,
                             1, 10002,
-                            MAX_TIMESLOT, 1, 1, 0, 0, 1, 1,
-                            MAX_EXAM);
+                            MAX_TIMESLOT, 1, 1, 0, 0, 1,
+                            MAX_EXAM, class);
 
     return init_exams(MAX_EXAM, exam1, exam2, exam3, exam4, exam5, exam6, exam7,
                       exam8);
@@ -237,16 +245,16 @@ exam *get_example1() {
  */
 exam *get_example2() {
     // exam1 - Analyse
-    exam *exam1 = init_exam(1, 555000,                  // exam id, teacher id
-                            3, 10000, 10001, 10002,    // nb + enrollments
-                            2, 1, 0,                    // nb + availabilities
-                            MAX_EXAM);           // nb of exams
+    exam *exam1 = init_exam(1, 555000,               // exam id, teacher id
+                            3, 10000, 10001, 10002,  // nb + enrollments
+                            MAX_TIMESLOT, 1, 0,      // nb + availabilities
+                            MAX_EXAM, amphitheater); // nb of exams
 
     // exam2 - Fonctionnement des ordis
     exam *exam2 = init_exam(2, 555001,
                             2, 10000, 10003,
                             MAX_TIMESLOT, 1, 1,
-                            MAX_EXAM);
+                            MAX_EXAM, class);
 
     return init_exams(MAX_EXAM, exam1, exam2);
 }
@@ -275,13 +283,13 @@ exam *get_example() {
  */
 room *get_rooms() {
     // R1 - Salon bleu
-    room *room1 = init_room(0, class, 1, 0);
+    room *room1 = init_room(1, class, 1, 0);
     // R2 - Plisnier
-    room *room2 = init_room(1, class, 2, 0);
+    room *room2 = init_room(2, class, 2, 0);
     // R3 - Van Gogh
-    room *room3 = init_room(2, amphitheater, 5, 0);
+    room *room3 = init_room(3, amphitheater, 5, 0);
     // R4 - Pascal
-    room *room4 = init_room(3, lab, 4, 0);
+    room *room4 = init_room(4, lab, 4, 0);
 
     return init_rooms(4, room3, room1, room2, room4);
 }
@@ -290,14 +298,15 @@ uint16_t *get_room_type_indices(int size, room *rooms) {
     uint16_t *indices = calloc(size, sizeof(uint16_t));
 
     int i = 0, j = 0;
-    for(; i < size; i++) {
-        if(rooms[i].type != j) {
+
+    for (; i < size; i++) {
+        if (rooms[i].type != j) {
             indices[j] = i;
             j++;
         }
     }
 
-    while(j < 4) {
+    while (j < 4) {
         indices[j] = i;
         j++;
     }
@@ -365,6 +374,8 @@ void print_detailed_schedule(exam *exams) {
                 for (k = 0; k < exams[j].enrollment; k++) {
                     printf("            %d\n", exams[j].students[k]);
                 }
+
+                printf("      -> Room : %u\n", exams[j].room_id);
             }
         }
     }
