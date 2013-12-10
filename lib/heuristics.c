@@ -174,7 +174,23 @@ bool color_graph_backtrack(exam *exams, uint16_t size, uint8_t max_timeslot) {
     return success;
 }
 
-
+/**
+ * Assign rooms to exams (exams must be scheduled). For each exam, we consider
+ * a compatible room (i.e. a room with the right type), and we assign the room
+ * with the minimum but sufficient capacity. rooms must be sorted by type and
+ * capacity.
+ *
+ *
+ * @param exams An array filled with scheduled exams
+ * @param exams_size the size of exams array
+ * @param rooms An array of rooms. This array is sorted by type and for each
+ *               type, the rooms are sorted by capacity
+ * @param room_type_indices An array filled with start indices of each type
+ *                          in the rooms array
+ * @param max_timeslot The maximum number of timeslot available
+ * @return true if the algorithm was able to find a correct assignement,
+ *         false otherwise
+ */
 bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
                  uint16_t *room_type_indices, uint8_t max_timeslot) {
     uint16_t i, j;
@@ -192,7 +208,6 @@ bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
                 exam_.room_id = room_.room_id;
                 break;
             }
-
         }
 
         if (exam_.room_id == -1) {
