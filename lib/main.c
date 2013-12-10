@@ -294,24 +294,39 @@ room *get_rooms() {
     return init_rooms(4, room3, room1, room2, room4);
 }
 
-uint16_t *get_room_type_indices(int size, room *rooms) {
-    uint16_t *indices = calloc(size, sizeof(uint16_t));
+uint16_t **get_room_indices(uint16_t room_size, uint8_t faculty_size, room *rooms) {
 
-    int i = 0, j = 0;
+    uint8_t f;
+    uint16_t **room_indices = calloc(faculty_size, sizeof(uint16_t *));
 
-    for (; i < size; i++) {
-        if (rooms[i].type != j) {
-            indices[j] = i;
-            j++;
-        }
+    for(f = 0; f < faculty_size; f++)
+        room_indices[f] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+
+    for(f = 0; f < room_size; f++)
+        room_indices[rooms[f].faculty][rooms[f].type]++;
+
+    return room_indices;
+}
+
+room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, uint16_t **room_indices) {
+
+    uint8_t i, j;
+    uint16_t **cpt = calloc(faculty_size, sizeof(uint16_t *));
+    room ***rooms_matrix = calloc(faculty_size, sizeof(room**));
+
+    for (i = 0; i < faculty_size; i++) {
+        rooms_matrix[i] = calloc(MAX_ROOM_TYPE, sizeof(room*));
+        cpt[i] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+        for (j = 0; j < MAX_ROOM_TYPE; j++)
+            rooms_matrix[i][j] = calloc(room_indices[i][j], sizeof(room));
     }
 
-    while (j < 4) {
-        indices[j] = i;
-        j++;
+    for (i = 0; i < room_size; i++) {
+        uint16_t index = cpt[rooms[i].faculty][rooms[i].type]++;
+        rooms_matrix[rooms[i].faculty][rooms[i].type][index] = rooms[i];
     }
 
-    return indices;
+    return rooms_matrix;
 }
 
 /**
@@ -386,17 +401,19 @@ void print_detailed_schedule(exam *exams) {
  *
  */
 int main() {
+    uint8_t faculty_size = 1;
     // Collect a sample of exams
     exam *exams = get_example();
 
     room *rooms = get_rooms();
-    uint16_t *indices = get_room_type_indices(4, rooms);
+    uint16_t **indices = get_room_indices(4, faculty_size, rooms);
+    room ***rooms_matrix = get_rooms_matrix(4, faculty_size, rooms, indices);
 
     // Preprocessing to the coloring graph heuristics
     compute_conflicts(exams, MAX_EXAM);
 
     // Main heuristic
-    bool a = color_graph_backtrack(exams, MAX_EXAM, rooms, indices, MAX_TIMESLOT);
+    bool a = color_graph_backtrack(exams, MAX_EXAM, rooms_matrix, indices, faculty_size, MAX_TIMESLOT);
 
     printf("%s\n", (a == true) ? "A schedule has been found!\n" :
            "No schedule has been found!\n");

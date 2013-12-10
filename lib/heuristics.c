@@ -130,17 +130,18 @@ bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t size,
  * @param  exams_size Size of the array of exams
  * @param  rooms An array of rooms. This array is sorted by type and for each
  *               type, the rooms are sorted by capacity
- * @param  room_type_indices An array filled with start indices of each type
- *                           in the rooms array
+ * @param  room_indices An two dimensions array filled with the number of rooms
+ *                      given his faculty and type
  * @param  max_timeslot Maximum available timeslots
  * @return true if a correct assignement is found, false otherwise
  */
-bool color_graph_backtrack(exam *exams, uint16_t exams_size, room *rooms,
-                           uint16_t *room_type_indices, uint8_t max_timeslot) {
+bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
+                           uint16_t **room_indices, uint8_t faculty_size, uint8_t max_timeslot) {
     exam *exam_ = get_first_exam(exams, exams_size, max_timeslot);
 
     if (exam_ == NULL)
-        return room_assign(exams, exams_size, rooms, room_type_indices, max_timeslot);
+        return room_assign(exams, exams_size, rooms, room_indices, faculty_size,
+                           max_timeslot);
 
     uint8_t min_timeslot = 0, i = 0;
     bool success         = false;
@@ -164,8 +165,8 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room *rooms,
         backtrack = (i == max_timeslot);
 
         if (!backtrack) {
-            success = color_graph_backtrack(exams, exams_size, rooms, room_type_indices,
-                                            max_timeslot);
+            success = color_graph_backtrack(exams, exams_size, rooms, room_indices,
+                                            faculty_size, max_timeslot);
 
             if (!success) {
                 min_timeslot = exam_->timeslot + 1;
@@ -192,22 +193,22 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room *rooms,
  * @param exams_size the size of exams array
  * @param rooms An array of rooms. This array is sorted by type and for each
  *               type, the rooms are sorted by capacity
- * @param room_type_indices An array filled with start indices of each type
- *                          in the rooms array
+ * @param  room_indices An two dimensions array filled with the number of rooms
+ *                      given his faculty and type
  * @param max_timeslot The maximum number of timeslot available
  * @return true if the algorithm was able to find a correct assignement,
  *         false otherwise
  */
-bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
-                 uint16_t *room_type_indices, uint8_t max_timeslot) {
+bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
+                 uint16_t **room_indices, uint8_t faculty_size, uint8_t max_timeslot) {
     uint16_t i, j;
+
 
     for (i = 0; i < exams_size; i++) {
         exam *exam_ = &exams[i];
-        j = exam_->room_type ? room_type_indices[exam_->room_type - 1] : 0;
 
-        for (; j < room_type_indices[exam_->room_type]; j++) {
-            room *room_ = &rooms[j];
+        for (j = 0; j < room_indices[exam_->faculty][exam_->room_type]; j++) {
+            room *room_ = &rooms[exam_->faculty][exam_->room_type][j];
 
             if (room_->assignation[exam_->timeslot] == UINT16_MAX &&
                     room_->capacity >= exam_->enrollment) {
@@ -221,11 +222,13 @@ bool room_assign(exam *exams, uint16_t exams_size, room *rooms,
             for (j = 0; j < exams_size; j++)
                 exams[i].room_id = UINT16_MAX;
 
-            for (j = 0; j < room_type_indices[MAX_ROOM_TYPE - 1]; j++) {
-                for (i = 0; i < max_timeslot; i++) {
-                    rooms[j].assignation[i] = UINT16_MAX;
-                }
-            }
+            uint16_t k, l;
+
+            for (i = 0; i < faculty_size; i++)
+                for (j = 0; j < MAX_ROOM_TYPE; j++)
+                    for (k = 0; k < room_indices[i][j]; k++)
+                        for (l = 0; l < max_timeslot; l++)
+                            rooms[i][j][k].assignation[l] = UINT16_MAX;
 
             return false;
         }
