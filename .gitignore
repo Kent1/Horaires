@@ -1,0 +1,8 @@
+# Exe files
+*.exe
+# so files
+*.so
+# Horaire executable
+horaire
+# Obj dir
+lib/obj

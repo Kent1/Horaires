@@ -1,15 +1,15 @@
 CC      = gcc
-CFLAGS  = -Wall -O -std=c99
+CFLAGS  = -Wall -O -std=c99 -fPIC
 LDFLAGS =
-EXEC    = horaire
+LIB_NAME= libhoraire.so
 OBJ_DIR = obj
 SRC     = $(wildcard *.c)
 OBJ     = $(patsubst %.c,obj/%.o,$(SRC))
 
-all: $(EXEC)
+all: lib
 
-horaire: $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+lib: $(OBJ)
+	$(CC) -o $(LIB_NAME) -shared  $(OBJ) $(LDFLAGS)
 
 $(OBJ_DIR)/conflict.o: util.h structs.h
 
@@ -27,3 +27,4 @@ clean:
 mrproper: clean
 	rm -f $(EXEC)
 	rm -rf $(OBJ_DIR)
+	rm -f $(LIB_NAME)
