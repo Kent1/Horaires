@@ -9,7 +9,23 @@
 #ifndef CONFLICT_H_
 #define CONFLICT_H_
 
-bool compute_conflict(exam *, exam *);
-void compute_conflicts(exam *, uint16_t);
+/**
+ * Compute conflict between two exams. The exam->students array
+ * MUST be sorted.
+ *
+ * @param exam1 The first exam
+ * @param exam2 The second exam
+ * @return true if the two exams are in conflict, false otherwise.
+ */
+bool compute_conflict(exam const *exam1, exam const *exam2);
+
+/**
+ * Given an array of exams, computes all of the conflicts between
+ * each exam & fills the exam->conflicts array
+ *
+ * @param exams Array of exams
+ * @param nbr_exam Size of the array
+ */
+void compute_conflicts(exam const *exams, uint16_t const nbr_exam);
 
 #endif /*CONFLICT_H_*/
