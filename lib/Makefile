@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -Wall -O
+CFLAGS  = -Wall -O -std=c99
 LDFLAGS =
 EXEC    = horaire
 OBJ_DIR = obj

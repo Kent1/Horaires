@@ -25,8 +25,7 @@
  */
 exam *get_first_exam(exam *exams, uint16_t size, uint8_t max_timeslot) {
     // Initialization
-    uint16_t i;
-    uint8_t best = 255;
+    uint8_t best = UINT8_MAX;
     exam *first = NULL;
 
     // Compute all saturation degrees for the given exams
@@ -34,7 +33,7 @@ exam *get_first_exam(exam *exams, uint16_t size, uint8_t max_timeslot) {
 
     // Find the exam with the max saturation degree and resolve
     // tie-break with largest enrollment
-    for (i = 0; i < size; i++) {
+    for (uint16_t i = 0; i < size; i++) {
         // Exam 'i' already scheduled & so we don't care about sat_degree
         if (sat_degree[i] == NO_SAT)
             continue;
@@ -64,22 +63,21 @@ exam *get_first_exam(exam *exams, uint16_t size, uint8_t max_timeslot) {
  */
 uint8_t *get_exams_saturation_degree(exam *exams, uint16_t size,
                                      uint8_t max_timeslot) {
-    uint16_t i, j;
     uint8_t *sat_degree = calloc(size, sizeof(uint8_t));
 
-    for (i = 0; i < size; i++) {
+    for (uint16_t i = 0; i < size; i++) {
         // already scheduled
         if (exams[i].timeslot != NOT_SCHEDULED) {
             sat_degree[i] = NO_SAT;
         } else { // not scheduled, compute all conflicts
             sat_degree[i] = max_timeslot;
 
-            for (j = 0; j < max_timeslot; j++) {
+            for (uint16_t j = 0; j < max_timeslot; j++) {
                 if (exams[i].availabilities[j] == false)
                     sat_degree[i]--;
             }
 
-            for (j = 0; j < size; j++) {
+            for (uint16_t j = 0; j < size; j++) {
                 // A conflict represents an edge between i and j,
                 // then if j has a timeslot => j is scheduled
                 if (exams[i].conflicts[j] && exams[j].timeslot != 0 &&
@@ -104,14 +102,13 @@ uint8_t *get_exams_saturation_degree(exam *exams, uint16_t size,
  */
 bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t size,
                             uint8_t min_timeslot, uint8_t max_timeslot) {
-    uint16_t i;
     bool *timeslots_available = calloc(max_timeslot, sizeof(bool));
 
-    for (i = 0; i < max_timeslot; i++)
+    for (uint16_t i = 0; i < max_timeslot; i++)
         timeslots_available[i] = exam_->availabilities[i];
 
     // Store all the timeslots used by neighbors (i.e. vertex in conflict)
-    for (i = 0; i < size; i++) {
+    for (uint16_t i = 0; i < size; i++) {
         if (exam_->conflicts[i] && exams[i].timeslot != NOT_SCHEDULED)
             // If i is a neighbor and i is scheduled
             timeslots_available[exams[i].timeslot] = false;
@@ -201,13 +198,11 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
  */
 bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
                  uint16_t **room_indices, uint8_t faculty_size, uint8_t max_timeslot) {
-    uint16_t i, j;
 
-
-    for (i = 0; i < exams_size; i++) {
+    for (uint16_t i = 0; i < exams_size; i++) {
         exam *exam_ = &exams[i];
 
-        for (j = 0; j < room_indices[exam_->faculty][exam_->room_type]; j++) {
+        for (uint16_t j = 0; j < room_indices[exam_->faculty][exam_->room_type]; j++) {
             room *room_ = &rooms[exam_->faculty][exam_->room_type][j];
 
             if (room_->assignation[exam_->timeslot] == UINT16_MAX &&
@@ -219,15 +214,13 @@ bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
         }
 
         if (exam_->room_id == UINT16_MAX) {
-            for (j = 0; j < exams_size; j++)
+            for (uint16_t j = 0; j < exams_size; j++)
                 exams[i].room_id = UINT16_MAX;
 
-            uint16_t k, l;
-
             for (i = 0; i < faculty_size; i++)
-                for (j = 0; j < MAX_ROOM_TYPE; j++)
-                    for (k = 0; k < room_indices[i][j]; k++)
-                        for (l = 0; l < max_timeslot; l++)
+                for (uint16_t j = 0; j < MAX_ROOM_TYPE; j++)
+                    for (uint16_t k = 0; k < room_indices[i][j]; k++)
+                        for (uint16_t l = 0; l < max_timeslot; l++)
                             rooms[i][j][k].assignation[l] = UINT16_MAX;
 
             return false;

@@ -42,14 +42,12 @@ bool compute_conflict(exam *exam1, exam *exam2) {
  * @param nbr_exam Size of the array
  */
 void compute_conflicts(exam *exams, uint16_t nbr_exam) {
-    uint16_t i, j;
-
-    for (i = 0; i < nbr_exam; i++) {
+    for (uint16_t i = 0; i < nbr_exam; i++) {
         exam *exam1 = &exams[i];
         // Exam is not in conflict with itself
         exam1->conflicts[exam1->exam_id - 1] = false;
 
-        for (j = i + 1; j < nbr_exam; j++) {
+        for (uint16_t j = i + 1; j < nbr_exam; j++) {
             exam *exam2 = &exams[j];
 
             if (compute_conflict(exam1, exam2)) {

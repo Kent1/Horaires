@@ -33,10 +33,9 @@
  * @return An array containing all the given parameters
  */
 uint32_t *init_students(int size, va_list *para) {
-    int i;
     uint32_t *new_tab = calloc(size, sizeof(uint32_t));
 
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
         new_tab[i] = va_arg(*para, uint32_t);
 
     return new_tab;
@@ -50,10 +49,9 @@ uint32_t *init_students(int size, va_list *para) {
  * @return An array containing all the given parameters
  */
 uint8_t *init_availabilities(int size, va_list *para) {
-    int i;
     uint8_t *new_tab = calloc(size, sizeof(uint8_t));
 
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
         new_tab[i] = (uint8_t) va_arg(*para, uint32_t);
 
     return new_tab;
@@ -127,9 +125,7 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
     room_->faculty     = faculty;
     room_->assignation = calloc(MAX_TIMESLOT, sizeof(uint16_t));
 
-    int i;
-
-    for (i = 0; i < MAX_TIMESLOT; i++)
+    for (int i = 0; i < MAX_TIMESLOT; i++)
         room_->assignation[i] = -1;
 
     return room_;
@@ -148,9 +144,7 @@ exam *init_exams(int size, ...) {
     va_list para;
     va_start(para, size);
 
-    int i;
-
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
         exams[i] = *va_arg(para, exam *);
 
     va_end(para);
@@ -171,9 +165,7 @@ room *init_rooms(int size, ...) {
     va_list para;
     va_start(para, size);
 
-    int i;
-
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
         rooms[i] = *va_arg(para, room *);
 
     va_end(para);
@@ -296,13 +288,12 @@ room *get_rooms() {
 
 uint16_t **get_room_indices(uint16_t room_size, uint8_t faculty_size, room *rooms) {
 
-    uint8_t f;
     uint16_t **room_indices = calloc(faculty_size, sizeof(uint16_t *));
 
-    for(f = 0; f < faculty_size; f++)
+    for(uint8_t f = 0; f < faculty_size; f++)
         room_indices[f] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
 
-    for(f = 0; f < room_size; f++)
+    for(uint8_t f = 0; f < room_size; f++)
         room_indices[rooms[f].faculty][rooms[f].type]++;
 
     return room_indices;
@@ -310,18 +301,17 @@ uint16_t **get_room_indices(uint16_t room_size, uint8_t faculty_size, room *room
 
 room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, uint16_t **room_indices) {
 
-    uint8_t i, j;
     uint16_t **cpt = calloc(faculty_size, sizeof(uint16_t *));
     room ***rooms_matrix = calloc(faculty_size, sizeof(room**));
 
-    for (i = 0; i < faculty_size; i++) {
+    for (uint8_t i = 0; i < faculty_size; i++) {
         rooms_matrix[i] = calloc(MAX_ROOM_TYPE, sizeof(room*));
         cpt[i] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
-        for (j = 0; j < MAX_ROOM_TYPE; j++)
+        for (uint8_t j = 0; j < MAX_ROOM_TYPE; j++)
             rooms_matrix[i][j] = calloc(room_indices[i][j], sizeof(room));
     }
 
-    for (i = 0; i < room_size; i++) {
+    for (uint8_t i = 0; i < room_size; i++) {
         uint16_t index = cpt[rooms[i].faculty][rooms[i].type]++;
         rooms_matrix[rooms[i].faculty][rooms[i].type][index] = rooms[i];
     }
@@ -335,12 +325,10 @@ room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, 
  * @param exams An array of scheduled exams
  */
 void print_summary_schedule(exam *exams) {
-    int i;
-
     printf("Summary\n");
     printf("=======\n");
 
-    for (i = 0; i < MAX_EXAM; i++) {
+    for (int i = 0; i < MAX_EXAM; i++) {
         printf("Exam %d : %d\n", i + 1, exams[i].timeslot);
     }
 
@@ -354,23 +342,21 @@ void print_summary_schedule(exam *exams) {
  * @param exams An array of scheduled exams
  */
 void print_detailed_schedule(exam *exams) {
-    int i, j, k;
-
     printf("Detailed schedule\n");
     printf("=================\n");
 
-    for (i = 0; i < MAX_TIMESLOT; i++) {
+    for (int i = 0; i < MAX_TIMESLOT; i++) {
         printf("Timeslot %d\n", i + 1);
         printf("------------\n\n");
 
-        for (j = 0; j < MAX_EXAM; j++) {
+        for (int j = 0; j < MAX_EXAM; j++) {
             if (exams[j].timeslot == i) {
                 printf("  Exam %d :\n", j + 1);
                 printf("      -> Prof : %d\n", exams[j].teacher_id);
 
                 printf("      -> Timeslots available : (");
 
-                for (k = 0; k < MAX_TIMESLOT; k++) {
+                for (int k = 0; k < MAX_TIMESLOT; k++) {
                     printf("%d ", exams[j].availabilities[k]);
                 }
 
@@ -378,7 +364,7 @@ void print_detailed_schedule(exam *exams) {
 
                 printf("      -> Conflicts detected : (");
 
-                for (k = 0; k < MAX_EXAM; k++) {
+                for (int k = 0; k < MAX_EXAM; k++) {
                     printf("%d ", exams[j].conflicts[k]);
                 }
 
@@ -386,7 +372,7 @@ void print_detailed_schedule(exam *exams) {
 
                 printf("      -> Students :\n");
 
-                for (k = 0; k < exams[j].enrollment; k++) {
+                for (int k = 0; k < exams[j].enrollment; k++) {
                     printf("            %d\n", exams[j].students[k]);
                 }
 

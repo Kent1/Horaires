@@ -10,10 +10,9 @@
 #define UTIL_H_
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
-typedef enum { false, true } bool;
 
 #endif /*UTIL_H_*/
