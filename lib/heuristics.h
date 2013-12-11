@@ -9,8 +9,8 @@
 #ifndef HEURISTICS_H_
 #define HEURISTICS_H_
 
-#define NOT_SCHEDULED 255
-#define NO_SAT        255
+#define NOT_SCHEDULED UINT8_MAX
+#define NO_SAT        UINT8_MAX
 
 exam *get_first_exam(exam *, uint16_t, uint8_t);
 

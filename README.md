@@ -35,7 +35,7 @@ The best solution is the solution with the lowest penalty. An optimal solution i
 
 ### Construction of the timetable
 
-First, we need to construct a faesible timetable (i.e. a timetable which does not violate any hard constraints). To do this, we transform the examination timetable problem to a coloring graph problem. The vertex of the graph are the exams and the edges are hard constraints. For example, two exams with students in common are linked with an edge.
+First, we need to construct a feasible timetable (i.e. a timetable which does not violate any hard constraints). To do this, we transform the examination timetable problem to a coloring graph problem. The vertex of the graph are the exams and the edges are hard constraints. For example, two exams with students in common are linked with an edge.
 
 For resolve the coloring problem, we use ordering heuristics. We considered three ordering heuristics which are :
 
