@@ -9,8 +9,11 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
+#include "util.h"
+
 /* Constants */
 #define MAX_ROOM_TYPE 3
+#define NOT_SCHEDULED UINT8_MAX
 
 /**
  * @enum room_type
@@ -45,10 +48,10 @@ typedef enum {
  * Contains for each timeslot the assigned exam_id.
  */
 typedef struct {
-    uint16_t  const room_id;
-    room_type const type;
-    uint8_t   const faculty;
-    uint16_t  const capacity;
+    uint16_t  room_id;
+    room_type type;
+    uint8_t   faculty;
+    uint16_t  capacity;
     uint16_t  *assignation;
 } room;
 
@@ -93,16 +96,16 @@ typedef struct {
  * List of prerequisites.
  */
 typedef struct {
-    uint16_t  const exam_id;
+    uint16_t  exam_id;
 
-    uint8_t   const faculty;
+    uint8_t   faculty;
 
-    uint32_t  const teacher_id;
+    uint32_t  teacher_id;
 
-    uint32_t  const *students;
-    uint16_t  const enrollment;
+    uint32_t  *students;
+    uint16_t  enrollment;
 
-    room_type const room_type;
+    room_type room_type;
     uint16_t room_id;
 
     uint8_t timeslot;
@@ -113,5 +116,63 @@ typedef struct {
     uint16_t *deps;
 } exam;
 
+/**
+ * Makes allocation and initialization of a new room with the specified
+ * parameters. Sets all the entries of the assignation array to UINT16_MAX,
+ * means the room is not assigned for each timeslot.
+ *
+ * @param id The room ID.
+ * @param type The room type.
+ * @param capacity The capacity of the room.
+ * @param faculty The faculty in charge of the room.
+ * @return A struct room allocated and initialized.
+ */
+room *init_room(uint16_t id, room_type type, uint16_t capacity,
+                uint8_t faculty, uint8_t max_timeslot);
+
+/**
+ * Makes allocation for an array of rooms given in parameters
+ * but with a variable length to be flexible.
+ *
+ * @param size Size of the array to allocate.
+ * @return An array containing all the given parameters.
+ */
+room *init_rooms(int size, ...);
+
+/**
+ * Frees all the memory used by a room r.
+ *
+ * @param r Pointer to the room to free.
+ */
+void free_room(room *r);
+
+/**
+ * Makes the allocation and initialization of an exam. The parameters are
+ * length variable, to have this function dynamic. It takes, in this order,
+ * the 'exam id', the 'teacher id', the 'number of enrollment' followed by
+ * the specified number of enrollment, the 'number of availabilities'
+ * followed by the specified number of availabilities and the 'number of
+ * exams'.
+ *
+ * @param id The exam id.
+ * @return A struct exam allocated and initialized.
+ */
+exam *init_exam(uint16_t id, ...);
+
+/**
+ * Makes allocation for an array of exams given in parameters
+ * but with a variable length to be flexible.
+ *
+ * @param size Size of the array to alloc.
+ * @return An array containing all the given parameters.
+ */
+exam *init_exams(int size, ...);
+
+/**
+ * Frees all the memory used by a room r.
+ *
+ * @param r Pointer to the room to free.
+ */
+void free_exam(exam *e);
 
 #endif /*STRUCTS_H_*/

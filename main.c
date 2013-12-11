@@ -25,154 +25,6 @@
 #endif
 
 /**
- * Make allocation for an array of students given in
- * parameters but with a variable length to be flexible.
- *
- * @param size Size of the array
- * @return An array containing all the given parameters
- */
-uint32_t *init_students(int size, va_list *para) {
-    uint32_t *new_tab = calloc(size, sizeof(uint32_t));
-
-    for (int i = 0; i < size; i++)
-        new_tab[i] = va_arg(*para, uint32_t);
-
-    return new_tab;
-}
-
-/**
- * Make allocation for an array of availabilities given in
- * parameters but with a variable length to be flexible.
- *
- * @param size Size of the array
- * @return An array containing all the given parameters
- */
-uint8_t *init_availabilities(int size, va_list *para) {
-    uint8_t *new_tab = calloc(size, sizeof(uint8_t));
-
-    for (int i = 0; i < size; i++)
-        new_tab[i] = (uint8_t) va_arg(*para, uint32_t);
-
-    return new_tab;
-}
-
-/**
- * Make allocation for an array of conflicts initialized to 0.
- *
- * @param size Size of the array
- * @return An array containing 0s.
- */
-uint16_t *init_conflicts(int size) {
-    return calloc(size, sizeof(uint16_t));
-}
-
-/**
- * Make the allocation and initialization of an exam. The parameters are
- * length variable, to have this function dynamic. It takes, in this order,
- * the 'exam id', the 'teacher id', the 'number of enrollment' followed by
- * the specified number of enrollment, the 'number of availabilities'
- * followed by the specified number of availabilities and the 'number of
- * exams'.
- *
- * @param id the exam id.
- * @return a struct exam allocated and initialized.
- */
-exam *init_exam(uint16_t id, ...) {
-    va_list para;
-    va_start(para, id);
-
-    exam *exam_ = calloc(1, sizeof(exam));
-    exam_->exam_id    = id;
-    exam_->teacher_id = (uint32_t) va_arg(para, int);
-
-    exam_->timeslot = NOT_SCHEDULED; // Default value for non-assigned exam
-
-    exam_->enrollment = (uint16_t) va_arg(para, int);
-    // problem with the two lines below
-    exam_->students = init_students(exam_->enrollment, &para);
-
-    exam_->availabilities = init_availabilities(va_arg(para, int), &para);
-
-    exam_->conflicts = init_conflicts(va_arg(para, int));
-
-    exam_->room_id   = UINT16_MAX;
-    exam_->room_type = va_arg(para, room_type);
-
-    va_end(para);
-
-    return exam_;
-}
-
-/**
- *
- * Make allocation and initialization of a room with the specified
- * parameters.
- *
- * @param id the room ID.
- * @param type the room type.
- * @param capacity the capacity of the room.
- * @param faculty the faculty in charge of the room.
- * @return a struct room allocated and initialized.
- */
-room *init_room(uint16_t id, room_type type, uint16_t capacity,
-                uint8_t faculty) {
-    room *room_ = calloc(1, sizeof(room));
-
-    room_->room_id     = id;
-    room_->type        = type;
-    room_->capacity    = capacity;
-    room_->faculty     = faculty;
-    room_->assignation = calloc(MAX_TIMESLOT, sizeof(uint16_t));
-
-    for (int i = 0; i < MAX_TIMESLOT; i++)
-        room_->assignation[i] = -1;
-
-    return room_;
-}
-
-/**
- * Make allocation for an array of exams given in parameters
- * but with a variable length to be flexible.
- *
- * @param size Size of the array to alloc.
- * @return An array containing all the given parameters.
- */
-exam *init_exams(int size, ...) {
-    exam *exams = calloc(size, sizeof(exam));
-
-    va_list para;
-    va_start(para, size);
-
-    for (int i = 0; i < size; i++)
-        exams[i] = *va_arg(para, exam *);
-
-    va_end(para);
-
-    return exams;
-}
-
-/**
- * Make allocation for an array of rooms given in parameters
- * but with a variable length to be flexible.
- *
- * @param size Size of the array to alloc.
- * @return An array containing all the given parameters.
- */
-room *init_rooms(int size, ...) {
-    room *rooms = calloc(size, sizeof(room));
-
-    va_list para;
-    va_start(para, size);
-
-    for (int i = 0; i < size; i++)
-        rooms[i] = *va_arg(para, room *);
-
-    va_end(para);
-
-    return rooms;
-}
-
-/**
  * Creates and initializes an problem instance, having a solution.
  *
  * @return An array of exams
@@ -274,13 +126,13 @@ exam *get_example() {
  */
 room *get_rooms() {
     // R1 - Salon bleu
-    room *room1 = init_room(1, classroom, 1, 0);
+    room *room1 = init_room(1, classroom, 1, 0, MAX_TIMESLOT);
     // R2 - Plisnier
-    room *room2 = init_room(2, classroom, 2, 0);
+    room *room2 = init_room(2, classroom, 2, 0, MAX_TIMESLOT);
     // R3 - Van Gogh
-    room *room3 = init_room(3, classroom, 5, 0);
+    room *room3 = init_room(3, classroom, 5, 0, MAX_TIMESLOT);
     // R4 - Pascal
-    room *room4 = init_room(4, lab, 4, 0);
+    room *room4 = init_room(4, lab, 4, 0, MAX_TIMESLOT);
 
     return init_rooms(4, room3, room1, room2, room4);
 }
