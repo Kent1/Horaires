@@ -22,7 +22,7 @@ typedef struct {
     // Bool array, describing a list of all timeslots in which
     // the i-th index is true if the exam can be sheduled at
     // the i-th timeslot, false otherwhise
-    uint8_t *availabilities;
+    bool *availabilities;
     uint16_t *deps; // list of prerequisites
 
     uint32_t *students; // list of students enrolled in the event
@@ -30,7 +30,7 @@ typedef struct {
     // Bool array, describing a list of adjacencies for conflicting
     // exams in which true means there is a conflict with the i-th exam,
     // false otherwhise
-    uint16_t *conflicts;
+    bool *conflicts;
 
     // Room
     room_type room_type; // Room type needed
