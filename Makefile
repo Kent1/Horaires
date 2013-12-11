@@ -8,10 +8,11 @@ LIB_HORAIRE = horaire
 LDFLAGS = -I$(LIB_DIR) -L$(LIB_DIR) -l$(LIB_HORAIRE)
 
 
-	
 
-main:
+lib:
 	cd $(LIB_DIR) && $(MAKE) lib
+
+main: lib
 	$(CC) -o $(EXEC) $(MAIN) $(CFLAGS) $(LDFLAGS)
 
 launch: main
