@@ -4,5 +4,9 @@
 *.so
 # Horaire executable
 horaire
-# Obj dir
+# Obj directory
 lib/obj
+# Documentation directory
+doc/
+# Python compiled files
+*.pyc

@@ -10,9 +10,13 @@
 #define STRUCTS_H_
 
 /* Constants */
-#define MAX_ROOM_TYPE 4
+#define MAX_ROOM_TYPE 3
 
-/* Defines an enumeration type for different room types */
+/**
+ * @enum room_type
+ *
+ * enumeration type for the different room types.
+ */
 typedef enum {
     classroom,
     lab,
@@ -20,43 +24,94 @@ typedef enum {
 } room_type;
 
 
-/* Defines a type struct for rooms */
+/**
+ * @struct room
+ * @brief This structure represents a room.
+ *
+ * @var room::room_id
+ * Id of the room.
+ *
+ * @var room::type
+ * Type of the room (Amphitheater, lab, ...). @see room_type.
+ *
+ * @var room::faculty
+ * Faculty which owns the room.
+ *
+ * @var room::capacity
+ * Number of seats in the room.
+ *
+ * @var room::assignation
+ * Array representing the reservation of the room.
+ * Contains for each timeslot the assigned exam_id.
+ */
 typedef struct {
-    uint16_t  room_id;
-    room_type type;         // Type of the room (Amphitheater, lab, ...)
-    uint8_t   faculty;      // Faculty which owns the room
-    uint16_t  capacity;     // Number of seats
-    uint16_t  *assignation; // Contains for each timeslot the assigned exam_id
+    uint16_t  const room_id;
+    room_type const type;
+    uint8_t   const faculty;
+    uint16_t  const capacity;
+    uint16_t  *assignation;
 } room;
 
 
-/* Defines a type struct for exams */
+/**
+ * @struct exam
+ * @brief This structure represents an exam.
+ *
+ * @var exam::exam_id
+ * Id of the exam.
+ *
+ * @var exam::faculty
+ * Exams are associated in general to a faculty.
+ *
+ * @var exam::teacher_id
+ * ID of the teacher responsible of the exam.
+ *
+ * @var exam::students
+ * List of students which have to take the exam.
+ *
+ * @var exam::enrollment
+ * Number of students, also sizeof students.
+ *
+ * @var exam::room_type
+ * Needed room_type for this exam.
+ *
+ * @var exam::room_id
+ * Assigned room id to this exam.
+ *
+ * @var exam::timeslot
+ * Assigned timeslot.
+ *
+ * @var exam::availabilities
+ * Bool array, describing a list of all timeslots in which the i-th index
+ * is true if the exam can be sheduled at the i-th timeslot, false otherwhise.
+ *
+ * @var exam::conflicts
+ * Bool array, describing a list of adjacencies for conflicting exams in
+ * which true means there is a conflict with the i-th exam, false otherwhise.
+ *
+ * @var exam::deps
+ * List of prerequisites.
+ */
 typedef struct {
-    uint16_t exam_id;
-    uint8_t  faculty;    // Exams are associated in general to a faculty
-    uint32_t teacher_id; // ID of the teacher responsible of the exam
+    uint16_t  const exam_id;
 
-    uint8_t  timeslot;   // Assigned timeslot
-    uint16_t enrollment; // Number of students, also sizeof students
+    uint8_t   const faculty;
 
-    uint16_t *deps;      // List of prerequisites
-    uint32_t *students;  // List of students enrolled in the event
+    uint32_t  const teacher_id;
 
-    // Bool array, describing a list of all timeslots in which
-    // the i-th index is true if the exam can be sheduled at
-    // the i-th timeslot, false otherwhise
+    uint32_t  const *students;
+    uint16_t  const enrollment;
+
+    room_type const room_type;
+    uint16_t room_id;
+
+    uint8_t timeslot;
+
     bool *availabilities;
 
-    // Bool array, describing a list of adjacencies for conflicting
-    // exams in which true means there is a conflict with the i-th exam,
-    // false otherwhise
     bool *conflicts;
-
-    // Room informations
-    uint16_t  room_id;   // Room id assigned
-    room_type room_type; // Room type needed
+    uint16_t *deps;
 } exam;
-
 
 
 #endif /*STRUCTS_H_*/
