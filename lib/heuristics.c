@@ -11,8 +11,7 @@
  */
 
 #include "util.h"
-#include "structs/exam.h"
-#include "structs/room.h"
+#include "structs.h"
 #include "heuristics.h"
 
 /**

@@ -7,8 +7,7 @@
  */
 
 #include "util.h"
-#include "structs/exam.h"
-#include "structs/room.h"
+#include "structs.h"
 #include "heuristics.h"
 #include "conflict.h"
 
@@ -183,25 +182,25 @@ exam *get_example1() {
     exam *exam1 = init_exam(1, 555000,                      // exam id, teacher id
                             3, 10000, 10001, 10002,         // nb + enrollments
                             MAX_TIMESLOT, 1, 1, 1, 0, 0, // nb + availabilities
-                            MAX_EXAM, amphitheater);        // nb of exams + room type
+                            MAX_EXAM, classroom);        // nb of exams + room type
 
     // exam2 - Fonctionnement des ordis
     exam *exam2 = init_exam(2, 555001,
                             2, 10000, 10003,
                             MAX_TIMESLOT, 0, 1, 1, 0, 0,
-                            MAX_EXAM, class);
+                            MAX_EXAM, classroom);
 
     // exam3 - MATH1
     exam *exam3 = init_exam(3, 555002,
                             2, 10002, 10004,
                             MAX_TIMESLOT, 0, 1, 1, 1, 0,
-                            MAX_EXAM, class);
+                            MAX_EXAM, classroom);
 
     // exam4 - Anglais
     exam *exam4 = init_exam(4, 555003,
                             4, 10003, 10004, 10005, 10006,
                             MAX_TIMESLOT, 0, 0, 1, 0, 0,
-                            MAX_EXAM, amphitheater);
+                            MAX_EXAM, classroom);
 
     // exam5 - Anglais
     exam *exam5 = init_exam(5, 555001,
@@ -219,12 +218,12 @@ exam *get_example1() {
     exam *exam7 = init_exam(7, 555005,
                             1, 10001,
                             MAX_TIMESLOT, 0, 0, 0, 0, 1,
-                            MAX_EXAM, class);
+                            MAX_EXAM, classroom);
     // exam8 - jesaispaslire
     exam *exam8 = init_exam(8, 555006,
                             1, 10002,
                             MAX_TIMESLOT, 1, 1, 0, 0, 1,
-                            MAX_EXAM, class);
+                            MAX_EXAM, classroom);
 
     return init_exams(MAX_EXAM, exam1, exam2, exam3, exam4, exam5, exam6, exam7,
                       exam8);
@@ -240,13 +239,13 @@ exam *get_example2() {
     exam *exam1 = init_exam(1, 555000,               // exam id, teacher id
                             3, 10000, 10001, 10002,  // nb + enrollments
                             MAX_TIMESLOT, 1, 0,      // nb + availabilities
-                            MAX_EXAM, amphitheater); // nb of exams
+                            MAX_EXAM, classroom); // nb of exams
 
     // exam2 - Fonctionnement des ordis
     exam *exam2 = init_exam(2, 555001,
                             2, 10000, 10003,
                             MAX_TIMESLOT, 1, 1,
-                            MAX_EXAM, class);
+                            MAX_EXAM, classroom);
 
     return init_exams(MAX_EXAM, exam1, exam2);
 }
@@ -275,11 +274,11 @@ exam *get_example() {
  */
 room *get_rooms() {
     // R1 - Salon bleu
-    room *room1 = init_room(1, class, 1, 0);
+    room *room1 = init_room(1, classroom, 1, 0);
     // R2 - Plisnier
-    room *room2 = init_room(2, class, 2, 0);
+    room *room2 = init_room(2, classroom, 2, 0);
     // R3 - Van Gogh
-    room *room3 = init_room(3, amphitheater, 5, 0);
+    room *room3 = init_room(3, classroom, 5, 0);
     // R4 - Pascal
     room *room4 = init_room(4, lab, 4, 0);
 

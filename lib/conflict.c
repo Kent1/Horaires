@@ -7,7 +7,7 @@
  */
 
 #include "util.h"
-#include "structs/exam.h"
+#include "structs.h"
 #include "conflict.h"
 
 /**
