@@ -12,8 +12,14 @@
 
 
 bool compute_conflict(exam const *exam1, exam const *exam2) {
+
+    // Verify first that teacher_id is not the same id
+    if (exam1->teacher_id == exam2->teacher_id)
+        return true;
+
     uint32_t i = 0, j = 0;
 
+    // Then verify that there are not any student in common
     while (i < exam1->enrollment && j < exam2->enrollment) {
         if (exam1->students[i] < exam2->students[j])
             i++;

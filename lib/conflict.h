@@ -11,7 +11,8 @@
 
 /**
  * Compute conflict between two exams. The exam->students array
- * MUST be sorted.
+ * MUST be sorted. There is a conflict when teacher is the same
+ * for the two exams or when exams have students in common.
  *
  * @param exam1 The first exam.
  * @param exam2 The second exam.
