@@ -304,5 +304,7 @@ int main() {
         print_detailed_schedule(exams);
     }
 
+    free_exams(exams);
+
     return 0;
 }
