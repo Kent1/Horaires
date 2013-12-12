@@ -195,6 +195,11 @@ room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, 
         rooms_matrix[rooms[i].faculty][rooms[i].type][index] = rooms[i];
     }
 
+    // Frees counters
+    for (uint8_t i = 0; i < faculty_size; i++)
+        free(counters[i]);
+    free(counters);
+
     return rooms_matrix;
 }
 
