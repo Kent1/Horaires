@@ -180,7 +180,7 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
  * but with a variable length to be flexible.
  *
  * @param rooms_size Number of rooms, also size of the array to allocate.
- * @return An array containing all the given parameters.
+ * @return An array containing all the given parameters (struct array_rooms).
  */
 array_rooms *init_rooms(int rooms_size, ...);
 
@@ -194,7 +194,7 @@ void free_room(room *r);
 /**
  * Frees each room of the given array, and the array itself.
  *
- * @param rooms Array of rooms.
+ * @param rooms Array of rooms (struct array_rooms).
  * @param rooms_size Number of rooms, also size of rooms.
  */
 void free_rooms(array_rooms *rooms);
@@ -217,7 +217,7 @@ exam *init_exam(uint16_t id, ...);
  * This parameter is variable length to be flexible.
  *
  * @param exams_size Number of exams, also size of the array to allocate.
- * @return An array containing all the given parameters.
+ * @return An array containing all the given parameters (struct array_exams).
  */
 array_exams *init_exams(int exams_size, ...);
 
@@ -231,7 +231,7 @@ void free_exam(exam *e);
 /**
  * Frees each exam of the given array, and the array itself.
  *
- * @param exams Array of exams.
+ * @param exams Array of exams (struct array_exams).
  * @param exams_size Number of exams, also size of exams.
  */
 void free_exams(array_exams *exams);

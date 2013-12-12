@@ -143,9 +143,8 @@ array_rooms *get_rooms() {
  * for each rooms categorized by faculty (1st dimension) and type (2nd
  * dimension).
  *
- * @param room_size Number of rooms, size of the parameter rooms.
  * @param faculty_size Number of faculties.
- * @param rooms An array of room of size room_size.
+ * @param rooms An array of room (struct array_rooms).
  * @return Limits for the 3-dimensional array containing categorized rooms.
  */
 size_t **get_room_indices(uint8_t faculty_size, array_rooms *rooms) {
@@ -168,11 +167,10 @@ size_t **get_room_indices(uint8_t faculty_size, array_rooms *rooms) {
  * The 1st dimension is for the faculty, the 2nd dimension for the type and
  * the 3rd contains an array of rooms verifying this faculty and type.
  *
- * @param room_size Number of rooms, size of the parameter rooms.
  * @param faculty_size Number of faculties.
- * @param rooms An array of room of size room_size.
+ * @param rooms An array of room (struct array_rooms).
  * @param rooms_limits Limits of the different arrays of room (3rd dimension).
- * @return A sorted 3-dim array containing the rooms.
+ * @return A sorted 3-dim array containing the rooms (struct matrix_rooms).
  */
 matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits) {
     // Allocation of the struct matrix
@@ -214,7 +212,7 @@ matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t 
 /**
  * Prints which timeslot have been attributed to each exams.
  *
- * @param exams An array of scheduled exams
+ * @param exams An array of scheduled exams (struct array_exams)
  */
 void print_summary_schedule(array_exams *exams) {
     printf("Summary\n");
@@ -231,7 +229,7 @@ void print_summary_schedule(array_exams *exams) {
  * Prints which detailed information from each exams,
  * for each timeslot available.
  *
- * @param exams An array of scheduled exams
+ * @param exams An array of scheduled exams (struct array_exams)
  */
 void print_detailed_schedule(array_exams *exams) {
     printf("Detailed schedule\n");

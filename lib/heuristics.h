@@ -18,8 +18,7 @@
  * following the saturation degree first and the largest
  * enrollment in case of tie-break.
  *
- * @param  exams An array of exams.
- * @param  exams_size The size of the exams array.
+ * @param  exams An array of exams (struct array_exams).
  * @param  max_timeslot Maximum available timeslots.
  * @return The next exam to schedule following our heuristics.
  */
@@ -30,8 +29,7 @@ exam *get_first_exam(array_exams *exams, uint8_t max_timeslot);
  * degree for each given exams. The degree of already scheduled exams
  * is set to 255, considered as a special value to not consider.
  *
- * @param  exams An array of exams.
- * @param  exams_size The size of the exams array.
+ * @param  exams An array of exams (struct array_exams).
  * @param  max_timeslot Maximum available timeslots.
  * @return An array regrouping saturation degree for the given parameter.
  */
@@ -41,8 +39,7 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot);
  * have already been scheduled and the possibilities of that exam.
  *
  * @param exam_ The exam to schedule.
- * @param exams An array of exams.
- * @param exams_size The size of the exams array.
+ * @param exams An array of exams (struct array_exams).
  * @param max_timeslot Maximum timeslot
  * @return A bool array of real available timeslots.
  */
@@ -54,13 +51,10 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslo
  * in the same period. Same thing for the room, it must be a room compatible
  * for the exam (with the correct room_type) and with enough capacity.
  *
- * @param  exams An array of exams.
- * @param  exams_size The size of the exams array.
+ * @param  exams An array of exams (struct array_exams).
  * @param  rooms An 3-dimensional array of rooms. The first given indice is
  *               the faculty of the room. The second indice is the type of
- *               the room.
- * @param  rooms_size An two dimensions array filled with the number of rooms
- *                    given its faculty and its type.
+ *               the room (struct matrix_rooms).
  * @param  faculty_size The number of different faculties.
  * @param  max_timeslot Maximum available timeslots.
  * @return true if a correct assignement is found, false otherwise.
@@ -75,13 +69,10 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t facu
  * the right type), and we assign the room with the minimum but
  * sufficient capacity. rooms must be sorted by type and capacity.
  *
- * @param exams An array of scheduled exams.
- * @param exams_size the size of exams array.
+ * @param exams An array of scheduled exams (struct array_exams).
  * @param  rooms An 3-dimensional array of rooms. The first given indice is
  *               the faculty of the room. The second indice is the type of
- *               the room.
- * @param  rooms_size An two dimensions array filled with the number of rooms
- *                    given its faculty and its type.
+ *               the room (struct matrix_rooms).
  * @param  faculty_size The number of different faculties.
  * @param  max_timeslot Maximum available timeslots.
  * @return true if the algorithm was able to find a correct assignement,
