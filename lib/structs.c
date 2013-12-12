@@ -67,6 +67,12 @@ void free_room(room *r) {
     free(r);
 }
 
+void free_rooms(room *rooms, int rooms_size) {
+    for(int i = 0; i < rooms_size; i++)
+        free_room(&rooms[i]);
+    free(rooms);
+}
+
 /* Functions associated with the type exam */
 
 static uint32_t *init_students(int enrollment, va_list *para) {
@@ -132,4 +138,10 @@ void free_exam(exam *e) {
     free(e->availabilities);
     free(e->conflicts);
     free(e);
+}
+
+void free_exams(exam *exams, int exams_size) {
+    for(int i = 0; i < exams_size; i++)
+        free_exam(&exams[i]);
+    free(exams);
 }

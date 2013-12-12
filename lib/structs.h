@@ -148,6 +148,14 @@ room *init_rooms(int rooms_size, ...);
 void free_room(room *r);
 
 /**
+ * Frees each room of the given array, and the array itself.
+ *
+ * @param rooms Array of rooms.
+ * @param rooms_size Number of rooms, also size of rooms.
+ */
+void free_rooms(room *rooms, int rooms_size);
+
+/**
  * Makes the allocation and initialization of an exam. The parameters are
  * length variable, to have this function dynamic. It takes, in this order,
  * the 'exam id', the 'teacher id', the 'number of enrollment' followed by
@@ -175,5 +183,13 @@ exam *init_exams(int exams_size, ...);
  * @param r Pointer to the room to free.
  */
 void free_exam(exam *e);
+
+/**
+ * Frees each exam of the given array, and the array itself.
+ *
+ * @param exams Array of exams.
+ * @param exams_size Number of exams, also size of exams.
+ */
+void free_exams(exam *exams, int exams_size);
 
 #endif /*STRUCTS_H_*/
