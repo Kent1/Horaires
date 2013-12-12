@@ -67,7 +67,7 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslo
  *         The algorithm also assign a timeslot and a room to all exams if
  *         true is returned.
  */
-bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot);
+bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot);
 
 /**
  * This function assigns rooms to exams (exams must be scheduled).
@@ -87,6 +87,6 @@ bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_s
  * @return true if the algorithm was able to find a correct assignement,
  *         false otherwise. If true is return, rooms are assigned to all exams.
  */
-bool room_assign(array_exams *exams, room ***rooms, uint16_t **room_size, uint8_t faculty_size, uint8_t max_timeslot);
+bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot);
 
 #endif /*HEURISTICS_H_*/

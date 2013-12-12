@@ -124,7 +124,7 @@ array_exams *get_example() {
  *
  * @return An array of rooms
  */
-room *get_rooms() {
+array_rooms *get_rooms() {
     // R1 - Salon bleu
     room *room1 = init_room(1, classroom, 1, 0, MAX_TIMESLOT);
     // R2 - Plisnier
@@ -148,17 +148,17 @@ room *get_rooms() {
  * @param rooms An array of room of size room_size.
  * @return Limits for the 3-dimensional array containing categorized rooms.
  */
-uint16_t **get_room_indices(uint16_t room_size, uint8_t faculty_size, room *rooms) {
+size_t **get_room_indices(uint8_t faculty_size, array_rooms *rooms) {
 
     // Allocation of the 2-dim array
-    uint16_t **rooms_limits = malloc(faculty_size * sizeof(uint16_t *));
+    size_t **rooms_limits = malloc(faculty_size * sizeof(size_t *));
 
     for(uint8_t f = 0; f < faculty_size; f++)
-        rooms_limits[f] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+        rooms_limits[f] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
 
     // Filling the limits in this 2-dim array
-    for(uint8_t f = 0; f < room_size; f++)
-        rooms_limits[rooms[f].faculty][rooms[f].type]++;
+    for(uint8_t f = 0; f < rooms->size; f++)
+        rooms_limits[rooms->data[f]->faculty][rooms->data[f]->type]++;
 
     return rooms_limits;
 }
@@ -174,33 +174,41 @@ uint16_t **get_room_indices(uint16_t room_size, uint8_t faculty_size, room *room
  * @param rooms_limits Limits of the different arrays of room (3rd dimension).
  * @return A sorted 3-dim array containing the rooms.
  */
-room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, uint16_t **rooms_limits) {
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits) {
+    // Allocation of the struct matrix
+    matrix_rooms *matrix = malloc(sizeof(matrix_rooms));
     // Allocation of an array of counters for each array of rooms (3rd dimension)
-    uint16_t **counters  = malloc(faculty_size * sizeof(uint16_t *));
+    size_t **counters  = malloc(faculty_size * sizeof(size_t *));
     // rooms_matrix initializes the 3-dim array
-    room ***rooms_matrix = malloc(faculty_size * sizeof(room**));
+    room ****rooms_3d = malloc(faculty_size * sizeof(room**));
 
     // Allocates/Initializes the other dimensions
     for (uint8_t i = 0; i < faculty_size; i++) {
-        counters[i] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+        counters[i] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
 
-        rooms_matrix[i] = malloc(MAX_ROOM_TYPE * sizeof(room*));
+        rooms_3d[i] = malloc(MAX_ROOM_TYPE * sizeof(room*));
         for (uint8_t j = 0; j < MAX_ROOM_TYPE; j++)
-            rooms_matrix[i][j] = malloc(rooms_limits[i][j] * sizeof(room));
+            rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room));
     }
 
     // Fills the 3-dim array using the counters
-    for (uint8_t i = 0; i < room_size; i++) {
-        uint16_t index = counters[rooms[i].faculty][rooms[i].type]++;
-        rooms_matrix[rooms[i].faculty][rooms[i].type][index] = rooms[i];
+    for (uint8_t i = 0; i < rooms->size; i++) {
+        uint16_t index = counters[rooms->data[i]->faculty][rooms->data[i]->type]++;
+        rooms_3d[rooms->data[i]->faculty][rooms->data[i]->type][index] = rooms->data[i];
     }
 
     // Frees counters
     for (uint8_t i = 0; i < faculty_size; i++)
         free(counters[i]);
     free(counters);
+    // Frees the array_rooms and its array only, not the datas
+    free(rooms->data);
+    free(rooms);
 
-    return rooms_matrix;
+    matrix->data = rooms_3d;
+    matrix->size = rooms_limits;
+
+    return matrix;
 }
 
 /**
@@ -276,15 +284,15 @@ int main() {
     array_exams *exams = get_example();
 
     // Creates and preprocesses a set of rooms
-    room *rooms = get_rooms();
-    uint16_t **indices = get_room_indices(4, faculty_size, rooms);
-    room ***rooms_matrix = get_rooms_matrix(4, faculty_size, rooms, indices);
+    array_rooms *rooms = get_rooms();
+    size_t **limits = get_room_indices(faculty_size, rooms);
+    matrix_rooms *matrix = get_rooms_matrix(faculty_size, rooms, limits);
 
     // Preprocessing to the coloring graph heuristics
     compute_conflicts(exams);
 
     // Main heuristic
-    bool a = color_graph_backtrack(exams, rooms_matrix, indices, faculty_size, MAX_TIMESLOT);
+    bool a = color_graph_backtrack(exams, matrix, faculty_size, MAX_TIMESLOT);
 
     printf("%s\n", (a == true) ? "A schedule has been found!\n" :
            "No schedule has been found!\n");

@@ -97,14 +97,13 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslo
 }
 
 
-bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
+bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot) {
     // Pick up the next exam to schedule
     exam *exam_ = get_first_exam(exams, max_timeslot);
 
     // A solution has been found, then compute a room assignement
     if (exam_ == NULL)
-        return room_assign(exams, rooms, rooms_size, faculty_size,
-                           max_timeslot);
+        return room_assign(exams, rooms, faculty_size, max_timeslot);
 
     // Initializes some variables for the process part
     uint8_t min_timeslot = 0, i = 0;
@@ -130,7 +129,7 @@ bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_s
         backtrack = (i == max_timeslot);
 
         if (!backtrack) { // No backtrack needed, process the next schedule
-            success = color_graph_backtrack(exams, rooms, rooms_size, faculty_size, max_timeslot);
+            success = color_graph_backtrack(exams, rooms, faculty_size, max_timeslot);
 
             if (!success) { // failed, must pick the next timeslot available
                 min_timeslot = exam_->timeslot + 1;
@@ -147,7 +146,7 @@ bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_s
 }
 
 
-bool room_assign(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
+bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot) {
     /* For each exam, having is own faculty and room_type, we'll select a room
        not assigned, corresponding with these parameters. If an exam has no
        room after the research, then the room assignation failed and another
@@ -156,9 +155,9 @@ bool room_assign(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8
         exam *exam_ = exams->data[i];
 
         // Research a unassigned room for the exam exam_
-        for (uint16_t j = 0; j < rooms_size[exam_->faculty][exam_->room_type]; j++) {
+        for (uint16_t j = 0; j < rooms->size[exam_->faculty][exam_->room_type]; j++) {
 
-            room *room_ = &rooms[exam_->faculty][exam_->room_type][j];
+            room *room_ = rooms->data[exam_->faculty][exam_->room_type][j];
 
             /* If a room, corresponding in faculty & type, is unassigned and
                can contain the number of students, then the room is assigned.*/
@@ -178,9 +177,9 @@ bool room_assign(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8
 
             for (i = 0; i < faculty_size; i++)
                 for (uint16_t j = 0; j < MAX_ROOM_TYPE; j++)
-                    for (uint16_t k = 0; k < rooms_size[i][j]; k++)
+                    for (uint16_t k = 0; k < rooms->size[i][j]; k++)
                         for (uint16_t l = 0; l < max_timeslot; l++)
-                            rooms[i][j][k].assignation[l] = NOT_ASSIGNED;
+                            rooms->data[i][j][k]->assignation[l] = NOT_ASSIGNED;
 
             return false;
         }

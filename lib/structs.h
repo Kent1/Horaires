@@ -72,6 +72,21 @@ typedef struct {
 } array_rooms;
 
 /**
+ * @struct matrix_rooms
+ * @brief This structure represents 3-d matrix of rooms.
+ *
+ * @var matrix_rooms::data
+ * Pointer on the matrix of room datas.
+ *
+ * @var matrix_rooms::size
+ * Sizes of the matrix pointed by @see data.
+ */
+typedef struct {
+    room ****data;
+    size_t **size;
+} matrix_rooms;
+
+/**
  * @struct exam
  * @brief This structure represents an exam.
  *
@@ -167,7 +182,7 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
  * @param rooms_size Number of rooms, also size of the array to allocate.
  * @return An array containing all the given parameters.
  */
-room *init_rooms(int rooms_size, ...);
+array_rooms *init_rooms(int rooms_size, ...);
 
 /**
  * Frees all the memory used by a room r.
@@ -182,7 +197,7 @@ void free_room(room *r);
  * @param rooms Array of rooms.
  * @param rooms_size Number of rooms, also size of rooms.
  */
-void free_rooms(room *rooms, int rooms_size);
+void free_rooms(array_rooms *rooms);
 
 /**
  * Makes the allocation and initialization of an exam. The parameters are
@@ -219,6 +234,6 @@ void free_exam(exam *e);
  * @param exams Array of exams.
  * @param exams_size Number of exams, also size of exams.
  */
-void free_exams(exam *exams, int exams_size);
+void free_exams(array_exams *exams);
 
 #endif /*STRUCTS_H_*/

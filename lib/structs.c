@@ -48,16 +48,20 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
     return new_room;
 }
 
-room *init_rooms(int rooms_size, ...) {
-    room *rooms = malloc(rooms_size * sizeof(room));
+array_rooms *init_rooms(int rooms_size, ...) {
+    array_rooms *rooms = malloc(sizeof(array_rooms));
+    room **data = malloc(rooms_size * sizeof(room*));
 
     va_list para;
     va_start(para, rooms_size);
 
     for (int i = 0; i < rooms_size; i++)
-        rooms[i] = *va_arg(para, room *);
+        data[i] = va_arg(para, room *);
 
     va_end(para);
+
+    rooms->data = data;
+    rooms->size = rooms_size;
 
     return rooms;
 }
@@ -67,9 +71,9 @@ void free_room(room *r) {
     free(r);
 }
 
-void free_rooms(room *rooms, int rooms_size) {
-    for(int i = 0; i < rooms_size; i++)
-        free_room(&rooms[i]);
+void free_rooms(array_rooms *rooms) {
+    for(int i = 0; i < rooms->size; i++)
+        free_room(rooms->data[i]);
     free(rooms);
 }
 
@@ -144,8 +148,8 @@ void free_exam(exam *e) {
     free(e);
 }
 
-void free_exams(exam *exams, int exams_size) {
-    for(int i = 0; i < exams_size; i++)
-        free_exam(&exams[i]);
+void free_exams(array_exams *exams) {
+    for(int i = 0; i < exams->size; i++)
+        free_exam(exams->data[i]);
     free(exams);
 }
