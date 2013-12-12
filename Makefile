@@ -1,23 +1,24 @@
-CC      = gcc
-CFLAGS  = -Wall -O -std=c99
-EXEC    = horaire
-MAIN 	= main.c
-LIB_DIR = lib
+CC          = gcc
+CFLAGS      = -Wall -O -std=c99
+LDFLAGS     = -I$(LIB_DIR) -L$(LIB_DIR) -l$(LIB_HORAIRE)
+EXEC        = horaire
+MAIN        = main.c
+LIB_DIR     = lib
 LIB_HORAIRE = horaire
 
-LDFLAGS = -I$(LIB_DIR) -L$(LIB_DIR) -l$(LIB_HORAIRE)
 
+all:
+	$(MAKE) -C $(LIB_DIR)
 
-
-lib:
-	cd $(LIB_DIR) && $(MAKE) lib
-
-main: lib
+main: all
 	$(CC) -o $(EXEC) $(MAIN) $(CFLAGS) $(LDFLAGS)
 
 launch: main
-	LD_LIBRARY_PATH=lib ./$(EXEC)
+	LD_LIBRARY_PATH=$(LIB_DIR) ./$(EXEC)
+
+clean:
+	$(MAKE) -C $(LIB_DIR) clean
 
 mrproper:
 	rm -f $(EXEC)
-	cd $(LIB_DIR) && $(MAKE) mrproper
+	$(MAKE) -C $(LIB_DIR) mrproper
