@@ -1,7 +1,7 @@
 /*
  * This file is part of UMons - horaires project
  *
- *  Created on: 28/11/2013
+ *  Created on: 11/12/2013
  *      Authors: Quentin Loos, Alexandre Devaux, Jérôme Dauge
  *
  */
@@ -13,6 +13,7 @@
 
 /* Constants */
 #define MAX_ROOM_TYPE 3
+#define NOT_ASSIGNED UINT16_MAX
 #define NOT_SCHEDULED UINT8_MAX
 
 /**
@@ -134,10 +135,10 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
  * Makes allocation for an array of rooms given in parameters
  * but with a variable length to be flexible.
  *
- * @param size Size of the array to allocate.
+ * @param rooms_size Number of rooms, also size of the array to allocate.
  * @return An array containing all the given parameters.
  */
-room *init_rooms(int size, ...);
+room *init_rooms(int rooms_size, ...);
 
 /**
  * Frees all the memory used by a room r.
@@ -160,13 +161,13 @@ void free_room(room *r);
 exam *init_exam(uint16_t id, ...);
 
 /**
- * Makes allocation for an array of exams given in parameters
- * but with a variable length to be flexible.
+ * Makes allocation for an array of exams given in parameters.
+ * This parameter is variable length to be flexible.
  *
- * @param size Size of the array to alloc.
+ * @param exams_size Number of exams, also size of the array to allocate.
  * @return An array containing all the given parameters.
  */
-exam *init_exams(int size, ...);
+exam *init_exams(int exams_size, ...);
 
 /**
  * Frees all the memory used by a room r.

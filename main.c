@@ -120,7 +120,7 @@ exam *get_example() {
 }
 
 /**
- * Create an array of rooms to use with the two first example.
+ * Creates an array of rooms to use with the two first example.
  *
  * @return An array of rooms
  */
@@ -137,33 +137,61 @@ room *get_rooms() {
     return init_rooms(4, room3, room1, room2, room4);
 }
 
+/**
+ * Following our 3-dim model containing rooms by faculty and type, we need
+ * to know the limit of each array of rooms. This provides the limits
+ * for each rooms categorized by faculty (1st dimension) and type (2nd
+ * dimension).
+ *
+ * @param room_size Number of rooms, size of the parameter rooms.
+ * @param faculty_size Number of faculties.
+ * @param rooms An array of room of size room_size.
+ * @return Limits for the 3-dimensional array containing categorized rooms.
+ */
 uint16_t **get_room_indices(uint16_t room_size, uint8_t faculty_size, room *rooms) {
 
-    uint16_t **room_indices = calloc(faculty_size, sizeof(uint16_t *));
+    // Allocation of the 2-dim array
+    uint16_t **rooms_limits = malloc(faculty_size * sizeof(uint16_t *));
 
     for(uint8_t f = 0; f < faculty_size; f++)
-        room_indices[f] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+        rooms_limits[f] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
 
+    // Filling the limits in this 2-dim array
     for(uint8_t f = 0; f < room_size; f++)
-        room_indices[rooms[f].faculty][rooms[f].type]++;
+        rooms_limits[rooms[f].faculty][rooms[f].type]++;
 
-    return room_indices;
+    return rooms_limits;
 }
 
-room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, uint16_t **room_indices) {
+/**
+ * Sorts the rooms in a 3-dim array, categorized by faculty and type.
+ * The 1st dimension is for the faculty, the 2nd dimension for the type and
+ * the 3rd contains an array of rooms verifying this faculty and type.
+ *
+ * @param room_size Number of rooms, size of the parameter rooms.
+ * @param faculty_size Number of faculties.
+ * @param rooms An array of room of size room_size.
+ * @param rooms_limits Limits of the different arrays of room (3rd dimension).
+ * @return A sorted 3-dim array containing the rooms.
+ */
+room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, uint16_t **rooms_limits) {
+    // Allocation of an array of counters for each array of rooms (3rd dimension)
+    uint16_t **counters  = malloc(faculty_size * sizeof(uint16_t *));
+    // rooms_matrix initializes the 3-dim array
+    room ***rooms_matrix = malloc(faculty_size * sizeof(room**));
 
-    uint16_t **cpt = calloc(faculty_size, sizeof(uint16_t *));
-    room ***rooms_matrix = calloc(faculty_size, sizeof(room**));
-
+    // Allocates/Initializes the other dimensions
     for (uint8_t i = 0; i < faculty_size; i++) {
-        rooms_matrix[i] = calloc(MAX_ROOM_TYPE, sizeof(room*));
-        cpt[i] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+        counters[i] = calloc(MAX_ROOM_TYPE, sizeof(uint16_t));
+
+        rooms_matrix[i] = malloc(MAX_ROOM_TYPE * sizeof(room*));
         for (uint8_t j = 0; j < MAX_ROOM_TYPE; j++)
-            rooms_matrix[i][j] = calloc(room_indices[i][j], sizeof(room));
+            rooms_matrix[i][j] = malloc(rooms_limits[i][j] * sizeof(room));
     }
 
+    // Fills the 3-dim array using the counters
     for (uint8_t i = 0; i < room_size; i++) {
-        uint16_t index = cpt[rooms[i].faculty][rooms[i].type]++;
+        uint16_t index = counters[rooms[i].faculty][rooms[i].type]++;
         rooms_matrix[rooms[i].faculty][rooms[i].type][index] = rooms[i];
     }
 
@@ -242,6 +270,7 @@ int main() {
     // Collect a sample of exams
     exam *exams = get_example();
 
+    // Creates and preprocesses a set of rooms
     room *rooms = get_rooms();
     uint16_t **indices = get_room_indices(4, faculty_size, rooms);
     room ***rooms_matrix = get_rooms_matrix(4, faculty_size, rooms, indices);
