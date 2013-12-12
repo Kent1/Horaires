@@ -4,8 +4,12 @@
 *.so
 # Horaire executable
 horaire
+# Librairie test executable
+tests/lib/test
 # Obj directory
 lib/obj
+# Obj files
+*.o
 # Documentation directory
 doc/
 # Python compiled files
