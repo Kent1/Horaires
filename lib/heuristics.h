@@ -23,7 +23,7 @@
  * @param  max_timeslot Maximum available timeslots.
  * @return The next exam to schedule following our heuristics.
  */
-exam *get_first_exam(exam *exams, uint16_t exams_size, uint8_t max_timeslot);
+exam *get_first_exam(array_exams *exams, uint8_t max_timeslot);
 
 /**
  * This function returns an array regrouping the saturation
@@ -35,8 +35,7 @@ exam *get_first_exam(exam *exams, uint16_t exams_size, uint8_t max_timeslot);
  * @param  max_timeslot Maximum available timeslots.
  * @return An array regrouping saturation degree for the given parameter.
  */
-uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
-                                     uint8_t max_timeslot);
+uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot);
 /**
  * Computes all available timeslots, knowing all those which
  * have already been scheduled and the possibilities of that exam.
@@ -47,8 +46,7 @@ uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
  * @param max_timeslot Maximum timeslot
  * @return A bool array of real available timeslots.
  */
-bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t exams_size,
-                            uint8_t max_timeslot);
+bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslot);
 
 /**
  * Try to set a correct timeslot to all exams and then assign them a room.
@@ -69,8 +67,7 @@ bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t exams_size,
  *         The algorithm also assign a timeslot and a room to all exams if
  *         true is returned.
  */
-bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
-                           uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot);
+bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot);
 
 /**
  * This function assigns rooms to exams (exams must be scheduled).
@@ -90,7 +87,6 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
  * @return true if the algorithm was able to find a correct assignement,
  *         false otherwise. If true is return, rooms are assigned to all exams.
  */
-bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
-                 uint16_t **room_size, uint8_t faculty_size, uint8_t max_timeslot);
+bool room_assign(array_exams *exams, room ***rooms, uint16_t **room_size, uint8_t faculty_size, uint8_t max_timeslot);
 
 #endif /*HEURISTICS_H_*/

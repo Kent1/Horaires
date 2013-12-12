@@ -28,14 +28,14 @@ bool compute_conflict(exam const *exam1, exam const *exam2) {
 }
 
 
-void compute_conflicts(exam const *exams, uint16_t const nbr_exam) {
-    for (uint16_t i = 0; i < nbr_exam; i++) {
-        exam const *exam1 = &exams[i];
+void compute_conflicts(array_exams const *exams) {
+    for (uint16_t i = 0; i < exams->size; i++) {
+        exam const *exam1 = exams->data[i];
         // Exam is not in conflict with itself
         exam1->conflicts[exam1->exam_id - 1] = false;
 
-        for (uint16_t j = i + 1; j < nbr_exam; j++) {
-            exam const *exam2 = &exams[j];
+        for (uint16_t j = i + 1; j < exams->size; j++) {
+            exam const *exam2 = exams->data[j];
 
             if (compute_conflict(exam1, exam2)) {
                 // If the two exams are in conflict

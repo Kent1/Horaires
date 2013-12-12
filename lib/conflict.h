@@ -26,6 +26,6 @@ bool compute_conflict(exam const *exam1, exam const *exam2);
  * @param exams Array of exams
  * @param nbr_exam Size of the array
  */
-void compute_conflicts(exam const *exams, uint16_t const nbr_exam);
+void compute_conflicts(array_exams const *exams);
 
 #endif /*CONFLICT_H_*/

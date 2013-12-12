@@ -56,6 +56,20 @@ typedef struct {
     uint16_t  *assignation;
 } room;
 
+/**
+ * @struct array_rooms
+ * @brief This structure represents an array of rooms.
+ *
+ * @var array_rooms::data
+ * Pointer on the room datas.
+ *
+ * @var array_rooms::size
+ * Size of the array pointed by @see data.
+ */
+typedef struct {
+    room **data;
+    size_t size;
+} array_rooms;
 
 /**
  * @struct exam
@@ -118,6 +132,21 @@ typedef struct {
 } exam;
 
 /**
+ * @struct array_exams
+ * @brief This structure represents an array of exams.
+ *
+ * @var array_exams::data
+ * Pointer on the exam datas.
+ *
+ * @var array_exams::size
+ * Size of the array pointed by @see data.
+ */
+typedef struct {
+    exam **data;
+    size_t size;
+} array_exams;
+
+/**
  * Makes allocation and initialization of a new room with the specified
  * parameters. Sets all the entries of the assignation array to UINT16_MAX,
  * means the room is not assigned for each timeslot.
@@ -175,7 +204,7 @@ exam *init_exam(uint16_t id, ...);
  * @param exams_size Number of exams, also size of the array to allocate.
  * @return An array containing all the given parameters.
  */
-exam *init_exams(int exams_size, ...);
+array_exams *init_exams(int exams_size, ...);
 
 /**
  * Frees all the memory used by a room r.

@@ -117,16 +117,20 @@ exam *init_exam(uint16_t id, ...) {
     return new_exam;
 }
 
-exam *init_exams(int exams_size, ...) {
-    exam *exams = malloc(exams_size * sizeof(exam));
+array_exams *init_exams(int exams_size, ...) {
+    array_exams *exams = malloc(sizeof(array_exams));
+    exam **data  = malloc(exams_size * sizeof(exam *));
 
     va_list para;
     va_start(para, exams_size);
 
     for (int i = 0; i < exams_size; i++)
-        exams[i] = *va_arg(para, exam *);
+        data[i] = va_arg(para, exam *);
 
     va_end(para);
+
+    exams->data = data;
+    exams->size = exams_size;
 
     return exams;
 }

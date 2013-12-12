@@ -15,29 +15,28 @@
 #include "heuristics.h"
 
 
-exam *get_first_exam(exam *exams, uint16_t exams_size, uint8_t max_timeslot) {
+exam *get_first_exam(array_exams *exams, uint8_t max_timeslot) {
     // Initialization
     uint8_t best = NO_SAT;
     exam *first = NULL;
 
     // Compute all saturation degrees for the given array of exams
-    uint8_t *sat_degree = get_exams_saturation_degree(exams, exams_size,
-                          max_timeslot);
+    uint8_t *sat_degree = get_exams_saturation_degree(exams, max_timeslot);
 
     // Find the exam with the lowest saturation degree and resolve
     // tie-break with largest enrollment
-    for (uint16_t i = 0; i < exams_size; i++) {
+    for (uint16_t i = 0; i < exams->size; i++) {
         // Exam 'i' already scheduled & so we don't care about sat_degree
         if (sat_degree[i] == NO_SAT)
             continue;
 
         if (sat_degree[i] < best) {
             best  = sat_degree[i];
-            first = &exams[i];
+            first = exams->data[i];
         } else if (sat_degree[i] == best &&
-                   exams[i].enrollment > first->enrollment) {
+                   exams->data[i]->enrollment > first->enrollment) {
             best  = sat_degree[i];
-            first = &exams[i];
+            first = exams->data[i];
         }
     }
 
@@ -47,12 +46,11 @@ exam *get_first_exam(exam *exams, uint16_t exams_size, uint8_t max_timeslot) {
 }
 
 
-uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
-                                     uint8_t max_timeslot) {
-    uint8_t *sat_degree = malloc(exams_size * sizeof(uint8_t));
+uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
+    uint8_t *sat_degree = malloc(exams->size * sizeof(uint8_t));
 
-    for (uint16_t i = 0; i < exams_size; i++) {
-        if (exams[i].timeslot != NOT_SCHEDULED) { // already scheduled
+    for (uint16_t i = 0; i < exams->size; i++) {
+        if (exams->data[i]->timeslot != NOT_SCHEDULED) { // already scheduled
             sat_degree[i] = NO_SAT;
         } else { // not scheduled, compute saturation degree
             // Initially saturation degree is maximum
@@ -60,7 +58,7 @@ uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
 
             // Then substract a degree for each timeslot unavailable
             for (uint16_t j = 0; j < max_timeslot; j++) {
-                if (exams[i].availabilities[j] == false)
+                if (exams->data[i]->availabilities[j] == false)
                     sat_degree[i]--;
             }
 
@@ -68,9 +66,9 @@ uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
                but already used by a conflicting exam, i.e. an edge exists
                between the two exam => something in common(teacher or students)
                => cannot be set on the same timeslot. */
-            for (uint16_t j = 0; j < exams_size; j++) {
-                if (exams[i].conflicts[j] && exams[j].timeslot != 0 &&
-                        exams[i].availabilities[exams[j].timeslot] == true)
+            for (uint16_t j = 0; j < exams->size; j++) {
+                if (exams->data[i]->conflicts[j] && exams->data[j]->timeslot != 0 &&
+                        exams->data[i]->availabilities[exams->data[j]->timeslot] == true)
                     sat_degree[i]--;
             }
         }
@@ -80,8 +78,7 @@ uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
 }
 
 
-bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t exams_size,
-                            uint8_t max_timeslot) {
+bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslot) {
     bool *timeslots_available = malloc(max_timeslot * sizeof(bool));
 
     // Initially, possible availabilities are the ones provided with the exam
@@ -91,23 +88,22 @@ bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t exams_size,
     /* For each exam in conflict (i.e. that has a vertex with exam_) and
        which is scheduled on a certain timeslot, this timeslot is substracted
        from the timeslots available. */
-    for (uint16_t i = 0; i < exams_size; i++) {
-        if (exam_->conflicts[i] && exams[i].timeslot != NOT_SCHEDULED)
-            timeslots_available[exams[i].timeslot] = false;
+    for (uint16_t i = 0; i < exams->size; i++) {
+        if (exam_->conflicts[i] && exams->data[i]->timeslot != NOT_SCHEDULED)
+            timeslots_available[exams->data[i]->timeslot] = false;
     }
 
     return timeslots_available;
 }
 
 
-bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
-                           uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
+bool color_graph_backtrack(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
     // Pick up the next exam to schedule
-    exam *exam_ = get_first_exam(exams, exams_size, max_timeslot);
+    exam *exam_ = get_first_exam(exams, max_timeslot);
 
     // A solution has been found, then compute a room assignement
     if (exam_ == NULL)
-        return room_assign(exams, exams_size, rooms, rooms_size, faculty_size,
+        return room_assign(exams, rooms, rooms_size, faculty_size,
                            max_timeslot);
 
     // Initializes some variables for the process part
@@ -116,8 +112,7 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
     bool backtrack       = false;
 
     // Get an array of timeslots usable for this exam
-    bool *timeslots_available = set_possible_timeslot(exam_, exams, exams_size,
-                                max_timeslot);
+    bool *timeslots_available = set_possible_timeslot(exam_, exams, max_timeslot);
 
     // Process part
     do {
@@ -135,8 +130,7 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
         backtrack = (i == max_timeslot);
 
         if (!backtrack) { // No backtrack needed, process the next schedule
-            success = color_graph_backtrack(exams, exams_size, rooms,
-                                     rooms_size, faculty_size, max_timeslot);
+            success = color_graph_backtrack(exams, rooms, rooms_size, faculty_size, max_timeslot);
 
             if (!success) { // failed, must pick the next timeslot available
                 min_timeslot = exam_->timeslot + 1;
@@ -153,15 +147,13 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
 }
 
 
-bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
-                 uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
-
+bool room_assign(array_exams *exams, room ***rooms, uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
     /* For each exam, having is own faculty and room_type, we'll select a room
        not assigned, corresponding with these parameters. If an exam has no
        room after the research, then the room assignation failed and another
        shedule has to be found => launch backtrack for the scheduling. */
-    for (uint16_t i = 0; i < exams_size; i++) {
-        exam *exam_ = &exams[i];
+    for (uint16_t i = 0; i < exams->size; i++) {
+        exam *exam_ = exams->data[i];
 
         // Research a unassigned room for the exam exam_
         for (uint16_t j = 0; j < rooms_size[exam_->faculty][exam_->room_type]; j++) {
@@ -181,8 +173,8 @@ bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
         /* If true, the reseach has failed and all values are reset before
            launching the backtrack for the schedule. */
         if (exam_->room_id == NOT_ASSIGNED) {
-            for (uint16_t j = 0; j < exams_size; j++)
-                exams[i].room_id = NOT_ASSIGNED;
+            for (uint16_t j = 0; j < exams->size; j++)
+                exams->data[i]->room_id = NOT_ASSIGNED;
 
             for (i = 0; i < faculty_size; i++)
                 for (uint16_t j = 0; j < MAX_ROOM_TYPE; j++)

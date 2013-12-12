@@ -29,7 +29,7 @@
  *
  * @return An array of exams
  */
-exam *get_example1() {
+array_exams *get_example1() {
     // exam1 - Analyse
     exam *exam1 = init_exam(1, 555000,                      // exam id, teacher id
                             3, 10000, 10001, 10002,         // nb + enrollments
@@ -86,7 +86,7 @@ exam *get_example1() {
  *
  * @return An array of exams
  */
-exam *get_example2() {
+array_exams *get_example2() {
     // exam1 - Analyse
     exam *exam1 = init_exam(1, 555000,               // exam id, teacher id
                             3, 10000, 10001, 10002,  // nb + enrollments
@@ -107,7 +107,7 @@ exam *get_example2() {
  *
  * @return An array of exams
  */
-exam *get_example() {
+array_exams *get_example() {
     switch (EXAMPLE) {
         case 1:
             return get_example1();
@@ -208,12 +208,12 @@ room ***get_rooms_matrix(uint16_t room_size, uint8_t faculty_size, room *rooms, 
  *
  * @param exams An array of scheduled exams
  */
-void print_summary_schedule(exam *exams) {
+void print_summary_schedule(array_exams *exams) {
     printf("Summary\n");
     printf("=======\n");
 
     for (int i = 0; i < MAX_EXAM; i++) {
-        printf("Exam %d : %d\n", i + 1, exams[i].timeslot);
+        printf("Exam %d : %d\n", i + 1, exams->data[i]->timeslot);
     }
 
     printf("\n");
@@ -225,7 +225,7 @@ void print_summary_schedule(exam *exams) {
  *
  * @param exams An array of scheduled exams
  */
-void print_detailed_schedule(exam *exams) {
+void print_detailed_schedule(array_exams *exams) {
     printf("Detailed schedule\n");
     printf("=================\n");
 
@@ -233,34 +233,34 @@ void print_detailed_schedule(exam *exams) {
         printf("Timeslot %d\n", i + 1);
         printf("------------\n\n");
 
-        for (int j = 0; j < MAX_EXAM; j++) {
-            if (exams[j].timeslot == i) {
+        for (int j = 0; j < exams->size; j++) {
+            if (exams->data[j]->timeslot == i) {
                 printf("  Exam %d :\n", j + 1);
-                printf("      -> Prof : %d\n", exams[j].teacher_id);
+                printf("      -> Prof : %d\n", exams->data[j]->teacher_id);
 
                 printf("      -> Timeslots available : (");
 
                 for (int k = 0; k < MAX_TIMESLOT; k++) {
-                    printf("%d ", exams[j].availabilities[k]);
+                    printf("%d ", exams->data[j]->availabilities[k]);
                 }
 
                 printf(")\n");
 
                 printf("      -> Conflicts detected : (");
 
-                for (int k = 0; k < MAX_EXAM; k++) {
-                    printf("%d ", exams[j].conflicts[k]);
+                for (int k = 0; k < exams->size; k++) {
+                    printf("%d ", exams->data[j]->conflicts[k]);
                 }
 
                 printf(")\n");
 
                 printf("      -> Students :\n");
 
-                for (int k = 0; k < exams[j].enrollment; k++) {
-                    printf("            %d\n", exams[j].students[k]);
+                for (int k = 0; k < exams->data[j]->enrollment; k++) {
+                    printf("            %d\n", exams->data[j]->students[k]);
                 }
 
-                printf("      -> Room : %u\n", exams[j].room_id);
+                printf("      -> Room : %u\n", exams->data[j]->room_id);
             }
         }
     }
@@ -273,7 +273,7 @@ void print_detailed_schedule(exam *exams) {
 int main() {
     uint8_t faculty_size = 1;
     // Collect a sample of exams
-    exam *exams = get_example();
+    array_exams *exams = get_example();
 
     // Creates and preprocesses a set of rooms
     room *rooms = get_rooms();
@@ -281,10 +281,10 @@ int main() {
     room ***rooms_matrix = get_rooms_matrix(4, faculty_size, rooms, indices);
 
     // Preprocessing to the coloring graph heuristics
-    compute_conflicts(exams, MAX_EXAM);
+    compute_conflicts(exams);
 
     // Main heuristic
-    bool a = color_graph_backtrack(exams, MAX_EXAM, rooms_matrix, indices, faculty_size, MAX_TIMESLOT);
+    bool a = color_graph_backtrack(exams, rooms_matrix, indices, faculty_size, MAX_TIMESLOT);
 
     printf("%s\n", (a == true) ? "A schedule has been found!\n" :
            "No schedule has been found!\n");
