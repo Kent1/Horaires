@@ -14,14 +14,7 @@
 #include "structs.h"
 #include "heuristics.h"
 
-/**
- * This function returns a pointer to the next exam to schedule,
- * following the saturation degree first and the largest
- * enrollment in case of tie-break.
- *
- * @param exams An array of exams.
- * @return The next exam to schedule following our heuristics.
- */
+
 exam *get_first_exam(exam *exams, uint16_t exams_size, uint8_t max_timeslot) {
     // Initialization
     uint8_t best = NO_SAT;
@@ -53,14 +46,7 @@ exam *get_first_exam(exam *exams, uint16_t exams_size, uint8_t max_timeslot) {
     return first;
 }
 
-/**
- * This function returns an array regrouping the saturation
- * degree for each given exams. The degree of already scheduled exams
- * is set to 255, considered as a special value to not consider.
- *
- * @param exams An array of exams.
- * @return An array regrouping saturation degree for the given parameter.
- */
+
 uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
                                      uint8_t max_timeslot) {
     uint8_t *sat_degree = malloc(exams_size * sizeof(uint8_t));
@@ -93,18 +79,9 @@ uint8_t *get_exams_saturation_degree(exam *exams, uint16_t exams_size,
     return sat_degree;
 }
 
-/**
- * Computes all available timeslots, knowing all those who
- * have already been scheduled and the possibilities of that exam.
- *
- * @param exam_ The exam to schedule
- * @param exams Array of all exams
- * @param size Size of array of exams
- * @param max_timeslot Maximum timeslot
- * @return An array of boolean with real available timeslots.
- */
+
 bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t exams_size,
-                            uint8_t min_timeslot, uint8_t max_timeslot) {
+                            uint8_t max_timeslot) {
     bool *timeslots_available = malloc(max_timeslot * sizeof(bool));
 
     // Initially, possible availabilities are the ones provided with the exam
@@ -122,29 +99,15 @@ bool *set_possible_timeslot(exam *exam_, exam *exams, uint16_t exams_size,
     return timeslots_available;
 }
 
-/**
- * Try to set a correct timeslot to all exams and then assign them a room.
- * Correct means that any students/teachers have two exams scheduled in
- * the same period. Same thing for the room, it must be a room compatible
- * for the exam (with the correct room_type) and with enough capacity
- *
- * @param  exams Array of all exams
- * @param  exams_size Size of the array of exams
- * @param  rooms An array of rooms. This array is sorted by type and for each
- *               type, the rooms are sorted by capacity
- * @param  room_indices An two dimensions array filled with the number of rooms
- *                      given his faculty and type
- * @param  max_timeslot Maximum available timeslots
- * @return true if a correct assignement is found, false otherwise
- */
+
 bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
-                           uint16_t **rooms_limits, uint8_t faculty_size, uint8_t max_timeslot) {
+                           uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
     // Pick up the next exam to schedule
     exam *exam_ = get_first_exam(exams, exams_size, max_timeslot);
 
     // A solution has been found, then compute a room assignement
     if (exam_ == NULL)
-        return room_assign(exams, exams_size, rooms, rooms_limits, faculty_size,
+        return room_assign(exams, exams_size, rooms, rooms_size, faculty_size,
                            max_timeslot);
 
     // Initializes some variables for the process part
@@ -154,7 +117,7 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
 
     // Get an array of timeslots usable for this exam
     bool *timeslots_available = set_possible_timeslot(exam_, exams, exams_size,
-                                min_timeslot, max_timeslot);
+                                max_timeslot);
 
     // Process part
     do {
@@ -173,7 +136,7 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
 
         if (!backtrack) { // No backtrack needed, process the next schedule
             success = color_graph_backtrack(exams, exams_size, rooms,
-                                     rooms_limits, faculty_size, max_timeslot);
+                                     rooms_size, faculty_size, max_timeslot);
 
             if (!success) { // failed, must pick the next timeslot available
                 min_timeslot = exam_->timeslot + 1;
@@ -189,25 +152,9 @@ bool color_graph_backtrack(exam *exams, uint16_t exams_size, room ***rooms,
     return success;
 }
 
-/**
- * Assign rooms to exams (exams must be scheduled). For each exam, we consider
- * a compatible room (i.e. a room with the right type), and we assign the room
- * with the minimum but sufficient capacity. rooms must be sorted by type and
- * capacity.
- *
- *
- * @param exams An array filled with scheduled exams
- * @param exams_size the size of exams array
- * @param rooms An array of rooms. This array is sorted by type and for each
- *               type, the rooms are sorted by capacity
- * @param  room_indices An two dimensions array filled with the number of rooms
- *                      given his faculty and type
- * @param max_timeslot The maximum number of timeslot available
- * @return true if the algorithm was able to find a correct assignement,
- *         false otherwise
- */
+
 bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
-                 uint16_t **rooms_limits, uint8_t faculty_size, uint8_t max_timeslot) {
+                 uint16_t **rooms_size, uint8_t faculty_size, uint8_t max_timeslot) {
 
     /* For each exam, having is own faculty and room_type, we'll select a room
        not assigned, corresponding with these parameters. If an exam has no
@@ -217,7 +164,8 @@ bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
         exam *exam_ = &exams[i];
 
         // Research a unassigned room for the exam exam_
-        for (uint16_t j = 0; j < rooms_limits[exam_->faculty][exam_->room_type]; j++) {
+        for (uint16_t j = 0; j < rooms_size[exam_->faculty][exam_->room_type]; j++) {
+
             room *room_ = &rooms[exam_->faculty][exam_->room_type][j];
 
             /* If a room, corresponding in faculty & type, is unassigned and
@@ -238,7 +186,7 @@ bool room_assign(exam *exams, uint16_t exams_size, room ***rooms,
 
             for (i = 0; i < faculty_size; i++)
                 for (uint16_t j = 0; j < MAX_ROOM_TYPE; j++)
-                    for (uint16_t k = 0; k < rooms_limits[i][j]; k++)
+                    for (uint16_t k = 0; k < rooms_size[i][j]; k++)
                         for (uint16_t l = 0; l < max_timeslot; l++)
                             rooms[i][j][k].assignation[l] = NOT_ASSIGNED;
 
