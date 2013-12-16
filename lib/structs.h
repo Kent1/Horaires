@@ -207,12 +207,8 @@ void free_rooms(array_rooms *rooms);
 array_exams *init_array_exams(uint16_t exams_size);
 
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
-                uint16_t enrollment, room_type type, uint16_t exams_size);
-
-void set_students_to_exam(exam *exam_, uint32_t *students);
-
-void set_availabilities_to_exam(exam *exam_, bool *availabilities,
-                                uint8_t max_timeslot);
+                uint32_t *students, uint16_t enrollment, room_type type,
+                bool *availabilities, uint16_t exams_size, uint8_t max_timeslot);
 
 /**
  * Frees all the memory used by a room r.

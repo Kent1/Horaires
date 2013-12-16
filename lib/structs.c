@@ -60,7 +60,8 @@ array_exams *init_array_exams(uint16_t exams_size) {
 }
 
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
-                uint16_t enrollment, room_type type, uint16_t exams_size) {
+                uint32_t *students, uint16_t enrollment, room_type type,
+                bool *availabilities, uint16_t exams_size, uint8_t max_timeslot) {
 
     exam *new_exam = malloc(sizeof(exam));
     new_exam->exam_id = exam_id;
@@ -74,27 +75,21 @@ exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
     new_exam->room_id        = NOT_ASSIGNED;
     new_exam->timeslot       = NOT_SCHEDULED;
     new_exam->deps           = NULL;
-    new_exam->students       = NULL;
-    new_exam->availabilities = NULL;
 
-    return new_exam;
-}
+    // Fills arrays with a proper copy
+    new_exam->students = malloc(new_exam->enrollment * sizeof(uint32_t));
 
-void set_students_to_exam(exam *exam_, uint32_t *students) {
-    exam_->students = malloc(exam_->enrollment * sizeof(uint32_t));
-
-    for (uint16_t i = 0; i < exam_->enrollment; i++) {
-        exam_->students[i] = students[i];
+    for (uint16_t i = 0; i < new_exam->enrollment; i++) {
+        new_exam->students[i] = students[i];
     }
-}
 
-void set_availabilities_to_exam(exam *exam_, bool *availabilities,
-                                uint8_t max_timeslot) {
-    exam_->students = malloc(max_timeslot * sizeof(bool));
+    new_exam->availabilities = malloc(max_timeslot * sizeof(bool));
 
     for (uint8_t i = 0; i < max_timeslot; i++) {
-        exam_->availabilities[i] = availabilities[i];
+        new_exam->availabilities[i] = availabilities[i];
     }
+
+    return new_exam;
 }
 
 void free_exam(exam *e) {
