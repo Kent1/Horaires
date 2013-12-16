@@ -175,14 +175,7 @@ typedef struct {
 room *init_room(uint16_t id, room_type type, uint16_t capacity,
                 uint8_t faculty, uint8_t max_timeslot);
 
-/**
- * Makes allocation for an array of rooms given in parameters
- * but with a variable length to be flexible.
- *
- * @param rooms_size Number of rooms, also size of the array to allocate.
- * @return An array containing all the given parameters (struct array_rooms).
- */
-array_rooms *init_rooms(int rooms_size, ...);
+array_rooms *init_array_rooms(uint16_t rooms_size);
 
 /**
  * Frees all the memory used by a room r.
@@ -210,16 +203,16 @@ void free_rooms(array_rooms *rooms);
  * @param id The exam id.
  * @return A struct exam allocated and initialized.
  */
-exam *init_exam(uint16_t id, ...);
 
-/**
- * Makes allocation for an array of exams given in parameters.
- * This parameter is variable length to be flexible.
- *
- * @param exams_size Number of exams, also size of the array to allocate.
- * @return An array containing all the given parameters (struct array_exams).
- */
-array_exams *init_exams(int exams_size, ...);
+array_exams *init_array_exams(uint16_t exams_size);
+
+exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
+                uint16_t enrollment, room_type type, uint16_t exams_size);
+
+void set_students_to_exam(exam *exam_, uint32_t *students);
+
+void set_availabilities_to_exam(exam *exam_, bool *availabilities,
+                                uint8_t max_timeslot);
 
 /**
  * Frees all the memory used by a room r.
