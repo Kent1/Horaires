@@ -34,6 +34,7 @@ exam *get_first_exam(array_exams *exams, uint8_t max_timeslot);
  * @return An array regrouping saturation degree for the given parameter.
  */
 uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot);
+
 /**
  * Computes all available timeslots, knowing all those which
  * have already been scheduled and the possibilities of that exam.

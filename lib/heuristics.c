@@ -67,8 +67,9 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
                between the two exam => something in common(teacher or students)
                => cannot be set on the same timeslot. */
             for (uint16_t j = 0; j < exams->size; j++) {
-                if (exams->data[i]->conflicts[j] && exams->data[j]->timeslot != 0 &&
-                        exams->data[i]->availabilities[exams->data[j]->timeslot] == true)
+                if (exams->data[i]->conflicts[j] &&
+                        exams->data[j]->timeslot != NOT_SCHEDULED &&
+                        exams->data[i]->availabilities[exams->data[j]->timeslot])
                     sat_degree[i]--;
             }
         }
@@ -78,7 +79,8 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
 }
 
 
-bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslot) {
+bool *set_possible_timeslot(exam *exam_, array_exams *exams,
+                            uint8_t max_timeslot) {
     bool *timeslots_available = malloc(max_timeslot * sizeof(bool));
 
     // Initially, possible availabilities are the ones provided with the exam
@@ -97,7 +99,8 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslo
 }
 
 
-bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot) {
+bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
+                           uint8_t faculty_size, uint8_t max_timeslot) {
     // Pick up the next exam to schedule
     exam *exam_ = get_first_exam(exams, max_timeslot);
 
@@ -146,7 +149,8 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t facu
 }
 
 
-bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot) {
+bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
+                 uint8_t max_timeslot) {
     /* For each exam, having is own faculty and room_type, we'll select a room
        not assigned, corresponding with these parameters. If an exam has no
        room after the research, then the room assignation failed and another
