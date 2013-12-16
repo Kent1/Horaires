@@ -1,10 +1,10 @@
-CC          = gcc
-CFLAGS      = -Wall -O -std=c99
-LDFLAGS     = -I$(LIB_DIR) -L$(LIB_DIR) -l$(LIB_HORAIRE)
-EXEC        = horaire
-MAIN        = main.c
-LIB_DIR     = lib
-LIB_HORAIRE = horaire
+CC            = gcc
+CFLAGS        = -Wall -O -std=c99
+LDFLAGS       = -I$(LIB_DIR) -L$(LIB_DIR) -l$(LIB_TIMETABLE)
+EXEC          = timetable
+MAIN          = main.c
+LIB_DIR       = lib
+LIB_TIMETABLE = timetable
 
 
 all:

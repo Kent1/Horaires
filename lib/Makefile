@@ -1,10 +1,11 @@
 CC       = gcc
 CFLAGS   = -Wall -O -std=c99 -fPIC
 LDFLAGS  =
-LIB_NAME = libhoraire.so
+LIB_NAME = libtimetable.so
 OBJ_DIR  = obj
 SRC      = $(wildcard *.c)
 OBJ      = $(patsubst %.c,obj/%.o,$(SRC))
+
 
 all: obj_dir lib
 

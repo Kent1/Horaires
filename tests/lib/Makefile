@@ -1,15 +1,14 @@
-CC          = gcc
-CFLAGS      = -Wall -O -std=c99 -I$(LIB_DIR)
-LDFLAGS     = -L$(LIB_DIR) -l$(LIB_HORAIRE) -lcunit
-SRC         = $(filter-out $(MAIN), $(wildcard *.c))
-BASEDIR     = ../..
-LIB_DIR     = $(BASEDIR)/lib
-LIB_HORAIRE = horaire
-MAIN        = main.c
-EXEC        = test
-OBJ_DIR     = obj
-OBJ         = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
-
+CC            = gcc
+CFLAGS        = -Wall -O -std=c99 -I$(LIB_DIR)
+LDFLAGS       = -L$(LIB_DIR) -l$(LIB_TIMETABLE) -lcunit
+SRC           = $(filter-out $(MAIN), $(wildcard *.c))
+BASEDIR       = ../..
+LIB_DIR       = $(BASEDIR)/lib
+LIB_TIMETABLE = timetable
+MAIN          = main.c
+EXEC          = test
+OBJ_DIR       = obj
+OBJ           = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 
 
 lib:
