@@ -1,0 +1,95 @@
+{
+	"max_timeslot" : 6,
+	"exams" : [
+		{
+			"exam_id"        : 0,
+			"faculty"        : 0,
+			"teacher_id"     : 555000,
+			"students"       : [10000, 10001, 10002],
+			"room_type"      : 0,
+			"availabilities" : [true, true, true, false, false, false]
+		},
+		{
+			"exam_id"        : 1,
+			"faculty"        : 0,
+			"teacher_id"     : 555001,
+			"students"       : [10000, 10003],
+			"room_type"      : 0,
+			"availabilities" : [false, true, true, false, false, false]
+		},
+		{
+			"exam_id"        : 2,
+			"faculty"        : 0,
+			"teacher_id"     : 555002,
+			"students"       : [10002, 10004],
+			"room_type"      : 0,
+			"availabilities" : [false, true, true, true, false, false]
+		},
+		{
+			"exam_id"        : 3,
+			"faculty"        : 0,
+			"teacher_id"     : 555003,
+			"students"       : [10003, 10004, 10005, 10006],
+			"room_type"      : 0,
+			"availabilities" : [false, false, true, false, false, false]
+		},
+		{
+			"exam_id"        : 4,
+			"faculty"        : 0,
+			"teacher_id"     : 555001,
+			"students"       : [10000, 10001, 10003],
+			"room_type"      : 1,
+			"availabilities" : [false, false, true, true, false, false]
+		},
+		{
+			"exam_id"        : 5,
+			"faculty"        : 0,
+			"teacher_id"     : 555004,
+			"students"       : [10004],
+			"room_type"      : 1,
+			"availabilities" : [false, false, false, true, true, true]
+		},
+		{
+			"exam_id"        : 6,
+			"faculty"        : 0,
+			"teacher_id"     : 555005,
+			"students"       : [10001],
+			"room_type"      : 0,
+			"availabilities" : [false, false, false, true, true, false]
+		},
+		{
+			"exam_id"        : 7,
+			"faculty"        : 0,
+			"teacher_id"     : 555006,
+			"students"       : [10002],
+			"room_type"      : 0,
+			"availabilities" : [true, true, false, false, true, true]
+		}
+	],
+	"rooms" : [
+		{
+			"room_id"   : 0,
+			"room_type" : 0,
+			"faculty"   : 0,
+			"capacity"  : 1
+		},
+		{
+			"room_id"   : 1,
+			"room_type" : 0,
+			"faculty"   : 0,
+			"capacity"  : 2
+		},
+		{
+			"room_id"   : 2,
+			"room_type" : 0,
+			"faculty"   : 0,
+			"capacity"  : 5
+		},
+		{
+			"room_id"   : 3,
+			"room_type" : 1,
+			"faculty"   : 0,
+			"capacity"  : 4
+		}
+	]
+}
