@@ -175,7 +175,7 @@ typedef struct {
 room *init_room(uint16_t id, room_type type, uint16_t capacity,
                 uint8_t faculty, uint8_t max_timeslot);
 
-array_rooms *init_array_rooms(uint16_t rooms_size);
+array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms);
 
 /**
  * Frees all the memory used by a room r.
@@ -204,7 +204,7 @@ void free_rooms(array_rooms *rooms);
  * @return A struct exam allocated and initialized.
  */
 
-array_exams *init_array_exams(uint16_t exams_size, exam *exams);
+array_exams *init_array_exams(uint16_t exams_size, exam **exams);
 
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
                 uint32_t *students, uint16_t enrollment, room_type type,

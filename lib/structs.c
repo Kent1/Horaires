@@ -29,12 +29,15 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
     return new_room;
 }
 
-array_rooms *init_array_rooms(uint16_t rooms_size) {
-    array_rooms *rooms = malloc(sizeof(array_rooms));
-    rooms->data = malloc(rooms_size * sizeof(room *));
-    rooms->size = rooms_size;
+array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms) {
+    array_rooms *array = malloc(sizeof(array_rooms));
+    array->data = malloc(rooms_size * sizeof(room *));
+    array->size = rooms_size;
 
-    return rooms;
+    for(uint16_t i = 0; i < rooms_size; i++)
+        array->data[i] = rooms[i];
+
+    return array;
 }
 
 void free_room(room *r) {
@@ -51,14 +54,13 @@ void free_rooms(array_rooms *rooms) {
 
 /* Functions associated with the type exam */
 
-array_exams *init_array_exams(uint16_t exams_size, exam *exams) {
+array_exams *init_array_exams(uint16_t exams_size, exam **exams) {
     array_exams *array = malloc(sizeof(array_exams));
     array->data = malloc(exams_size * sizeof(exam *));
     array->size = exams_size;
 
-    for(uint16_t i = 0; i < exams_size; i++) {
-        array->data[i] = &exams[i];
-    }
+    for(uint16_t i = 0; i < exams_size; i++)
+        array->data[i] = exams[i];
 
     return array;
 }
