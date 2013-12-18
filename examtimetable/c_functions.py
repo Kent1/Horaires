@@ -47,3 +47,25 @@ init_room.argtypes = [c_uint16, c_uint8, c_uint16, c_uint8, c_uint8]
 init_array_rooms = lib.init_array_rooms
 init_array_rooms.restype = POINTER(c_structs.ArrayRooms)
 init_array_rooms.argtypes = [c_uint16, POINTER(POINTER(c_structs.Room))]
+
+# size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms);
+get_rooms_sizes = lib.get_rooms_sizes
+get_rooms_sizes.restype = POINTER(POINTER(c_size_t))
+get_rooms_sizes.argtypes = [c_uint8, POINTER(c_structs.ArrayRooms)]
+
+# matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms,
+# 								 size_t **rooms_limits);
+get_rooms_matrix = lib.get_rooms_matrix
+get_rooms_matrix.restype = POINTER(c_structs.MatrixRooms)
+get_rooms_matrix.argtypes = [c_uint8, POINTER(c_structs.ArrayRooms),
+                             POINTER(POINTER(c_size_t))]
+
+# void compute_conflicts(array_exams const *exams);
+compute_conflicts = lib.compute_conflicts
+compute_conflicts.restype = None
+compute_conflicts.argtypes = [POINTER(c_structs.ArrayExams)]
+
+# bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot);
+color_graph_backtrack = lib.color_graph_backtrack
+color_graph_backtrack.restype = c_bool
+color_graph_backtrack.argtypes = [POINTER(c_structs.ArrayExams), POINTER(c_structs.MatrixRooms), c_uint8, c_uint8]
