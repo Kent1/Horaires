@@ -40,6 +40,58 @@ array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms) {
     return array;
 }
 
+size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms) {
+
+    // Allocation of the 2-dim array
+    size_t **rooms_limits = malloc(faculty_size * sizeof(size_t *));
+
+    for(uint8_t f = 0; f < faculty_size; f++)
+        rooms_limits[f] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
+
+    // Filling the limits in this 2-dim array
+    for(uint8_t f = 0; f < rooms->size; f++)
+        rooms_limits[rooms->data[f]->faculty][rooms->data[f]->type]++;
+
+    return rooms_limits;
+}
+
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits) {
+    // Allocation of the struct matrix
+    matrix_rooms *matrix = malloc(sizeof(matrix_rooms));
+    // Allocation of an array of counters for each array of rooms (3rd dimension)
+    size_t **counters  = malloc(faculty_size * sizeof(size_t *));
+    // rooms_matrix initializes the 3-dim array
+    room ****rooms_3d = malloc(faculty_size * sizeof(room**));
+
+    // Allocates/Initializes the other dimensions
+    for (uint8_t i = 0; i < faculty_size; i++) {
+        counters[i] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
+
+        rooms_3d[i] = malloc(MAX_ROOM_TYPE * sizeof(room*));
+        for (uint8_t j = 0; j < MAX_ROOM_TYPE; j++)
+            rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room));
+    }
+
+    // Fills the 3-dim array using the counters
+    for (uint8_t i = 0; i < rooms->size; i++) {
+        uint16_t index = counters[rooms->data[i]->faculty][rooms->data[i]->type]++;
+        rooms_3d[rooms->data[i]->faculty][rooms->data[i]->type][index] = rooms->data[i];
+    }
+
+    // Frees counters
+    for (uint8_t i = 0; i < faculty_size; i++)
+        free(counters[i]);
+    free(counters);
+    // Frees the array_rooms and its array only, not the datas
+    free(rooms->data);
+    free(rooms);
+
+    matrix->data = rooms_3d;
+    matrix->size = rooms_limits;
+
+    return matrix;
+}
+
 void free_room(room *r) {
     free(r->assignation);
     free(r);

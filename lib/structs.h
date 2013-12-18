@@ -178,6 +178,30 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
 array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms);
 
 /**
+ * Following our 3-dim model containing rooms by faculty and type, we need
+ * to know the limit of each array of rooms. This provides the limits
+ * for each rooms categorized by faculty (1st dimension) and type (2nd
+ * dimension).
+ *
+ * @param faculty_size Number of faculties.
+ * @param rooms An array of room (struct array_rooms).
+ * @return Limits for the 3-dimensional array containing categorized rooms.
+ */
+size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms);
+
+/**
+ * Sorts the rooms in a 3-dim array, categorized by faculty and type.
+ * The 1st dimension is for the faculty, the 2nd dimension for the type and
+ * the 3rd contains an array of rooms verifying this faculty and type.
+ *
+ * @param faculty_size Number of faculties.
+ * @param rooms An array of room (struct array_rooms).
+ * @param rooms_limits Limits of the different arrays of room (3rd dimension).
+ * @return A sorted 3-dim array containing the rooms (struct matrix_rooms).
+ */
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits);
+
+/**
  * Frees all the memory used by a room r.
  *
  * @param r Pointer to the room to free.
