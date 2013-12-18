@@ -1,5 +1,5 @@
 CC       = gcc
-CFLAGS   = -Wall -O -std=c99 -fPIC
+CFLAGS   = -Wall -O -std=c99 -fPIC -fshort-enums
 LDFLAGS  =
 LIB_NAME = libtimetable.so
 OBJ_DIR  = obj

@@ -31,3 +31,19 @@ init_exam.argtypes = [c_uint16, c_uint8, c_uint32, POINTER(c_uint32),
 free_exam = lib.free_exam
 free_exam.restype = None
 free_exam.argtypes = [POINTER(c_structs.Exam)]
+
+# array_exams *init_array_exams(uint16_t exams_size, exam *exams);
+init_array_exams = lib.init_array_exams
+init_array_exams.restype = POINTER(c_structs.ArrayExams)
+init_array_exams.argtypes = [c_uint16, POINTER(POINTER(c_structs.Exam))]
+
+# room *init_room(uint16_t id, room_type type, uint16_t capacity,
+#                 uint8_t faculty, uint8_t max_timeslot);
+init_room = lib.init_room
+init_room.restype = POINTER(c_structs.Room)
+init_room.argtypes = [c_uint16, c_uint8, c_uint16, c_uint8, c_uint8]
+
+# array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms);
+init_array_rooms = lib.init_array_rooms
+init_array_rooms.restype = POINTER(c_structs.ArrayRooms)
+init_array_rooms.argtypes = [c_uint16, POINTER(POINTER(c_structs.Room))]
