@@ -1,51 +1,52 @@
 #!/usr/bin/python
 # encoding: utf-8
 
-from ctypes import *
+import ctypes
+p = ctypes.POINTER
 
 
-class Room(Structure):
+class Room(ctypes.Structure):
     _fields_ = [
-        ("room_id",     c_uint16),
-        ("room_type",   c_uint8),
-        ("faculty",     c_uint8),
-        ("capacity",    c_uint16),
-        ("assignation", POINTER(c_uint16)),
+        ("room_id",     ctypes.c_uint16),
+        ("room_type",   ctypes.c_uint8),
+        ("faculty",     ctypes.c_uint8),
+        ("capacity",    ctypes.c_uint16),
+        ("assignation", p(ctypes.c_uint16)),
     ]
 
 
-class ArrayRooms(Structure):
+class ArrayRooms(ctypes.Structure):
     _fields_ = [
-        ("data", POINTER(POINTER(Room))),
-        ("size", c_size_t),
+        ("data", p(p(Room))),
+        ("size", ctypes.c_size_t),
     ]
 
 
-class MatrixRooms(Structure):
+class MatrixRooms(ctypes.Structure):
     _fields_ = [
-        ("data", POINTER(POINTER(POINTER(POINTER(Room))))),
-        ("size", POINTER(POINTER(c_size_t))),
+        ("data", p(p(p(p(Room))))),
+        ("size", p(p(ctypes.c_size_t))),
     ]
 
 
-class Exam(Structure):
+class Exam(ctypes.Structure):
     _fields_ = [
-        ("exam_id",        c_uint16),
-        ("faculty",        c_uint8),
-        ("teacher_id",     c_uint32),
-        ("students",       POINTER(c_uint32)),
-        ("enrollment",     c_uint16),
-        ("room_type",      c_uint8),
-        ("room_id",        c_uint16),
-        ("timeslot",       c_uint8),
-        ("availabilities", POINTER(c_bool)),
-        ("conflicts",      POINTER(c_bool)),
-        ("deps",           POINTER(c_uint16)),
+        ("exam_id",        ctypes.c_uint16),
+        ("faculty",        ctypes.c_uint8),
+        ("teacher_id",     ctypes.c_uint32),
+        ("students",       p(ctypes.c_uint32)),
+        ("enrollment",     ctypes.c_uint16),
+        ("room_type",      ctypes.c_uint8),
+        ("room_id",        ctypes.c_uint16),
+        ("timeslot",       ctypes.c_uint8),
+        ("availabilities", p(ctypes.c_bool)),
+        ("conflicts",      p(ctypes.c_bool)),
+        ("deps",           p(ctypes.c_uint16)),
     ]
 
 
-class ArrayExams(Structure):
+class ArrayExams(ctypes.Structure):
     _fields_ = [
-        ("data", POINTER(POINTER(Exam))),
-        ("size", c_size_t),
+        ("data", p(p(Exam))),
+        ("size", ctypes.c_size_t),
     ]
