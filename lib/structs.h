@@ -204,7 +204,7 @@ void free_rooms(array_rooms *rooms);
  * @return A struct exam allocated and initialized.
  */
 
-array_exams *init_array_exams(uint16_t exams_size);
+array_exams *init_array_exams(uint16_t exams_size, exam *exams);
 
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
                 uint32_t *students, uint16_t enrollment, room_type type,

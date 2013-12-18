@@ -51,12 +51,16 @@ void free_rooms(array_rooms *rooms) {
 
 /* Functions associated with the type exam */
 
-array_exams *init_array_exams(uint16_t exams_size) {
-    array_exams *exams = malloc(sizeof(array_exams));
-    exams->data = malloc(exams_size * sizeof(exam *));
-    exams->size = exams_size;
+array_exams *init_array_exams(uint16_t exams_size, exam *exams) {
+    array_exams *array = malloc(sizeof(array_exams));
+    array->data = malloc(exams_size * sizeof(exam *));
+    array->size = exams_size;
 
-    return exams;
+    for(uint16_t i = 0; i < exams_size; i++) {
+        array->data[i] = &exams[i];
+    }
+
+    return array;
 }
 
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
