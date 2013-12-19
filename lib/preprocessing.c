@@ -8,7 +8,7 @@
 
 #include "util.h"
 #include "structs.h"
-#include "conflict.h"
+#include "preprocessing.h"
 
 
 bool compute_conflict(exam const *exam1, exam const *exam2) {
@@ -55,4 +55,22 @@ void compute_conflicts(array_exams const *exams) {
             }
         }
     }
+}
+
+void compute_deps(array_exams const *exams) {
+    for (uint16_t i = 0; i < exams->size; i++) {
+        exam const *exam1 = exams->data[i];
+
+        for (uint8_t j = 0; j < exam1->deps_size; j++) {
+            for (uint16_t k = 0; k < exams->size; k++) {
+                if (exams->data[k]->exam_id == exam1->deps[j])
+                    exam1->deps[j] = k;
+            }
+        }
+    }
+}
+
+void preprocess(array_exams const *exams) {
+    compute_conflicts(exams);
+    compute_deps(exams);
 }

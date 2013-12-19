@@ -15,10 +15,10 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
     room *new_room = malloc(sizeof(room));
 
     // Initializes non-changing values
-    new_room->room_id     = id;
-    new_room->type        = type;
-    new_room->capacity    = capacity;
-    new_room->faculty     = faculty;
+    new_room->room_id  = id;
+    new_room->type     = type;
+    new_room->capacity = capacity;
+    new_room->faculty  = faculty;
     /* Allocates an array such that for each input (corresponding to a timeslot),
        the constant NOT_ASSIGNED at initial time.*/
     new_room->assignation = malloc(max_timeslot * sizeof(uint16_t));
@@ -130,10 +130,10 @@ exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
     new_exam->room_type  = type;
 
     // Default values for the rest
-    new_exam->conflicts      = malloc(exams_size * sizeof(bool));
-    new_exam->room_id        = NOT_ASSIGNED;
-    new_exam->timeslot       = NOT_SCHEDULED;
-    new_exam->deps_size      = deps_size;
+    new_exam->conflicts = malloc(exams_size * sizeof(bool));
+    new_exam->room_id   = NOT_ASSIGNED;
+    new_exam->timeslot  = NOT_SCHEDULED;
+    new_exam->deps_size = deps_size;
 
     // Fills arrays with a proper copy
     new_exam->students = malloc(enrollment * sizeof(uint32_t));

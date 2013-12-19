@@ -139,15 +139,16 @@ typedef struct {
     uint16_t  enrollment;
 
     room_type room_type;
-    uint16_t room_id;
+    uint16_t  room_id;
 
-    uint8_t timeslot;
+    uint8_t   timeslot;
 
     bool *availabilities;
 
     bool *conflicts;
+
     uint16_t *deps;
-    uint8_t deps_size;
+    uint8_t  deps_size;
 } exam;
 
 /**
