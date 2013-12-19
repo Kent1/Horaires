@@ -1,4 +1,5 @@
 #include "structs.h"
+#include "test_util.h"
 #include "CUnit/Basic.h"
 
 static void test_init_exam(void) {
@@ -97,6 +98,32 @@ static void test_init_array_rooms(void) {
     free_rooms(array_rooms);
 }
 
+static void test_get_rooms_sizes(void) {
+    init_test_array_rooms();
+    size_t **size = get_rooms_sizes(FACULTY_SIZE, rooms);
+    CU_ASSERT_EQUAL(size[0][classroom], 0);
+    CU_ASSERT_EQUAL(size[0][lab], 0);
+    CU_ASSERT_EQUAL(size[0][computer_room], 1);
+    CU_ASSERT_EQUAL(size[1][classroom], 3);
+    CU_ASSERT_EQUAL(size[1][lab], 1);
+    CU_ASSERT_EQUAL(size[1][computer_room], 0);
+    clean_array_rooms();
+}
+
+static void test_get_rooms_matrix(void) {
+    init_test_array_rooms();
+    size_t **rooms_limit = get_rooms_sizes(FACULTY_SIZE, rooms);
+    matrix_rooms *matrix_rooms = get_rooms_matrix(FACULTY_SIZE, rooms,
+                                 rooms_limit);
+    CU_ASSERT_PTR_EQUAL(matrix_rooms->size, rooms_limit);
+    CU_ASSERT_PTR_EQUAL(matrix_rooms->data[0][computer_room][0], room5);
+    CU_ASSERT_PTR_EQUAL(matrix_rooms->data[1][classroom][0], room1);
+    CU_ASSERT_PTR_EQUAL(matrix_rooms->data[1][classroom][1], room2);
+    CU_ASSERT_PTR_EQUAL(matrix_rooms->data[1][classroom][2], room3);
+    CU_ASSERT_PTR_EQUAL(matrix_rooms->data[1][lab][0], room4);
+    clean_test_room();
+}
+
 int structs_test_suite(void) {
     CU_TestInfo tests[] = {
         {"init_exam()", test_init_exam},
@@ -104,6 +131,8 @@ int structs_test_suite(void) {
         {"init_array_exams()", test_init_array_exams},
         {"init_room()", test_init_room},
         {"init_array_rooms()", test_init_array_rooms},
+        {"get_rooms_sizes()", test_get_rooms_sizes},
+        {"get_rooms_matrix()", test_get_rooms_matrix},
         CU_TEST_INFO_NULL
     };
 
