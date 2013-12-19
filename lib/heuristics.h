@@ -47,6 +47,16 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot);
 bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslot);
 
 /**
+ * Computes the minimum timeslot that can be used for the exam
+ * exam_, following its dependencies.
+ *
+ * @param exam_ The exam to know the minimum timeslot.
+ * @param exams An array of exams (struct array_exams).
+ * @return The minimum timeslot that can be used according to the dependencies.
+ */
+uint8_t compute_min_timeslot(exam *exam_, array_exams *exams);
+
+/**
  * Try to set a correct timeslot to all exams and then assign them a room.
  * Correct means that any students/teachers doesn't have two exams scheduled
  * in the same period. Same thing for the room, it must be a room compatible

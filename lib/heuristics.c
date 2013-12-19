@@ -52,26 +52,39 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
     for (uint16_t i = 0; i < exams->size; i++) {
         if (exams->data[i]->timeslot != NOT_SCHEDULED) { // already scheduled
             sat_degree[i] = NO_SAT;
-        } else { // not scheduled, compute saturation degree
-            // Initially saturation degree is maximum
-            sat_degree[i] = max_timeslot;
+            continue;
+        } else if (exams->data[i]->deps_size != 0) { // dependencies
+            for (uint8_t j = 0; j < exams->data[i]->deps_size; j++) {
+                uint16_t index = exams->data[i]->deps[j];
 
-            // Then substract a degree for each timeslot unavailable
-            for (uint16_t j = 0; j < max_timeslot; j++) {
-                if (exams->data[i]->availabilities[j] == false)
-                    sat_degree[i]--;
+                if (exams->data[index]->timeslot == NOT_SCHEDULED) {
+                    sat_degree[i] = NO_SAT;
+                    continue;
+                }
             }
+        }
 
-            /* Finally, substract a degree for each timeslot available,
-               but already used by a conflicting exam, i.e. an edge exists
-               between the two exam => something in common(teacher or students)
-               => cannot be set on the same timeslot. */
-            for (uint16_t j = 0; j < exams->size; j++) {
-                if (exams->data[i]->conflicts[j] &&
-                        exams->data[j]->timeslot != NOT_SCHEDULED &&
-                        exams->data[i]->availabilities[exams->data[j]->timeslot])
-                    sat_degree[i]--;
-            }
+        // If not scheduled; compute saturation degree or
+        // If all deps scheduled; compute saturation degree.
+
+        // Initially saturation degree is maximum
+        sat_degree[i] = max_timeslot;
+
+        // Then substract a degree for each timeslot unavailable
+        for (uint16_t j = 0; j < max_timeslot; j++) {
+            if (exams->data[i]->availabilities[j] == false)
+                sat_degree[i]--;
+        }
+
+        /* Finally, substract a degree for each timeslot available,
+           but already used by a conflicting exam, i.e. an edge exists
+           between the two exam => something in common(teacher or students)
+           => cannot be set on the same timeslot. */
+        for (uint16_t j = 0; j < exams->size; j++) {
+            if (exams->data[i]->conflicts[j] &&
+                    exams->data[j]->timeslot != NOT_SCHEDULED &&
+                    exams->data[i]->availabilities[exams->data[j]->timeslot])
+                sat_degree[i]--;
         }
     }
 
@@ -98,6 +111,15 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams,
     return timeslots_available;
 }
 
+uint8_t compute_min_timeslot(exam *exam_, array_exams *exams) {
+    uint8_t min_timeslot = 0;
+
+    for (uint8_t i = 0; i < exam_->deps_size; i++) {
+        min_timeslot = MAX(min_timeslot, exams->data[exam_->deps[i]]->timeslot + 1);
+    }
+
+    return min_timeslot;
+}
 
 bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
                            uint8_t faculty_size, uint8_t max_timeslot) {
@@ -109,7 +131,8 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
         return room_assign(exams, rooms, faculty_size, max_timeslot);
 
     // Initializes some variables for the process part
-    uint8_t min_timeslot = 0, i = 0;
+    uint8_t i = 0;
+    uint8_t min_timeslot = compute_min_timeslot(exam_, exams);
     bool success         = false;
     bool backtrack       = false;
 
