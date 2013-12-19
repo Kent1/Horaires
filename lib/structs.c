@@ -157,7 +157,7 @@ exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
 
 void free_exam(exam *e) {
     // Cannot free a pointer non-initialized, 'cause still not handled
-    //free(e->deps);
+    free(e->deps);
     free(e->students);
     free(e->availabilities);
     free(e->conflicts);
