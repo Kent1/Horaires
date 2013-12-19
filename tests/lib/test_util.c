@@ -71,9 +71,8 @@ void init_test_exam(void) {
     }
 }
 
-void init_test_array_exams(uint16_t exams_size, exam **exams) {
-    init_test_exam();
-    init_array_exams(exams_size, exams);
+void init_test_array_exams(uint16_t exams_size, exam **test_exams) {
+    exams = init_array_exams(exams_size, test_exams);
 }
 
 void clean_test_exam(void) {
