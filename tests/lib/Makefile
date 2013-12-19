@@ -1,5 +1,5 @@
 CC            = gcc
-CFLAGS        = -Wall -O -std=c99 -I$(LIB_DIR)
+CFLAGS        = -Wall -O -std=c99 -I$(LIB_DIR) -fshort-enums
 LDFLAGS       = -L$(LIB_DIR) -l$(LIB_TIMETABLE) -lcunit
 SRC           = $(filter-out $(MAIN), $(wildcard *.c))
 BASEDIR       = ../..
