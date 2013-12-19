@@ -124,6 +124,9 @@ typedef struct {
  *
  * @var exam::deps
  * List of prerequisites.
+ *
+ * @var exam::deps_size
+ * Size of list of prerequisites.
  */
 typedef struct {
     uint16_t  exam_id;
@@ -144,6 +147,7 @@ typedef struct {
 
     bool *conflicts;
     uint16_t *deps;
+    uint8_t deps_size;
 } exam;
 
 /**
@@ -233,7 +237,7 @@ array_exams *init_array_exams(uint16_t exams_size, exam **exams);
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
                 uint32_t *students, uint16_t enrollment, room_type type,
                 bool *availabilities, uint8_t max_timeslot, uint16_t exams_size,
-                uint16_t *deps);
+                uint16_t *deps, uint8_t deps_size);
 
 /**
  * Frees all the memory used by a room r.
