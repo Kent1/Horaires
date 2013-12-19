@@ -1,9 +1,13 @@
 #include "structs.h"
 
-const uint8_t MAX_TIMESLOT = 5;
-const uint16_t MAX_EXAM = 8;
+const uint8_t  MAX_TIMESLOT = 5;
+const uint16_t MAX_EXAM     = 8;
+const uint16_t MAX_ROOM     = 5;
+const uint8_t  FACULTY_SIZE = 2;
 exam *exam1, *exam2, *exam3, *exam4, *exam5, *exam6, *exam7, *exam8;
 array_exams *exams;
+room *room1, *room2, *room3, *room4, *room5;
+array_rooms *rooms;
 
 void init_test_exam(void) {
     {
@@ -91,5 +95,37 @@ void clean_test_exam(void) {
 void clean_array_exams(void) {
     clean_test_exam();
     free(exams);
+}
+
+
+void init_test_room(void) {
+    // Room 1 - Salon Bleu
+    room1 = init_room(1, classroom, 1, 1, MAX_TIMESLOT);
+    // Room 2 - Plisnier
+    room2 = init_room(2, classroom, 2, 1, MAX_TIMESLOT);
+    // Room 3 - Van Gogh
+    room3 = init_room(3, classroom, 5, 1, MAX_TIMESLOT);
+    // Room 4 - Pascal
+    room4 = init_room(4, lab, 4, 1, MAX_TIMESLOT);
+    // Room 5 - IG Lab
+    room5 = init_room(5, computer_room, 10, 0, MAX_TIMESLOT);
+}
+
+void init_test_array_rooms(void) {
+    init_test_room();
+    room *test_rooms[] = {room1, room2, room3, room4, room5};
+    rooms = init_array_rooms(MAX_ROOM, test_rooms);
+}
+
+void clean_test_room(void) {
+    free(room1);
+    free(room2);
+    free(room3);
+    free(room4);
+    free(room5);
+}
+
+void clean_array_rooms(void) {
+    free_rooms(rooms);
 }
 
