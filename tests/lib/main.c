@@ -1,7 +1,7 @@
 #include <CUnit/Basic.h>
 
-int conflict_test_suite(void);
 int structs_test_suite(void);
+int preprocessing_test_suite(void);
 int heuristics_test_suite(void);
 
 
@@ -10,8 +10,8 @@ int main(void) {
         return CU_get_error();
 
     int (* suites_functions[])(void) = {structs_test_suite,
-                                        conflict_test_suite,
-                                        heuristics_test_suite
+                                        preprocessing_test_suite,
+                                        // heuristics_test_suite
                                         };
 
     int size = sizeof(suites_functions)/sizeof(suites_functions)[0];
