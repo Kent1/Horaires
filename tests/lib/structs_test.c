@@ -7,8 +7,8 @@ static void test_init_exam(void) {
     exam *exam = init_exam(1, 2, 555000, // Exam ID + Faculty ID + Teacher ID
                            students, 3,// Students + Enrollement (n of students)
                            classroom, // Room type
-                           availabilities, 5, // Availabilities + max_timeslot
-                           2, NULL, 0); // Max timeslots + deps + deps size
+                           availabilities, 5, // Availabilities + max timeslots
+                           2, NULL, 0); // Max exams + deps + deps size
     CU_ASSERT_EQUAL(exam->exam_id, 1);
     CU_ASSERT_EQUAL(exam->faculty, 2);
     CU_ASSERT_EQUAL(exam->teacher_id, 555000);
@@ -34,11 +34,8 @@ static void test_init_exam_with_deps(void) {
     uint32_t students[] = {100000, 100001, 100002};
     bool availabilities[] = {true, true, false, true, false};
     uint16_t deps[] = {2, 3};
-    exam *exam = init_exam(1, 2, 555000, // Exam ID + Faculty ID + Teacher ID
-                           students, 3,// Students + Enrollement (n of students)
-                           classroom, // Room type
-                           availabilities, 5, // Availabilities + max_timeslot
-                           2, deps, 2); // Max timeslots + deps + deps size
+    exam *exam = init_exam(1, 2, 555000, students, 3, classroom, availabilities,
+                           5, 2, deps, 2);
     CU_ASSERT_EQUAL(exam->exam_id, 1);
     CU_ASSERT_EQUAL(exam->faculty, 2);
     CU_ASSERT_EQUAL(exam->teacher_id, 555000);
@@ -65,16 +62,10 @@ static void test_init_exam_with_deps(void) {
 static void test_init_array_exams(void) {
     uint32_t students[] = {100000, 100001, 100002};
     bool availabilities[] = {true, true, false, true, false};
-    exam *exam1 = init_exam(1, 2, 555000, // Exam ID + Faculty ID + Teacher ID
-                            students, 3,// Students + Enrollement
-                            classroom, // Room type
-                            availabilities, 5, // Availabilities + max_timeslot
-                            2, NULL, 0); // Max timeslots + deps + deps size
-    exam *exam2 = init_exam(1, 2, 555000, // Exam ID + Faculty ID + Teacher ID
-                            students, 3,// Students + Enrollement
-                            classroom, // Room type
-                            availabilities, 5, // Availabilities + max_timeslot
-                            2, NULL, 0); // Max timeslots + deps + deps size
+    exam *exam1 = init_exam(1, 2, 555000, students, 3, classroom,
+                            availabilities, 5, 2, NULL, 0);
+    exam *exam2 = init_exam(1, 2, 555000, students, 3, classroom,
+                            availabilities, 5, 2, NULL, 0);
     exam *exams[] = {exam1, exam2};
     array_exams *array_exams = init_array_exams(2, exams);
     CU_ASSERT_EQUAL(2, array_exams->size);
