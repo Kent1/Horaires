@@ -10,7 +10,7 @@ void init_test_exam(void) {
         // Exam 1 - Analyse
         uint32_t students[] = {100000, 100001, 100002};
         bool availabilities[] = {true, true, true, false, false};
-        exam1 = init_exam(1, 1, 555000, students, 3, classroom, availabilities,
+        exam1 = init_exam(10, 1, 555000, students, 3, classroom, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
@@ -18,7 +18,7 @@ void init_test_exam(void) {
         // Exam 2 - Fonctionnement des ordinateurs
         uint32_t students[] = {100000, 100003};
         bool availabilities[] = {false, true, true, false, false};
-        exam2 = init_exam(2, 1, 555001, students, 2, classroom, availabilities,
+        exam2 = init_exam(20, 1, 555001, students, 2, classroom, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
@@ -26,15 +26,16 @@ void init_test_exam(void) {
         // Exam 3 - Math 1
         uint32_t students[] = {100002, 100004};
         bool availabilities[] = {false, true, true, true, false};
-        exam3 = init_exam(3, 1, 555002, students, 2, classroom, availabilities,
-                          MAX_TIMESLOT, MAX_EXAM, NULL, 0);
+        uint16_t deps[] = {80};
+        exam3 = init_exam(30, 1, 555002, students, 2, classroom, availabilities,
+                          MAX_TIMESLOT, MAX_EXAM, deps, 1);
     }
 
     {
         // Exam 4 - Anglais
         uint32_t students[] = {100003, 100004, 100005, 100006};
         bool availabilities[] = {false, false, true, false, false};
-        exam4 = init_exam(4, 1, 555003, students, 4, classroom, availabilities,
+        exam4 = init_exam(40, 1, 555003, students, 4, classroom, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
@@ -42,7 +43,7 @@ void init_test_exam(void) {
         // Exam 5 - Physique
         uint32_t students[] = {100000, 100001, 100003};
         bool availabilities[] = {false, false, true, true, false};
-        exam5 = init_exam(5, 1, 555001, students, 3, lab, availabilities,
+        exam5 = init_exam(50, 1, 555001, students, 3, lab, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
@@ -50,7 +51,7 @@ void init_test_exam(void) {
         // Exam 6 - Chimie
         uint32_t students[] = {100004};
         bool availabilities[] = {false, false, false, true, true};
-        exam6 = init_exam(6, 1, 555001, students, 1, lab, availabilities,
+        exam6 = init_exam(60, 1, 555001, students, 1, lab, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
@@ -58,15 +59,16 @@ void init_test_exam(void) {
         // Exam 7 - Algèbre
         uint32_t students[] = {100001};
         bool availabilities[] = {false, false, false, false, true};
-        exam7 = init_exam(7, 1, 555005, students, 1, classroom, availabilities,
-                          MAX_TIMESLOT, MAX_EXAM, NULL, 0);
+        uint16_t deps[] = {10};
+        exam7 = init_exam(70, 1, 555005, students, 1, classroom, availabilities,
+                          MAX_TIMESLOT, MAX_EXAM, deps, 1);
     }
 
     {
         // Exam 8 - Univers : S & R
         uint32_t students[] = {100006};
         bool availabilities[] = {true, true, false, false, true};
-        exam8 = init_exam(8, 1, 555006, students, 1, classroom, availabilities,
+        exam8 = init_exam(80, 1, 555006, students, 1, classroom, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 }
