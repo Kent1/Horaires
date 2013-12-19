@@ -7,7 +7,8 @@
 			"teacher_id"     : 555000,
 			"students"       : [10000, 10001, 10002],
 			"room_type"      : 0,
-			"availabilities" : [true, true, true, false, false, false]
+			"availabilities" : [true, true, true, false, false, false],
+			"dependencies"   : []
 		},
 		{
 			"exam_id"        : 2,
@@ -15,7 +16,8 @@
 			"teacher_id"     : 555001,
 			"students"       : [10000, 10003],
 			"room_type"      : 0,
-			"availabilities" : [false, true, true, false, false, false]
+			"availabilities" : [false, true, true, false, false, false],
+			"dependencies"   : []
 		},
 		{
 			"exam_id"        : 3,
@@ -23,7 +25,8 @@
 			"teacher_id"     : 555002,
 			"students"       : [10002, 10004],
 			"room_type"      : 0,
-			"availabilities" : [false, true, true, true, false, false]
+			"availabilities" : [false, true, true, true, false, false],
+			"dependencies"   : [8]
 		},
 		{
 			"exam_id"        : 4,
@@ -31,7 +34,8 @@
 			"teacher_id"     : 555003,
 			"students"       : [10003, 10004, 10005, 10006],
 			"room_type"      : 0,
-			"availabilities" : [false, false, true, false, false, false]
+			"availabilities" : [false, false, true, false, false, false],
+			"dependencies"   : []
 		},
 		{
 			"exam_id"        : 5,
@@ -39,7 +43,8 @@
 			"teacher_id"     : 555001,
 			"students"       : [10000, 10001, 10003],
 			"room_type"      : 1,
-			"availabilities" : [false, false, true, true, false, false]
+			"availabilities" : [false, false, true, true, false, false],
+			"dependencies"   : []
 		},
 		{
 			"exam_id"        : 6,
@@ -47,7 +52,8 @@
 			"teacher_id"     : 555004,
 			"students"       : [10004],
 			"room_type"      : 1,
-			"availabilities" : [false, false, false, true, true, true]
+			"availabilities" : [false, false, false, true, true, true],
+			"dependencies"   : [7, 8]
 		},
 		{
 			"exam_id"        : 7,
@@ -55,7 +61,8 @@
 			"teacher_id"     : 555005,
 			"students"       : [10001],
 			"room_type"      : 0,
-			"availabilities" : [false, false, false, true, true, false]
+			"availabilities" : [false, false, false, true, true, false],
+			"dependencies"   : [1]
 		},
 		{
 			"exam_id"        : 8,
@@ -63,7 +70,8 @@
 			"teacher_id"     : 555006,
 			"students"       : [10002],
 			"room_type"      : 0,
-			"availabilities" : [true, true, false, false, true, true]
+			"availabilities" : [true, true, false, false, true, true],
+			"dependencies"   : []
 		}
 	],
 	"rooms" : [

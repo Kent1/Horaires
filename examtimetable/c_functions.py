@@ -20,14 +20,15 @@ else:
 
 # exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
 #                 uint32_t *students, uint16_t enrollment, room_type type,
-#                 bool *availabilities, uint16_t exams_size,
-#                 uint8_t max_timeslot);
+#                 bool *availabilities, uint8_t max_timeslot,
+#                 uint16_t exams_size, uint16_t *deps, uint8_t deps_size);
 
 init_exam = lib.init_exam
 init_exam.restype = p(c_structs.Exam)
 init_exam.argtypes = [ctypes.c_uint16, ctypes.c_uint8, ctypes.c_uint32,
                       p(ctypes.c_uint32), ctypes.c_uint16, ctypes.c_uint8,
-                      p(ctypes.c_bool), ctypes.c_uint16, ctypes.c_uint8]
+                      p(ctypes.c_bool), ctypes.c_uint8, ctypes.c_uint16,
+                      p(ctypes.c_uint16), ctypes.c_uint8]
 
 # void free_exam(exam *e);
 free_exam = lib.free_exam
@@ -64,9 +65,9 @@ get_rooms_matrix.argtypes = [ctypes.c_uint8, p(c_structs.ArrayRooms),
                              p(p(ctypes.c_size_t))]
 
 # void compute_conflicts(array_exams const *exams);
-compute_conflicts = lib.compute_conflicts
-compute_conflicts.restype = None
-compute_conflicts.argtypes = [p(c_structs.ArrayExams)]
+preprocess = lib.preprocess
+preprocess.restype = None
+preprocess.argtypes = [p(c_structs.ArrayExams)]
 
 # bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
 #                            uint8_t faculty_size, uint8_t max_timeslot);

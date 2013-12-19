@@ -2,47 +2,12 @@
 # encoding: utf-8
 
 # Python imports
-from __future__ import print_function
 import json
 import ctypes
 p = ctypes.POINTER
 # My imports
 from examtimetable import c_functions, c_structs
-
-
-def print_detailed_schedule(c_array_exams, max_timeslot):
-    print("Detailed schedule")
-    print("=================")
-
-    for i in range(max_timeslot):
-        print("Timeslot %d" % (i + 1))
-        print("------------\n")
-
-        for j in range(c_array_exams.contents.size):
-            if (c_array_exams.contents.data[j].contents.timeslot == i):
-                print("  Exam %d :" % (j + 1))
-                print("      -> Prof : %d" % c_array_exams.contents.data[j].contents.teacher_id)
-
-                print("      -> Timeslots available : (", end="")
-
-                for k in range(max_timeslot):
-                    print("%d " % c_array_exams.contents.data[j].contents.availabilities[k], end="")
-
-                print(")")
-
-                print("      -> Conflicts detected : (", end="")
-
-                for k in range(c_array_exams.contents.size):
-                    print("%d " % c_array_exams.contents.data[j].contents.conflicts[k], end="")
-
-                print(")\n")
-
-                print("      -> Students :")
-
-                for k in range(c_array_exams.contents.data[j].contents.enrollment):
-                    print("            %d" % c_array_exams.contents.data[j].contents.students[k])
-
-                print("      -> Room : %u" % c_array_exams.contents.data[j].contents.room_id)
+from examtimetable.print_timetable import print_detailed_timetable
 
 
 with open('datasets/example1.json') as f:
@@ -61,8 +26,10 @@ for exam in fs['exams']:
         len(exam['students']),
         exam['room_type'],
         (ctypes.c_bool * len(exam['availabilities']))(*exam['availabilities']),
+        fs['max_timeslot'],
         len(fs['exams']),
-        fs['max_timeslot']
+        (ctypes.c_uint16 * len(exam['dependencies']))(*exam['dependencies']),
+        len(exam['dependencies']),
     )
     c_exams.append(c_exam)
 
@@ -98,8 +65,8 @@ c_rooms_matrix = c_functions.get_rooms_matrix(faculty_size, c_array_rooms,
                                               c_rooms_sizes)
 
 # Compute conflicts
-c_functions.compute_conflicts(c_array_exams)
+c_functions.preprocess(c_array_exams)
 
 if c_functions.color_graph_backtrack(c_array_exams, c_rooms_matrix,
                                      faculty_size, fs['max_timeslot']):
-    print_detailed_schedule(c_array_exams, fs['max_timeslot'])
+    print_detailed_timetable(c_array_exams, fs['max_timeslot'])
