@@ -38,7 +38,7 @@ void compute_conflicts(array_exams const *exams) {
     for (uint16_t i = 0; i < exams->size; i++) {
         exam const *exam1 = exams->data[i];
         // Exam is not in conflict with itself
-        exam1->conflicts[exam1->exam_id - 1] = false;
+        exam1->conflicts[i] = false;
 
         for (uint16_t j = i + 1; j < exams->size; j++) {
             exam const *exam2 = exams->data[j];
@@ -46,12 +46,12 @@ void compute_conflicts(array_exams const *exams) {
             if (compute_conflict(exam1, exam2)) {
                 // If the two exams are in conflict
                 // i.e. there are at least one student in common
-                exam1->conflicts[exam2->exam_id - 1] = true;
-                exam2->conflicts[exam1->exam_id - 1] = true;
+                exam1->conflicts[j] = true;
+                exam2->conflicts[i] = true;
             } else {
                 // Else, they are not in conflict
-                exam1->conflicts[exam2->exam_id - 1] = false;
-                exam2->conflicts[exam1->exam_id - 1] = false;
+                exam1->conflicts[j] = false;
+                exam2->conflicts[i] = false;
             }
         }
     }
