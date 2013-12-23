@@ -56,6 +56,7 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
         }
 
         bool compute_sat = true;
+
         for (uint8_t j = 0; j < exams->data[i]->deps_size; j++) {
             uint16_t index = exams->data[i]->deps[j];
 
@@ -72,9 +73,15 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
             // Initially saturation degree is maximum
             sat_degree[i] = max_timeslot;
 
-            // Then substract a degree for each timeslot unavailable
+            /* Then substract a degree for each timeslot unavailable or for each
+               timeslot available but strictly less than the min_timeslot (equals
+               to a timeslot unavailable). */
             for (uint16_t j = 0; j < max_timeslot; j++) {
-                if (exams->data[i]->availabilities[j] == false)
+                // Min_timeslot for the i-th exam
+                uint8_t min_timeslot = compute_min_timeslot(exams->data[i], exams);
+
+                if (exams->data[i]->availabilities[j] == false ||
+                        (exams->data[i]->availabilities[j] && j < min_timeslot))
                     sat_degree[i]--;
             }
 
