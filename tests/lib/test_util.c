@@ -62,7 +62,7 @@ void init_test_exam(void) {
     {
         // Exam 7 - Algèbre
         uint32_t students[] = {100001};
-        bool availabilities[] = {false, false, false, false, true};
+        bool availabilities[] = {true, true, true, true, true};
         uint16_t deps[] = {10};
         exam7 = init_exam(70, 1, 555005, students, 1, classroom, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, deps, 1);
