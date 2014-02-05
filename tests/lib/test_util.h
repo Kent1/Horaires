@@ -9,9 +9,12 @@ extern const uint16_t MAX_ROOM;
 extern const uint8_t  FACULTY_SIZE;
 
 void init_test_exam(void);
+void init_test_exam_2(void);
 void init_test_array_exams(uint16_t exams_size, exam **exams);
 void clean_test_exam(void);
+void clean_test_exam_2(void);
 void clean_array_exams(void);
+void clean_array_exams_2(void);
 void init_test_room(void);
 void init_test_array_rooms(void);
 void clean_test_room(void);

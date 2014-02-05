@@ -1,15 +1,22 @@
 #include "structs.h"
 
-const uint8_t  MAX_TIMESLOT = 5;
-const uint16_t MAX_EXAM     = 8;
-const uint16_t MAX_ROOM     = 5;
-const uint8_t  FACULTY_SIZE = 2;
+uint8_t  MAX_TIMESLOT = 5;
+uint16_t MAX_EXAM     = 8;
+uint16_t MAX_ROOM     = 5;
+uint8_t  FACULTY_SIZE = 2;
+
 exam *exam1, *exam2, *exam3, *exam4, *exam5, *exam6, *exam7, *exam8;
 array_exams *exams;
 room *room1, *room2, *room3, *room4, *room5;
 array_rooms *rooms;
 
 void init_test_exam(void) {
+
+    MAX_TIMESLOT = 5;
+    MAX_EXAM     = 8;
+    MAX_ROOM     = 5;
+    FACULTY_SIZE = 2;
+
     {
         // Exam 1 - Analyse
         uint32_t students[] = {100000, 100001, 100002};
@@ -77,6 +84,35 @@ void init_test_exam(void) {
     }
 }
 
+void init_test_exam_2(void) {
+
+    MAX_TIMESLOT = 3;
+    MAX_EXAM     = 3;
+    MAX_ROOM     = 5;
+    FACULTY_SIZE = 2;
+
+    {
+        uint32_t students[] = {100000};
+        bool availabilities[] = {true, false, true};
+        exam1 = init_exam(10, 1, 555000, students, 3, classroom, availabilities,
+                          MAX_TIMESLOT, MAX_EXAM, NULL, 0);
+    }
+
+    {
+        uint32_t students[] = {100000};
+        bool availabilities[] = {false, true, true};
+        exam2 = init_exam(20, 1, 555001, students, 2, lab, availabilities,
+                          MAX_TIMESLOT, MAX_EXAM, NULL, 0);
+    }
+
+    {
+        uint32_t students[] = {100000};
+        bool availabilities[] = {true, true, false};
+        exam3 = init_exam(30, 0, 555002, students, 2, computer_room, availabilities,
+                          MAX_TIMESLOT, MAX_EXAM, NULL, 0);
+    }
+}
+
 void init_test_array_exams(uint16_t exams_size, exam **test_exams) {
     exams = init_array_exams(exams_size, test_exams);
 }
@@ -92,8 +128,19 @@ void clean_test_exam(void) {
     free_exam(exam8);
 }
 
+void clean_test_exam_2(void) {
+    free_exam(exam1);
+    free_exam(exam2);
+    free_exam(exam3);
+}
+
 void clean_array_exams(void) {
     clean_test_exam();
+    free(exams);
+}
+
+void clean_array_exams_2(void) {
+    clean_test_exam_2();
     free(exams);
 }
 
