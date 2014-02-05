@@ -32,3 +32,6 @@ You can compile the code using the Makefile in the root of this directory. This 
 [1] Asmuni, Hishammudin and Burke, Edmund K and Garibaldi, Jonathan M and McCollum, Barry and Parkes, Andrew J, *An investigation of fuzzy multiple heuristic orderings in the construction of university examination timetables*, Computers & Operations Research 2009
 
 [2] Qu, Rong and Burke, EK and McCollum, Barry and Merlot, Liam TG and Lee, Sau Y, *A survey of search methodologies and automated approaches for examination timetabling*, Computer Science Technical Report No. NOTTCS-TR-2006-4, UK, 2006
+
+[3] Gogos, Christos and Alefragis, Panayiotis and Housos, Efthymios, *An improved multi-staged algorithmic process for the solution of the examination timetabling problem*, Annals of Operations Research 194, 2012
+
