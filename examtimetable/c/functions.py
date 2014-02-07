@@ -7,7 +7,7 @@ import ctypes
 p = ctypes.POINTER
 
 # ExamTimetable imports
-from examtimetable import c_structs
+import structs as c_structs
 
 # Load libtimetable librairy
 MAIN_DIR_PATH = 'lib/libtimetable'
