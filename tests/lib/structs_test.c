@@ -21,13 +21,13 @@ static void test_init_exam(void) {
     CU_ASSERT_EQUAL(exam->room_id, NOT_ASSIGNED);
     CU_ASSERT_EQUAL(exam->timeslot, NOT_SCHEDULED);
     CU_ASSERT_EQUAL(exam->deps_size, 0);
-    CU_ASSERT_EQUAL(exam->availabilities[0], true);
-    CU_ASSERT_EQUAL(exam->availabilities[1], true);
-    CU_ASSERT_EQUAL(exam->availabilities[2], false);
-    CU_ASSERT_EQUAL(exam->availabilities[3], true);
-    CU_ASSERT_EQUAL(exam->availabilities[4], false);
-    CU_ASSERT_EQUAL(exam->conflicts[0], false);
-    CU_ASSERT_EQUAL(exam->conflicts[1], false);
+    CU_ASSERT_TRUE(exam->availabilities[0]);
+    CU_ASSERT_TRUE(exam->availabilities[1]);
+    CU_ASSERT_FALSE(exam->availabilities[2]);
+    CU_ASSERT_TRUE(exam->availabilities[3]);
+    CU_ASSERT_FALSE(exam->availabilities[4]);
+    CU_ASSERT_FALSE(exam->conflicts[0]);
+    CU_ASSERT_FALSE(exam->conflicts[1]);
     free_exam(exam);
 }
 
@@ -50,14 +50,47 @@ static void test_init_exam_with_deps(void) {
     CU_ASSERT_EQUAL(exam->deps_size, 2);
     CU_ASSERT_EQUAL(exam->deps[0], 2);
     CU_ASSERT_EQUAL(exam->deps[1], 3);
-    CU_ASSERT_EQUAL(exam->availabilities[0], true);
-    CU_ASSERT_EQUAL(exam->availabilities[1], true);
-    CU_ASSERT_EQUAL(exam->availabilities[2], false);
-    CU_ASSERT_EQUAL(exam->availabilities[3], true);
-    CU_ASSERT_EQUAL(exam->availabilities[4], false);
-    CU_ASSERT_EQUAL(exam->conflicts[0], false);
-    CU_ASSERT_EQUAL(exam->conflicts[1], false);
+    CU_ASSERT_TRUE(exam->availabilities[0]);
+    CU_ASSERT_TRUE(exam->availabilities[1]);
+    CU_ASSERT_FALSE(exam->availabilities[2]);
+    CU_ASSERT_TRUE(exam->availabilities[3]);
+    CU_ASSERT_FALSE(exam->availabilities[4]);
+    CU_ASSERT_FALSE(exam->conflicts[0]);
+    CU_ASSERT_FALSE(exam->conflicts[1]);
     free_exam(exam);
+}
+
+static void test_clone_exam(void) {
+    uint32_t students[] = {100000, 100001, 100002};
+    bool availabilities[] = {true, true, false, true, false};
+    uint16_t deps[] = {2, 3};
+    exam *exam_ = init_exam(1, 2, 555000, // Exam ID + Faculty ID + Teacher ID
+                           students, 3,// Students + Enrollement (n of students)
+                           classroom, // Room type
+                           availabilities, 5, // Availabilities + max timeslots
+                           2, deps, 2); // Max exams + deps + deps size
+    exam *clone = clone_exam(exam_, 2, 5);
+    CU_ASSERT_EQUAL(clone->exam_id, exam_->exam_id);
+    CU_ASSERT_EQUAL(clone->faculty, exam_->faculty);
+    CU_ASSERT_EQUAL(clone->teacher_id, exam_->teacher_id);
+    CU_ASSERT_EQUAL(clone->enrollment, exam_->enrollment);
+    CU_ASSERT_EQUAL(clone->students[0], exam_->students[0]);
+    CU_ASSERT_EQUAL(clone->students[1], exam_->students[1]);
+    CU_ASSERT_EQUAL(clone->students[2], exam_->students[2]);
+    CU_ASSERT_EQUAL(clone->room_type, exam_->room_type);
+    CU_ASSERT_EQUAL(clone->room_id, exam_->room_id);
+    CU_ASSERT_EQUAL(clone->timeslot, exam_->timeslot);
+    CU_ASSERT_EQUAL(clone->deps_size, exam_->deps_size);
+    CU_ASSERT_EQUAL(clone->availabilities[0], exam_->availabilities[0]);
+    CU_ASSERT_EQUAL(clone->availabilities[1], exam_->availabilities[1]);
+    CU_ASSERT_EQUAL(clone->availabilities[2], exam_->availabilities[2]);
+    CU_ASSERT_EQUAL(clone->availabilities[3], exam_->availabilities[3]);
+    CU_ASSERT_EQUAL(clone->availabilities[4], exam_->availabilities[4]);
+    CU_ASSERT_EQUAL(clone->conflicts[0], exam_->conflicts[0]);
+    CU_ASSERT_EQUAL(clone->conflicts[1], exam_->conflicts[1]);
+
+    free_exam(exam_);
+    free_exam(clone);
 }
 
 static void test_init_array_exams(void) {
@@ -69,10 +102,64 @@ static void test_init_array_exams(void) {
                             availabilities, 5, 2, NULL, 0);
     exam *exams[] = {exam1, exam2};
     array_exams *array_exams = init_array_exams(2, exams);
-    CU_ASSERT_EQUAL(2, array_exams->size);
-    CU_ASSERT_PTR_EQUAL(exam1, array_exams->data[0]);
-    CU_ASSERT_PTR_EQUAL(exam2, array_exams->data[1]);
+    CU_ASSERT_EQUAL(array_exams->size, 2);
+    CU_ASSERT_PTR_EQUAL(array_exams->data[0], exam1);
+    CU_ASSERT_PTR_EQUAL(array_exams->data[1], exam2);
     free_exams(array_exams);
+}
+
+static void test_clone_array_exams(void) {
+    uint32_t students[] = {100000, 100001, 100002};
+    bool availabilities[] = {true, true, false, true, false};
+    exam *exam1 = init_exam(1, 2, 555000, students, 3, classroom,
+                            availabilities, 5, 2, NULL, 0);
+    exam *exam2 = init_exam(1, 2, 555000, students, 3, classroom,
+                            availabilities, 5, 2, NULL, 0);
+    exam *exams[] = {exam1, exam2};
+    array_exams *array_exams_ = init_array_exams(2, exams);
+    array_exams *clone = clone_array_exams(array_exams_, 5);
+    CU_ASSERT_EQUAL(clone->size, array_exams_->size);
+    CU_ASSERT_PTR_NOT_EQUAL(clone->data[0], array_exams_->data[0]);
+    CU_ASSERT_PTR_NOT_EQUAL(clone->data[1], array_exams_->data[1]);
+    CU_ASSERT_EQUAL(clone->data[0]->exam_id, exam1->exam_id);
+    CU_ASSERT_EQUAL(clone->data[0]->faculty, exam1->faculty);
+    CU_ASSERT_EQUAL(clone->data[0]->teacher_id, exam1->teacher_id);
+    CU_ASSERT_EQUAL(clone->data[0]->enrollment, exam1->enrollment);
+    CU_ASSERT_EQUAL(clone->data[0]->students[0], exam1->students[0]);
+    CU_ASSERT_EQUAL(clone->data[0]->students[1], exam1->students[1]);
+    CU_ASSERT_EQUAL(clone->data[0]->students[2], exam1->students[2]);
+    CU_ASSERT_EQUAL(clone->data[0]->room_type, exam1->room_type);
+    CU_ASSERT_EQUAL(clone->data[0]->room_id, exam1->room_id);
+    CU_ASSERT_EQUAL(clone->data[0]->timeslot, exam1->timeslot);
+    CU_ASSERT_EQUAL(clone->data[0]->deps_size, exam1->deps_size);
+    CU_ASSERT_EQUAL(clone->data[0]->availabilities[0], exam1->availabilities[0]);
+    CU_ASSERT_EQUAL(clone->data[0]->availabilities[1], exam1->availabilities[1]);
+    CU_ASSERT_EQUAL(clone->data[0]->availabilities[2], exam1->availabilities[2]);
+    CU_ASSERT_EQUAL(clone->data[0]->availabilities[3], exam1->availabilities[3]);
+    CU_ASSERT_EQUAL(clone->data[0]->availabilities[4], exam1->availabilities[4]);
+    CU_ASSERT_EQUAL(clone->data[0]->conflicts[0], exam1->conflicts[0]);
+    CU_ASSERT_EQUAL(clone->data[0]->conflicts[1], exam1->conflicts[1]);
+
+    CU_ASSERT_EQUAL(clone->data[1]->exam_id, exam2->exam_id);
+    CU_ASSERT_EQUAL(clone->data[1]->faculty, exam2->faculty);
+    CU_ASSERT_EQUAL(clone->data[1]->teacher_id, exam2->teacher_id);
+    CU_ASSERT_EQUAL(clone->data[1]->enrollment, exam2->enrollment);
+    CU_ASSERT_EQUAL(clone->data[1]->students[0], exam2->students[0]);
+    CU_ASSERT_EQUAL(clone->data[1]->students[1], exam2->students[1]);
+    CU_ASSERT_EQUAL(clone->data[1]->students[2], exam2->students[2]);
+    CU_ASSERT_EQUAL(clone->data[1]->room_type, exam2->room_type);
+    CU_ASSERT_EQUAL(clone->data[1]->room_id, exam2->room_id);
+    CU_ASSERT_EQUAL(clone->data[1]->timeslot, exam2->timeslot);
+    CU_ASSERT_EQUAL(clone->data[1]->deps_size, exam2->deps_size);
+    CU_ASSERT_EQUAL(clone->data[1]->availabilities[0], exam2->availabilities[0]);
+    CU_ASSERT_EQUAL(clone->data[1]->availabilities[1], exam2->availabilities[1]);
+    CU_ASSERT_EQUAL(clone->data[1]->availabilities[2], exam2->availabilities[2]);
+    CU_ASSERT_EQUAL(clone->data[1]->availabilities[3], exam2->availabilities[3]);
+    CU_ASSERT_EQUAL(clone->data[1]->availabilities[4], exam2->availabilities[4]);
+    CU_ASSERT_EQUAL(clone->data[1]->conflicts[0], exam2->conflicts[0]);
+    CU_ASSERT_EQUAL(clone->data[1]->conflicts[1], exam2->conflicts[1]);
+    free_exams(array_exams_);
+    free_exams(clone);
 }
 
 static void test_init_room(void) {
@@ -87,15 +174,56 @@ static void test_init_room(void) {
     free_room(room);
 }
 
+static void test_clone_room(void) {
+    room *room_ = init_room(1, classroom, 1000, 1, 2);
+    room *clone = clone_room(room_, 2);
+
+    CU_ASSERT_EQUAL(clone->room_id, room_->room_id);
+    CU_ASSERT_EQUAL(clone->type, room_->type);
+    CU_ASSERT_EQUAL(clone->capacity, room_->capacity);
+    CU_ASSERT_EQUAL(clone->faculty, room_->faculty);
+    CU_ASSERT_EQUAL(clone->assignation[0], room_->assignation[0]);
+    CU_ASSERT_EQUAL(clone->assignation[1], room_->assignation[1]);
+
+    free_room(room_);
+    free_room(clone);
+}
+
 static void test_init_array_rooms(void) {
     room *room1 = init_room(1, classroom, 1000, 0, 2);
     room *room2 = init_room(2, classroom, 1000, 0, 2);
     room *rooms[] = {room1, room2};
     array_rooms *array_rooms = init_array_rooms(2, rooms);
-    CU_ASSERT_EQUAL(2, array_rooms->size);
-    CU_ASSERT_PTR_EQUAL(room1, array_rooms->data[0]);
-    CU_ASSERT_PTR_EQUAL(room2, array_rooms->data[1]);
+    CU_ASSERT_EQUAL(array_rooms->size, 2);
+    CU_ASSERT_PTR_EQUAL(array_rooms->data[0], room1);
+    CU_ASSERT_PTR_EQUAL(array_rooms->data[1], room2);
     free_rooms(array_rooms);
+}
+
+static void test_clone_array_rooms(void) {
+    room *room1 = init_room(1, classroom, 1000, 0, 2);
+    room *room2 = init_room(2, classroom, 1000, 0, 2);
+    room *rooms[] = {room1, room2};
+    array_rooms *array_rooms_ = init_array_rooms(2, rooms);
+    array_rooms *clone = clone_array_rooms(array_rooms_, 2);
+    CU_ASSERT_EQUAL(clone->size, 2);
+    CU_ASSERT_PTR_NOT_EQUAL(clone->data[0], room1);
+    CU_ASSERT_PTR_NOT_EQUAL(clone->data[1], room2);
+    CU_ASSERT_EQUAL(clone->data[0]->room_id, room1->room_id);
+    CU_ASSERT_EQUAL(clone->data[0]->type, room1->type);
+    CU_ASSERT_EQUAL(clone->data[0]->capacity, room1->capacity);
+    CU_ASSERT_EQUAL(clone->data[0]->faculty, room1->faculty);
+    CU_ASSERT_EQUAL(clone->data[0]->assignation[0], room1->assignation[0]);
+    CU_ASSERT_EQUAL(clone->data[0]->assignation[1], room1->assignation[1]);
+    CU_ASSERT_EQUAL(clone->data[1]->room_id, room2->room_id);
+    CU_ASSERT_EQUAL(clone->data[1]->type, room2->type);
+    CU_ASSERT_EQUAL(clone->data[1]->capacity, room2->capacity);
+    CU_ASSERT_EQUAL(clone->data[1]->faculty, room2->faculty);
+    CU_ASSERT_EQUAL(clone->data[1]->assignation[0], room2->assignation[0]);
+    CU_ASSERT_EQUAL(clone->data[1]->assignation[1], room2->assignation[1]);
+
+    free_rooms(array_rooms_);
+    free_rooms(clone);
 }
 
 static void test_get_rooms_sizes(void) {
@@ -128,9 +256,13 @@ int structs_test_suite(void) {
     CU_TestInfo tests[] = {
         {"init_exam()", test_init_exam},
         {"init_exam() with deps", test_init_exam_with_deps},
+        {"clone_exam()", test_clone_exam},
         {"init_array_exams()", test_init_array_exams},
+        {"clone_array_exams()", test_clone_array_exams},
         {"init_room()", test_init_room},
+        {"clone_room()", test_clone_room},
         {"init_array_rooms()", test_init_array_rooms},
+        {"clone_array_rooms()", test_clone_array_rooms},
         {"get_rooms_sizes()", test_get_rooms_sizes},
         {"get_rooms_matrix()", test_get_rooms_matrix},
         CU_TEST_INFO_NULL

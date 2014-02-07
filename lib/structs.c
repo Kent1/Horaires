@@ -29,6 +29,23 @@ room *init_room(uint16_t id, room_type type, uint16_t capacity,
     return new_room;
 }
 
+room *clone_room(room *room_, uint8_t max_timeslot) {
+    room *clone = malloc(sizeof(room));
+
+    clone->room_id  = room_->room_id;
+    clone->type     = room_->type;
+    clone->capacity = room_->capacity;
+    clone->faculty  = room_->faculty;
+    /* Allocates an array such that for each input (corresponding to a timeslot),
+       the constant NOT_ASSIGNED at initial time.*/
+    clone->assignation = malloc(max_timeslot * sizeof(uint16_t));
+
+    for (int i = 0; i < max_timeslot; i++)
+        clone->assignation[i] = room_->assignation[i];
+
+    return clone;
+}
+
 array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms) {
     array_rooms *array = malloc(sizeof(array_rooms));
     array->data = malloc(rooms_size * sizeof(room *));
@@ -38,6 +55,17 @@ array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms) {
         array->data[i] = rooms[i];
 
     return array;
+}
+
+array_rooms *clone_array_rooms(array_rooms *rooms, uint8_t max_timeslot) {
+    array_rooms *clone = malloc(sizeof(array_rooms));
+    clone->data = malloc(rooms->size * sizeof(room *));
+    clone->size = rooms->size;
+
+    for(uint16_t i = 0; i < rooms->size; i++)
+        clone->data[i] = clone_room(rooms->data[i], max_timeslot);
+
+    return clone;
 }
 
 size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms) {
@@ -153,6 +181,55 @@ exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
         new_exam->deps[i] = deps[i];
     }
     return new_exam;
+}
+
+exam *clone_exam(exam *exam_, uint16_t exams_size, uint8_t max_timeslot) {
+    exam *clone = malloc(sizeof(exam));
+
+    clone->exam_id    = exam_->exam_id;
+    clone->faculty    = exam_->faculty;
+    clone->teacher_id = exam_->teacher_id;
+    clone->enrollment = exam_->enrollment;
+    clone->room_type  = exam_->room_type;
+    clone->room_id    = exam_->room_id;
+    clone->timeslot   = exam_->timeslot;
+    clone->deps_size  = exam_->deps_size;
+
+    // Fills arrays with a proper copy
+    clone->conflicts = malloc(exams_size * sizeof(bool));
+
+    for (uint16_t i = 0; i < exams_size; i++) {
+        clone->conflicts[i] = exam_->conflicts[i];
+    }
+
+    clone->students = malloc(exam_->enrollment * sizeof(uint32_t));
+
+    for (uint16_t i = 0; i < exam_->enrollment; i++) {
+        clone->students[i] = exam_->students[i];
+    }
+
+    clone->availabilities = malloc(max_timeslot * sizeof(bool));
+
+    for (uint8_t i = 0; i < max_timeslot; i++) {
+        clone->availabilities[i] = exam_->availabilities[i];
+    }
+
+    clone->deps = malloc(exam_->deps_size * sizeof(uint16_t));
+    for (uint8_t i = 0; i < exam_->deps_size; i++) {
+        clone->deps[i] = exam_->deps[i];
+    }
+    return clone;
+}
+
+array_exams *clone_array_exams(array_exams *exams, uint8_t max_timeslot) {
+    array_exams *clone = malloc(sizeof(array_exams));
+    clone->data = malloc(exams->size * sizeof(exam *));
+    clone->size = exams->size;
+
+    for(uint16_t i = 0; i < exams->size; i++)
+        clone->data[i] = clone_exam(exams->data[i], exams->size, max_timeslot);
+
+    return clone;
 }
 
 void free_exam(exam *e) {
