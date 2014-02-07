@@ -21,6 +21,14 @@
  * @param exams An array of exams with a feasible schedule(struct array_exams).
  * @return A feasible schedule not worse than the given one.
  */
-array_exams iterative_local_search(array_exams *exams);
+array_exams* iterative_local_search(array_exams *exams);
+
+float fitness(array_exams *exams);
+
+array_exams* perturbation(array_exams *best);
+
+bool acceptance_criterion(array_exams *candidate, float best_score, float candidate_score);
+
+bool termination_condition(array_exams *best, float best_score);
 
 #endif /*ILS_HEURISTICS_H_*/

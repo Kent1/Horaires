@@ -14,10 +14,10 @@
 #include "structs.h"
 #include "ils_heuristics.h"
 
-array_exams
+array_exams *
 iterative_local_search(array_exams *exams) {
-	array_exams best, candidate;
-	uint32_t best_score, candidate_score;
+	array_exams *best, *candidate;
+	float best_score, candidate_score;
 
 	best = exams;
 	best_score = fitness(best);
@@ -37,4 +37,24 @@ iterative_local_search(array_exams *exams) {
 	} while(termination_condition(best, best_score));
 
 	return best;
+}
+
+float fitness(array_exams *exams) {
+	// ToDo
+	return 0;
+}
+
+array_exams* perturbation(array_exams *best) {
+	// ToDo
+	return NULL;
+}
+
+bool acceptance_criterion(array_exams *candidate, float best_score, float candidate_score) {
+	// ToDo
+	return false;
+}
+
+bool termination_condition(array_exams *best, float best_score) {
+	// ToDo
+	return true;
 }
