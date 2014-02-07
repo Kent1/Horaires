@@ -73,7 +73,10 @@ float local_fitness(array_exams *exams, uint16_t index) {
             conflicts++;
         }
     }
-    return 1.0*distance/conflicts;
+    if(conflicts)
+        return 1.0*distance/conflicts;
+    else
+        return 0;
 }
 
 array_exams* perturbation(array_exams *best) {
