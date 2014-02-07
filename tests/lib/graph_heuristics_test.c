@@ -1,6 +1,6 @@
 #include "util.h"
 #include "structs.h"
-#include "heuristics.h"
+#include "graph_heuristics.h"
 #include "test_util.h"
 #include "preprocessing.h"
 #include "CUnit/Basic.h"
@@ -178,7 +178,7 @@ static void test_color_graph_backtrack(void) {
     clean_array_exams_2();
 }
 
-int heuristics_test_suite(void) {
+int graph_heuristics_test_suite(void) {
     CU_TestInfo tests[] = {
         {"compute_min_timeslot()", test_compute_min_timeslot},
         {"set_possible_timeslot()", test_set_possible_timeslot},
@@ -193,7 +193,7 @@ int heuristics_test_suite(void) {
     };
 
     CU_SuiteInfo suites[] = {
-        {"heuristics.c", NULL, NULL, tests},
+        {"graph_heuristics.c", NULL, NULL, tests},
         CU_SUITE_INFO_NULL
     };
 

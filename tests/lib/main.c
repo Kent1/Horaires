@@ -2,7 +2,7 @@
 
 int structs_test_suite(void);
 int preprocessing_test_suite(void);
-int heuristics_test_suite(void);
+int graph_heuristics_test_suite(void);
 
 
 int main(void) {
@@ -11,7 +11,7 @@ int main(void) {
 
     int (* suites_functions[])(void) = {structs_test_suite,
                                         preprocessing_test_suite,
-                                        heuristics_test_suite
+                                        graph_heuristics_test_suite
                                         };
 
     int size = sizeof(suites_functions)/sizeof(suites_functions)[0];

@@ -12,7 +12,7 @@
 
 #include "util.h"
 #include "structs.h"
-#include "heuristics.h"
+#include "graph_heuristics.h"
 
 
 exam *get_first_exam(array_exams *exams, uint8_t max_timeslot) {

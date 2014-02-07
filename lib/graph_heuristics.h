@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef HEURISTICS_H_
-#define HEURISTICS_H_
+#ifndef GRAPH_HEURISTICS_H_
+#define GRAPH_HEURISTICS_H_
 
 #define NOT_SCHEDULED UINT8_MAX
 #define NO_SAT        UINT8_MAX
@@ -91,4 +91,4 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t facu
  */
 bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot);
 
-#endif /*HEURISTICS_H_*/
+#endif /*GRAPH_HEURISTICS_H_*/
