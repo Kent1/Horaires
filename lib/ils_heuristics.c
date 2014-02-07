@@ -16,34 +16,44 @@
 
 array_exams *
 iterative_local_search(array_exams *exams) {
-    array_exams *best, *candidate;
-    float best_score, candidate_score;
+    // array_exams *best, *candidate;
+    // float best_score, candidate_score;
 
-    best = exams;
-    best_score = fitness(best);
+    // best = exams;
+    // best_score = fitness(best);
 
-    do {
-        candidate = perturbation(best);
-        candidate_score = fitness(candidate);
+    // do {
+    //     candidate = perturbation(best);
+    //     candidate_score = fitness(candidate);
 
-        if(! acceptance_criterion(candidate, best_score, candidate_score)) {
-            free_exams(candidate);
-            continue;
-        }
-        free_exams(best);
+    //     if(! acceptance_criterion(candidate, best_score, candidate_score)) {
+    //         free_exams(candidate);
+    //         continue;
+    //     }
+    //     free_exams(best);
 
-        best = candidate;
-        best_score = candidate_score;
-    } while(termination_condition(best, best_score));
+    //     best = candidate;
+    //     best_score = candidate_score;
+    // } while(termination_condition(best, best_score));
 
-    return best;
+    // return best;
+    return 0;
 }
 
-float fitness(array_exams *exams) {
+float fitness(array_exams *exams, exam *worst, float *exam_fitness, float min_threshold_fitness) {
+    worst = NULL;
     float fitness = 0;
+    float worst_fitness = FLT_MAX;
     for(int i = 0; i < exams->size; i++) {
-        fitness += local_fitness(exams, i);
+        float l_fitness = local_fitness(exams, i);
+        fitness += l_fitness;
+        /* Warning : ignore exam with exactly same fitness */
+        if(l_fitness < worst_fitness && l_fitness > min_threshold_fitness) {
+            worst_fitness = l_fitness;
+            worst = exams->data[i];
+        }
     }
+    *exam_fitness = worst_fitness;
     return fitness;
 }
 
@@ -63,7 +73,7 @@ float local_fitness(array_exams *exams, uint16_t index) {
             conflicts++;
         }
     }
-    return distance*-1/conflicts;
+    return 1.0*distance/conflicts;
 }
 
 array_exams* perturbation(array_exams *best) {

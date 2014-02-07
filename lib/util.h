@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <float.h>
 
 #define MAX(A,B) ((A < B) ? B : A)
 #define MIN(A,B) ((A < B) ? A : B)

@@ -23,7 +23,7 @@
  */
 array_exams* iterative_local_search(array_exams *exams);
 
-float fitness(array_exams *exams);
+float fitness(array_exams *exams, exam *worst, float *exam_fitness, float min_threshold_fitness);
 
 float local_fitness(array_exams *exams, uint16_t index);
 
