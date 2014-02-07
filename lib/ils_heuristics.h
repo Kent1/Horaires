@@ -14,16 +14,18 @@
  * (feasible) one. Receiving a simple feasible schedule, the function
  * searches to make a better solution using an objective function to
  * maximize representing the respect of the soft constraints.
- * 
+ *
  * The stop condition can be of 3 types : total time, number of iteration
  * without getting a better solution and a threshold to reach.
- * 
+ *
  * @param exams An array of exams with a feasible schedule(struct array_exams).
  * @return A feasible schedule not worse than the given one.
  */
 array_exams* iterative_local_search(array_exams *exams);
 
 float fitness(array_exams *exams);
+
+float local_fitness(array_exams *exams, uint16_t index);
 
 array_exams* perturbation(array_exams *best);
 
