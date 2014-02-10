@@ -21,22 +21,23 @@ def main():
     with open(args.file) as f:
         data = json.load(f)
 
-    exams = []
+    exams = {}
     for exam in data['exams']:
         temp = examtimetable.Exam(exam['exam_id'], '', exam['faculty'],
                                   exam['room_type'], exam['teacher_id'],
                                   exam['students'], exam['availabilities'],
                                   exam['dependencies'])
-        exams.append(temp)
+        exams[exam['exam_id']] = temp
 
-    rooms = []
+    rooms = {}
     for room in data['rooms']:
         temp = examtimetable.Room(room['room_id'], '', room['faculty'],
                                   room['capacity'], room['room_type'])
-        rooms.append(temp)
+        rooms[room['room_id']] = temp
 
     timetable = examtimetable.Timetable(data['max_timeslot'], exams, rooms)
     timetable.schedule()
+    timetable.print_timetable()
 
 
 if __name__ == '__main__':

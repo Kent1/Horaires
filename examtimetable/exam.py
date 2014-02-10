@@ -1,7 +1,7 @@
 class Exam(object):
 
     def __init__(self, id, name, faculty, room_type, teacher,
-                 student=[], availabilities=[], dependencies=[]):
+                 student=[], availabilities=[], conflicts=[], dependencies=[]):
         self.id = id
         self.name = name
         self.faculty = faculty
@@ -11,4 +11,5 @@ class Exam(object):
         self.timeslot = None
         self.students = student or []
         self.availabilities = availabilities or []
+        self.conflicts = conflicts or []
         self.dependencies = dependencies or []

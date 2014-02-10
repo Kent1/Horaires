@@ -42,6 +42,7 @@ class Exam(ctypes.Structure):
         ("availabilities", p(ctypes.c_bool)),
         ("conflicts",      p(ctypes.c_bool)),
         ("deps",           p(ctypes.c_uint16)),
+        ("deps_size",      ctypes.c_uint8),
     ]
 
 
