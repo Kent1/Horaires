@@ -29,6 +29,20 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
                  uint8_t max_timeslot);
 
 /**
+ * This function try to find a free room for the exam given.
+ *
+ * @param  exam_        The exam which a room must be find
+ * @param  rooms        An 3-dimensional array of rooms. The first given indice
+ *                      is the faculty of the room. The second indice is the
+ *                      type of the room (struct matrix_rooms).
+ * @param  faculty_size The number of different faculties.
+ * @param  max_timeslot Maximum available timeslots.
+ * @return              True if a room was found, false otherwise.
+ */
+bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms, uint8_t faculty_size,
+                 uint8_t max_timeslot);
+
+/**
  * This function set to NO_ASSIGNED all rooms et all exams given in parameters.
  *
  * @param exams        An array of scheduled exams (struct array_exams).

@@ -22,24 +22,9 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
     for (uint16_t i = 0; i < exams->size; i++) {
         exam *exam_ = exams->data[i];
 
-        // Research a unassigned room for the exam exam_
-        for (uint16_t j = 0; j < rooms->size[exam_->faculty][exam_->room_type]; j++) {
-
-            room *room_ = rooms->data[exam_->faculty][exam_->room_type][j];
-
-            /* If a room, corresponding in faculty & type, is unassigned and
-               can contain the number of students, then the room is assigned.*/
-            if (room_->assignation[exam_->timeslot] == NOT_ASSIGNED &&
-                    room_->capacity >= exam_->enrollment) {
-                room_->assignation[exam_->timeslot] = exam_->exam_id;
-                exam_->room_id = room_->room_id;
-                break;
-            }
-        }
-
         /* If true, the reseach has failed and all values are reset before
            launching the backtrack for the schedule. */
-        if (exam_->room_id == NOT_ASSIGNED) {
+        if (!room_assign_single_exam(exam_, rooms, faculty_size, max_timeslot)) {
             reset_room_assigned(exams, rooms, faculty_size, max_timeslot);
             return false;
         }
@@ -47,6 +32,26 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
 
     // Only if a room assignement has been found
     return true;
+}
+
+bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms,
+                             uint8_t faculty_size, uint8_t max_timeslot) {
+    // Research a unassigned room for the exam exam_
+    for (uint16_t j = 0; j < rooms->size[exam_->faculty][exam_->room_type]; j++) {
+
+        room *room_ = rooms->data[exam_->faculty][exam_->room_type][j];
+
+        /* If a room, corresponding in faculty & type, is unassigned and
+           can contain the number of students, then the room is assigned.*/
+        if (room_->assignation[exam_->timeslot] == NOT_ASSIGNED &&
+                room_->capacity >= exam_->enrollment) {
+            room_->assignation[exam_->timeslot] = exam_->exam_id;
+            exam_->room_id = room_->room_id;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
