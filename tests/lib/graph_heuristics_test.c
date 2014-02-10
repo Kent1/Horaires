@@ -128,36 +128,6 @@ static void test_get_first_exam(void) {
     clean_array_exams();
 }
 
-static void test_room_assign(void) {
-    init_test_exam_2();
-    exam *test_exams[] = {exam1, exam2, exam3};
-    init_test_array_exams(3, test_exams);
-    preprocess(exams);
-    init_test_array_rooms();
-    room *test_rooms[] = {room1, room2, room3, room4, room5};
-    size_t **rooms_limit = get_rooms_sizes(FACULTY_SIZE, rooms);
-    matrix_rooms *matrix_rooms = get_rooms_matrix(FACULTY_SIZE, rooms,
-                                 rooms_limit);
-    /* Manually scheduled : E1 : 1, E2 : 3, E3 : 2 */
-    exams->data[0]->timeslot = 0;
-    exams->data[1]->timeslot = 2;
-    exams->data[2]->timeslot = 1;
-    room_assign(exams, matrix_rooms, 2, MAX_TIMESLOT);
-    for(int i = 0 ; i < MAX_EXAM; i++) {
-        /* Room assigned ? */
-        uint16_t room_id = exams->data[i]->room_id;
-        CU_ASSERT_NOT_EQUAL(room_id, NOT_ASSIGNED);
-        for(int j = 0; j < MAX_ROOM; j++) {
-            if(test_rooms[j]->room_id == room_id) {
-                CU_ASSERT_EQUAL(test_rooms[j]->type, exams->data[i]->room_type);
-            }
-        }
-    }
-    clean_test_room();
-    clean_array_exams_2();
-
-}
-
 static void test_color_graph_backtrack(void) {
     init_test_exam_2();
     exam *test_exams[] = {exam1, exam2, exam3};
@@ -187,7 +157,6 @@ int graph_heuristics_test_suite(void) {
         {"get_exams_saturation_degree() (Exam 1 scheduled)",
             test_get_exams_saturation_degree_scheduled},
         {"get_first_exam()", test_get_first_exam},
-        {"room_assign()", test_room_assign},
         {"color_graph_backtrack()", test_color_graph_backtrack},
         CU_TEST_INFO_NULL
     };
