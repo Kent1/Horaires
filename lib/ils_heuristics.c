@@ -15,7 +15,7 @@
 #include "ils_heuristics.h"
 
 array_exams *
-iterative_local_search(array_exams *exams) {
+iterative_local_search(array_exams *exams, uint8_t max_timeslot) {
     // array_exams *best, *candidate;
     // float best_score, candidate_score;
 
@@ -26,14 +26,14 @@ iterative_local_search(array_exams *exams) {
     //     candidate = perturbation(best);
     //     candidate_score = fitness(candidate);
 
-    //     if(! acceptance_criterion(candidate, best_score, candidate_score)) {
-    //         free_exams(candidate);
-    //         continue;
-    //     }
-    //     free_exams(best);
+    //     if(acceptance_criterion(candidate, best_score, candidate_score)) {
+    //         free_exams(best);
 
-    //     best = candidate;
-    //     best_score = candidate_score;
+    //         best = candidate;
+    //         best_score = candidate_score;
+    //     } else {
+    //         free_exams(candidate);
+    //     }
     // } while(termination_condition(best, best_score));
 
     // return best;
@@ -44,7 +44,7 @@ float fitness(array_exams *exams, exam *worst, float *exam_fitness, float min_th
     worst = NULL;
     float fitness = 0;
     float worst_fitness = FLT_MAX;
-    for(int i = 0; i < exams->size; i++) {
+    for(uint16_t i = 0; i < exams->size; i++) {
         float l_fitness = local_fitness(exams, i);
         fitness += l_fitness;
         /* Warning : ignore exam with exactly same fitness */
@@ -54,6 +54,16 @@ float fitness(array_exams *exams, exam *worst, float *exam_fitness, float min_th
         }
     }
     *exam_fitness = worst_fitness;
+    return fitness;
+}
+
+float fitness(array_exams *exams) {
+    float fitness = 0;
+    for(uint16_t i = 0; i < exams->size; i++) {
+        float l_fitness = local_fitness(exams, i);
+        fitness += l_fitness;
+    }
+
     return fitness;
 }
 
@@ -79,9 +89,48 @@ float local_fitness(array_exams *exams, uint16_t index) {
         return 0;
 }
 
-array_exams* perturbation(array_exams *best) {
-    // ToDo
-    return NULL;
+array_exams* perturbation(array_exams *current, uint16_t id_worst, float initial_fitness, uint8_t max_timeslot) {
+    array_exams *best_candidate = NULL;
+    float best_candidate_score = FLT_MIN;
+
+    uint8_t old_timeslot = current->data[id_worst]->timeslot;
+
+    /* For each timeslot, search a better solution by spreading the exam with the next
+       worst fitness known, test by deplacing to each timeslot available and check that
+       the result remains feasible. */
+    for(uint8_t i = 0; i < max_timeslot; i++) {
+        float candidate_score = 0;
+        candidate = clone_array_exams(current, max_timeslot);
+
+        /* Check if there exists a conflict with exams scheduled
+         in the timeslot i. If not, just move, otherwhise use
+         Kempe Chains algorithm. */
+        if(check_conflict(id_worst, i)) { // KC
+            kempe_chains(id_worst, i, switch_in, switch_out);
+
+            change_timeslot(switch_out, old_timeslot);
+            change_timeslot(switch_in, i);
+
+            // Reset rooms for both timeslots i and old_timeslot
+        } else { // No conflict, just move
+            candidate->data[id_worst]->timeslot = i;
+            // Desassignation room
+        }
+
+        candidate_score = fitness(candidate);
+
+        // Saves best permutation
+        if(best_candidate_score < candidate_score) {
+            free_exams(best_candidate);
+
+            best_candidate = candidate;
+            best_candidate_score = candidate_score;
+        } else {
+            free_exams(candidate);
+        }
+    }
+
+    return best_candidate;
 }
 
 bool acceptance_criterion(array_exams *candidate, float best_score, float candidate_score) {

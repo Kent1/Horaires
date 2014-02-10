@@ -21,13 +21,15 @@
  * @param exams An array of exams with a feasible schedule(struct array_exams).
  * @return A feasible schedule not worse than the given one.
  */
-array_exams* iterative_local_search(array_exams *exams);
+array_exams* iterative_local_search(array_exams *exams, uint8_t max_timeslot);
 
 float fitness(array_exams *exams, exam *worst, float *exam_fitness, float min_threshold_fitness);
 
+float fitness(array_exams *exams);
+
 float local_fitness(array_exams *exams, uint16_t index);
 
-array_exams* perturbation(array_exams *best);
+array_exams* perturbation(array_exams *current, uint16_t id_worst, float initial_fitness, uint8_t max_timeslot);
 
 bool acceptance_criterion(array_exams *candidate, float best_score, float candidate_score);
 
