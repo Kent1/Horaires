@@ -41,9 +41,8 @@ iterative_local_search(array_exams *exams, uint8_t max_timeslot) {
 }
 
 float
-fitness(array_exams *exams, exam *worst, float *exam_fitness,
+fitness(array_exams *exams, exam **worst, float *exam_fitness,
         float min_threshold_fitness) {
-    worst = NULL;
     float fitness = 0;
     float worst_fitness = FLT_MAX;
 
@@ -54,11 +53,12 @@ fitness(array_exams *exams, exam *worst, float *exam_fitness,
         /* Warning : ignore exam with exactly same fitness */
         if (l_fitness < worst_fitness && l_fitness > min_threshold_fitness) {
             worst_fitness = l_fitness;
-            worst = exams->data[i];
+            *worst = exams->data[i];
         }
     }
 
     *exam_fitness = worst_fitness;
+
     return fitness;
 }
 
@@ -80,7 +80,7 @@ local_fitness(array_exams *exams, uint16_t index) {
     uint16_t conflicts = 0;
     uint16_t distance = 0;
 
-    for (int i = 0; i < exams->size; i++) {
+    for (uint16_t i = 0; i < exams->size; i++) {
         /* Skip if i is index */
         if (i == index)
             continue;
