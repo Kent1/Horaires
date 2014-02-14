@@ -39,8 +39,7 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
  * @param  max_timeslot Maximum available timeslots.
  * @return              True if a room was found, false otherwise.
  */
-bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms, uint8_t faculty_size,
-                 uint8_t max_timeslot);
+bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms);
 
 /**
  * This function set to NO_ASSIGNED all rooms et all exams given in parameters.
@@ -54,5 +53,9 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms, uint8_t faculty_s
  */
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
                          uint8_t faculty_size, uint8_t max_timeslot);
+
+bool valid_assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
+                                uint8_t timeslot);
+
 
 #endif /*ROOM_ASSIGN_H_*/
