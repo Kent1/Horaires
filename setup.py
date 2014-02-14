@@ -23,6 +23,9 @@ setup(
     author=authors,
     url='',
     version='0.1',
-    packages=['examtimetable'],
+    packages=['examtimetable', 'examtimetable.c'],
+    data_files=[
+        ('lib', ['lib/libtimetable.so']),
+    ],
     license=license,
 )

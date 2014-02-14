@@ -9,12 +9,14 @@ p = ctypes.POINTER
 # ExamTimetable imports
 import structs as c_structs
 
+_ROOT = os.path.abspath(os.path.dirname(__file__))
+libtimetable = os.path.join(_ROOT, '../..', 'lib/libtimetable')
+
 # Load libtimetable librairy
-MAIN_DIR_PATH = 'lib/libtimetable'
 if os.uname()[0] == 'Darwin':
-    lib = ctypes.cdll.LoadLibrary(MAIN_DIR_PATH + '.dylib')
+    lib = ctypes.cdll.LoadLibrary(libtimetable + '.dylib')
 elif os.uname()[0] == 'Linux':
-    lib = ctypes.cdll.LoadLibrary(MAIN_DIR_PATH + '.so')
+    lib = ctypes.cdll.LoadLibrary(libtimetable + '.so')
 else:
     raise Exception('OS not supported')
 
