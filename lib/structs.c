@@ -161,6 +161,21 @@ void free_rooms(array_rooms *rooms) {
     free(rooms);
 }
 
+
+void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_room_type) {
+    for(uint8_t i = 0; i < faculty_size; i++) {
+        for(uint8_t j = 0; j < max_room_type; j++) {
+            for(uint16_t k = 0; k < rooms->size[i][j]; k++)
+                free_room(rooms->data[i][j][k]);
+            free(rooms->data[i][j]);
+        }
+        free(rooms->size[i]);
+        free(rooms->data[i]);
+    }
+    free(rooms->size);
+    free(rooms->data);
+}
+
 /* Functions associated with the type exam */
 
 array_exams *init_array_exams(uint16_t exams_size, exam **exams) {

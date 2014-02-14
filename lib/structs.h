@@ -227,6 +227,8 @@ void free_room(room *r);
  */
 void free_rooms(array_rooms *rooms);
 
+void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_room_type);
+
 /**
  * Makes the allocation and initialization of an exam. The parameters are
  * length variable, to have this function dynamic. It takes, in this order,
