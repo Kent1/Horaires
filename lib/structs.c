@@ -89,15 +89,15 @@ matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t 
     // Allocation of an array of counters for each array of rooms (3rd dimension)
     size_t **counters  = malloc(faculty_size * sizeof(size_t *));
     // rooms_matrix initializes the 3-dim array
-    room ****rooms_3d = malloc(faculty_size * sizeof(room**));
+    room ****rooms_3d = malloc(faculty_size * sizeof(room***));
 
     // Allocates/Initializes the other dimensions
     for (uint8_t i = 0; i < faculty_size; i++) {
         counters[i] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
 
-        rooms_3d[i] = malloc(MAX_ROOM_TYPE * sizeof(room*));
+        rooms_3d[i] = malloc(MAX_ROOM_TYPE * sizeof(room**));
         for (uint8_t j = 0; j < MAX_ROOM_TYPE; j++)
-            rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room));
+            rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room*));
     }
 
     // Fills the 3-dim array using the counters
@@ -118,6 +118,35 @@ matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t 
     matrix->size = rooms_limits;
 
     return matrix;
+}
+
+matrix_rooms *clone_matrix_rooms(matrix_rooms *rooms, uint8_t max_timeslot, uint8_t faculty_size, uint8_t max_room_type) {
+    // Allocation of the struct matrix
+    matrix_rooms *clone = malloc(sizeof(matrix_rooms));
+    size_t **clone_size = malloc(faculty_size * sizeof(size_t*));
+    // rooms_matrix initializes the 3-dim array
+    room ****rooms_3d = malloc(faculty_size * sizeof(room***));
+
+    // Allocates/Initializes the other dimensions
+    for (uint8_t i = 0; i < faculty_size; i++) {
+        clone_size[i] = malloc(max_room_type * sizeof(size_t));
+
+        rooms_3d[i] = malloc(max_room_type * sizeof(room**));
+
+        for (uint8_t j = 0; j < max_room_type; j++) {
+            clone_size[i][j] = rooms->size[i][j];
+            rooms_3d[i][j] = malloc(rooms->size[i][j] * sizeof(room*));
+
+            for (size_t k = 0; k < rooms->size[i][j]; k++) {
+                rooms_3d[i][j][k] = clone_room(rooms->data[i][j][k], max_timeslot);
+            }
+        }
+    }
+
+    clone->data = rooms_3d;
+    clone->size = clone_size;
+
+    return clone;
 }
 
 void free_room(room *r) {

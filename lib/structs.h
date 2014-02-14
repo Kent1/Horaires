@@ -210,6 +210,8 @@ size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms);
  */
 matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits);
 
+matrix_rooms *clone_matrix_rooms(matrix_rooms *rooms, uint8_t max_timeslot, uint8_t faculty_size, uint8_t max_room_type);
+
 /**
  * Frees all the memory used by a room r.
  *

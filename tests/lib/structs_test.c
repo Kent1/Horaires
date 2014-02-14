@@ -252,6 +252,24 @@ static void test_get_rooms_matrix(void) {
     clean_test_room();
 }
 
+static void test_clone_matrix_rooms(void) {
+    init_test_array_rooms();
+    size_t **rooms_limit = get_rooms_sizes(FACULTY_SIZE, rooms);
+    matrix_rooms *matrix_rooms_ = get_rooms_matrix(FACULTY_SIZE, rooms,
+                                 rooms_limit);
+    matrix_rooms *clone = clone_matrix_rooms(matrix_rooms_, MAX_TIMESLOT, FACULTY_SIZE, MAX_ROOM_TYPE);
+
+    CU_ASSERT_PTR_NOT_EQUAL(clone, matrix_rooms_);
+    CU_ASSERT_PTR_NOT_EQUAL(clone->size, matrix_rooms_->size);
+    CU_ASSERT_EQUAL(clone->data[0][computer_room][0]->room_id, matrix_rooms_->data[0][computer_room][0]->room_id);
+    CU_ASSERT_EQUAL(clone->data[0][computer_room][0]->type, matrix_rooms_->data[0][computer_room][0]->type);
+    CU_ASSERT_EQUAL(clone->data[0][computer_room][0]->faculty, matrix_rooms_->data[0][computer_room][0]->faculty);
+    CU_ASSERT_EQUAL(clone->data[0][computer_room][0]->capacity, matrix_rooms_->data[0][computer_room][0]->capacity);
+    for(uint8_t i = 0; i < MAX_TIMESLOT; i++) {
+        CU_ASSERT_EQUAL(clone->data[0][computer_room][0]->assignation[i], matrix_rooms_->data[0][computer_room][0]->assignation[i]);
+    }
+}
+
 int structs_test_suite(void) {
     CU_TestInfo tests[] = {
         {"init_exam()", test_init_exam},
@@ -265,6 +283,7 @@ int structs_test_suite(void) {
         {"clone_array_rooms()", test_clone_array_rooms},
         {"get_rooms_sizes()", test_get_rooms_sizes},
         {"get_rooms_matrix()", test_get_rooms_matrix},
+        {"clone_matrix_rooms()", test_clone_matrix_rooms},
         CU_TEST_INFO_NULL
     };
 
