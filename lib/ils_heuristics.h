@@ -9,6 +9,8 @@
 #ifndef ILS_HEURISTICS_H_
 #define ILS_HEURISTICS_H_
 
+#include "graph_heuristics.h"
+
 /**
  * This function tries to return a better solution than the given
  * (feasible) one. Receiving a simple feasible schedule, the function
@@ -29,9 +31,14 @@ float fitness_bis(array_exams *exams);
 
 float local_fitness(array_exams *exams, uint16_t index);
 
-array_exams* perturbation(array_exams *current, uint16_t id_worst, float initial_fitness, uint8_t max_timeslot);
+void
+perturbation(array_exams *current, uint16_t id_worst,
+             float initial_fitness, uint8_t max_timeslot,
+             matrix_rooms *rooms, uint16_t faculty_size,
+             uint16_t max_room_type);
 
 bool check_conflict(array_exams *candidate, uint16_t exam_id, uint8_t timeslot);
+bool check_preds(array_exams *candidate, uint16_t exam_id, uint8_t timeslot);
 void kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot, uint8_t *swaps);
 void swap_timeslots(array_exams *candidate, uint8_t *swaps);
 

@@ -102,9 +102,11 @@ local_fitness(array_exams *exams, uint16_t index) {
         return 0;
 }
 
-array_exams *
+void
 perturbation(array_exams *current, uint16_t id_worst,
-             float initial_fitness, uint8_t max_timeslot) {
+             float initial_fitness, uint8_t max_timeslot,
+             matrix_rooms *rooms, uint16_t faculty_size,
+             uint16_t max_room_type) {
     array_exams *best_candidate = NULL;
     float best_candidate_score = FLT_MIN;
 
@@ -114,6 +116,13 @@ perturbation(array_exams *current, uint16_t id_worst,
     for (uint8_t i = 0; i < max_timeslot; i++) {
         float candidate_score = 0;
         array_exams *candidate = clone_array_exams(current, max_timeslot);
+        matrix_rooms *rcandidate = clone_matrix_rooms(rooms, max_timeslot, faculty_size, max_room_type);
+
+        if(!check_preds(candidate, id_worst, i)) {
+            free_exams(candidate);
+            free_matrix_rooms(rcandidate, faculty_size, max_room_type);
+            continue;
+        }
 
         /* Check if there exists a conflict with exams scheduled
          in the timeslot i. If not, just move, otherwhise use
@@ -124,9 +133,13 @@ perturbation(array_exams *current, uint16_t id_worst,
 
             swap_timeslots(candidate, swaps);
 
-            // Reset rooms for both timeslots i and old_timeslot
+            //Reset rcandidate for both timeslots i and old_timeslot
+
+            // Launch assign room on both timeslot
+
         } else { // No conflict, just move
             candidate->data[id_worst]->timeslot = i;
+
             // Desassignation room
         }
 
@@ -135,15 +148,16 @@ perturbation(array_exams *current, uint16_t id_worst,
         // Saves best permutation
         if (best_candidate_score < candidate_score) {
             free_exams(best_candidate);
+            free_matrix_rooms(rooms, faculty_size, max_room_type);
 
             best_candidate = candidate;
             best_candidate_score = candidate_score;
+            rooms = rcandidate;
         } else {
             free_exams(candidate);
+            free_matrix_rooms(rcandidate, faculty_size, max_room_type);
         }
     }
-
-    return best_candidate;
 }
 
 bool
@@ -156,6 +170,13 @@ check_conflict(array_exams *candidate, uint16_t exam_id,
     }
 
     return false;
+}
+
+bool
+check_preds(array_exams *candidate, uint16_t exam_id, uint8_t timeslot) {
+    uint8_t min_timeslot = compute_min_timeslot(candidate->data[exam_id], candidate);
+
+    return min_timeslot < timeslot;
 }
 
 void
