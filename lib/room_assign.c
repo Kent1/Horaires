@@ -100,17 +100,17 @@ bool is_valid(array_exams *exams, matrix_rooms *rooms,
     /* Is there a conflict ? */
     bool valid_t1 = valid_assign_by_timeslot(exams, rooms, timeslot1);
     /* Room assigned is valid */
-    if(valid_t1) {
+    if(!valid_t1) {
         /* Reset room assignement for this timeslot */
         reset_room_by_timeslot(exams, rooms, timeslot1);
         valid_t1 = assign_by_timeslot(exams, rooms, timeslot1);
     }
     bool valid_t2 = valid_assign_by_timeslot(exams, rooms, timeslot2);
-    if(valid_t2) {
+    if(!valid_t2) {
         reset_room_by_timeslot(exams, rooms, timeslot2);
         valid_t2 = assign_by_timeslot(exams, rooms, timeslot1);
     }
-    return (!valid_t1 && !valid_t2);
+    return (valid_t1 && valid_t2);
 }
 
 

@@ -57,5 +57,4 @@ void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
 bool valid_assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                                 uint8_t timeslot);
 
-
 #endif /*ROOM_ASSIGN_H_*/
