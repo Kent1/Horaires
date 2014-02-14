@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The purpose of this project is to generate examination timetables for the University of Mons. The examination timetables generation is a well-known NP-Complete problem in computer sciences.
+The purpose of this tool is to generate examination timetables. It was developped to assist people who makes examination timetables for the University of Mons. The examination timetables generation is a well-known NP-Complete problem in computer sciences.
 In order to solve this problem we will use heuristic algorithms. Some references are presents at the bottom of this document.
 
 ### Description of the problem

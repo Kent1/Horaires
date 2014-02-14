@@ -1,6 +1,10 @@
 # Construction of a feasible timetable
 
-This librairy is written in C to benefit of the good performance of this langage. It contains functions to construct and solve the graph coloring problem, and so obtain a feasible timetable. The feasible timetable also have room assigned in a possible way.
+This librairy is written in C to benefit of the good performance of this language.
+
+graph_heuristics contains functions to construct and solve the graph coloring problem, and so obtain a feasible timetable. The feasible timetable also have room assigned in a possible way.
+
+ils_heuristics contains functions to improve the feasible timetable with iterative local search heuristic. It computes soft constraints based fitness of the timetable.
 
 ## Hard constraints
 
@@ -31,6 +35,8 @@ For resolve the coloring problem, we use ordering heuristics. We considered thre
 We decided to use Saturation Degree for our principal heuristic because its fits well with our hard constraints (especially with exam avaibility). We also decided to use Largest Enrollment in last resort (in the case of ex-aequo).
 
 For the room-type constraints, after computing the feasible timetable for the timeslot, we try to assigned a room to all scheduled exams (and all exams are scheduled). For the assignement, for each exam, we consider each room of desired type. If a room of the right type is available and it has enough capacity, we assign this room to the exam. If no solution is found, we do backtrack on the timeslot assignement.
+
+## Improvement of the timetable
 
 ## Data structures
 

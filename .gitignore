@@ -14,3 +14,7 @@ lib/obj
 doc/
 # Python compiled files
 *.pyc
+build/
+*.egg-info
+*.egg
+dist/
