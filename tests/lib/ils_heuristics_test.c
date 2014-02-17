@@ -4,6 +4,7 @@
 #include "test_util.h"
 #include "preprocessing.h"
 #include "CUnit/Basic.h"
+#include <time.h>
 
 static void test_local_fitness_without_conflict(void) {
     init_test_exam();
@@ -50,7 +51,7 @@ static void test_fitness_without_conflict(void) {
     exams->data[1]->timeslot = 1;
     exam *worst = NULL;
     float exam_fitness;
-    float global_fitness = fitness(exams, worst, &exam_fitness, 0);
+    float global_fitness = fitness(exams, &worst, &exam_fitness, 0);
     /* No conflicts, global fitness = 0 */
     CU_ASSERT_DOUBLE_EQUAL(global_fitness, 0, 1E-5);
     /* There is no worst fitness exam */
@@ -81,12 +82,90 @@ static void test_fitness_with_conflicts(void) {
     clean_array_exams();
 }
 
+static void test_kempe_chains(void) {
+    /* Setup */
+    init_test_exam();
+    exam *test_exams[] = {exam1, exam2, exam3, exam5};
+    init_test_array_exams(4, test_exams);
+    preprocess(exams);
+    exams->data[0]->timeslot = 1;
+    exams->data[1]->timeslot = 2;
+    exams->data[2]->timeslot = 2;
+    exams->data[3]->timeslot = 3;
+    // Init swap
+    uint8_t swaps[] = {NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED};
+    // Apply Kempe Chains - Swaps exam3 (exams->data[2]) to timeslot 1
+    kempe_chains(exams, 2, 1, swaps);
+
+    /* Checking time */
+    CU_ASSERT_EQUAL(swaps[0], 2);
+    CU_ASSERT_EQUAL(swaps[1], 1);
+    CU_ASSERT_EQUAL(swaps[2], 1);
+    CU_ASSERT_EQUAL(swaps[3], NOT_SCHEDULED);
+
+    /* Clean Up */
+    clean_array_exams();
+}
+
+static void test_swap_timeslots(void) {
+    /* Setup */
+    init_test_exam();
+    exam *test_exams[] = {exam1, exam2, exam3, exam5};
+    init_test_array_exams(4, test_exams);
+    preprocess(exams);
+    exams->data[0]->timeslot = 0;
+    exams->data[1]->timeslot = 1;
+    exams->data[2]->timeslot = 2;
+    exams->data[3]->timeslot = 2;
+    // Init swap
+    uint8_t swaps[] = {NOT_SCHEDULED, 2, 1, 1};
+    // Apply swap_timeslots
+    swap_timeslots(exams, swaps);
+
+    /* Checking time */
+    CU_ASSERT_EQUAL(exams->data[0]->timeslot, 0);
+    CU_ASSERT_EQUAL(exams->data[1]->timeslot, 2);
+    CU_ASSERT_EQUAL(exams->data[2]->timeslot, 1);
+    CU_ASSERT_EQUAL(exams->data[3]->timeslot, 1);
+
+    /* Cleaning up */
+    clean_array_exams();
+}
+
+static void test_termination_condition(void) {
+    /* Setup */
+    init_test_exam();
+    exam *test_exams[] = {exam1, exam2, exam3, exam5};
+    init_test_array_exams(4, test_exams);
+    preprocess(exams);
+    // Init other parameters
+    time_t start = time(NULL);
+
+    /* Checking time */
+    // threshold == 0, time not exceeded, counter not exceeded
+    CU_ASSERT_FALSE(termination_condition(exams, 10,  0, start, 60, 0, 10000));
+    // threshold not exceeded, time not exceeded, counter not exceeded
+    CU_ASSERT_FALSE(termination_condition(exams, 10, 20, start, 60, 0, 10000));
+    // threshold exceeded, time not exceeded, counter not exceeded
+    CU_ASSERT_TRUE(termination_condition(exams,  10, 10, start, 60, 0, 10000));
+    // threshold not exceeded, time exceeded, counter not exceeded
+    CU_ASSERT_TRUE(termination_condition(exams,  10,  0, start-120, 60, 0, 10000));
+    // threshold not exceeded, time not exceeded, counter exceeded
+    CU_ASSERT_TRUE(termination_condition(exams,  10,  0, start, 60, 10001, 10000));
+
+    /* Cleaning up */
+    clean_array_exams();
+}
+
 int ils_heuristics_test_suite(void) {
     CU_TestInfo tests[] = {
         {"local_fitness() without conflict", test_local_fitness_without_conflict},
         {"local_fitness() with conflicts", test_local_fitness_with_conflicts},
         {"fitness() without conflict", test_fitness_without_conflict},
         {"fitness() with conflicts", test_fitness_with_conflicts},
+        {"kempe_chains()", test_kempe_chains},
+        {"swap_timeslots()", test_swap_timeslots},
+        {"termination_condition()", test_termination_condition},
         CU_TEST_INFO_NULL
     };
 

@@ -34,9 +34,6 @@ iterative_local_search(array_exams *exams, matrix_rooms *rooms,
     best_rooms = rooms;
 
     do {
-        // candidate = best, rcandidate = rooms
-        // candidate = perturbation(best, worst, max_timeslot, rooms,
-        //                          faculty_size, max_room_type);
         candidate = best_exams;
         rcandidate = best_rooms;
         perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size, max_room_type);
@@ -142,6 +139,7 @@ perturbation(array_exams **current_best, exam *worst,
     for (uint8_t i = 0; i < max_timeslot; i++) {
         uint8_t timeslot_before = current->data[id_worst]->timeslot;
         uint8_t timeslot_after  = i;
+        // Check availabilities
 
         // If the new timeslot is not possible
         if (!check_preds(current, id_worst, timeslot_after))
@@ -156,7 +154,11 @@ perturbation(array_exams **current_best, exam *worst,
          in the timeslot i. If not, just move, otherwhise use
          Kempe Chains algorithm. */
         if (check_conflict(candidate, id_worst, timeslot_after)) { // KC
-            uint8_t *swaps = calloc(candidate->size, sizeof(uint8_t));
+            // Init swaps
+            uint8_t *swaps = malloc(candidate->size * sizeof(uint8_t));
+            for(uint8_t j = 0; j < candidate->size; j++)
+                swaps[j] = NOT_SCHEDULED;
+
             kempe_chains(candidate, id_worst, timeslot_after, swaps);
 
             swap_timeslots(candidate, swaps);
@@ -259,13 +261,13 @@ check_preds(array_exams *candidate, uint16_t exam_id, uint8_t timeslot) {
 
 void
 kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
-             uint8_t *swaps) {
+             uint8_t *swaps) { // exam_id ~ id in the table contening the exam
     swaps[exam_id] = swap_slot;
 
     for (uint16_t i = 0; i < candidate->size; i++) {
         if (candidate->data[exam_id]->conflicts[i]
                 && candidate->data[i]->timeslot == swap_slot
-                && swaps[i] == 0) {
+                && swaps[i] == NOT_SCHEDULED) {
             kempe_chains(candidate, i, candidate->data[exam_id]->timeslot, swaps);
         }
     }
@@ -274,7 +276,7 @@ kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
 void
 swap_timeslots(array_exams *candidate, uint8_t *swaps) {
     for (uint16_t i = 0; i < candidate->size; i++) {
-        if (swaps[i] != 0)
+        if (swaps[i] != NOT_SCHEDULED)
             candidate->data[i]->timeslot = swaps[i];
     }
 }
@@ -286,8 +288,8 @@ acceptance_criterion(array_exams *candidate, float best_score,
 }
 
 bool
-termination_condition(array_exams *best, float best_score,
-                      time_t start, time_t max_time, float threshold,
+termination_condition(array_exams *best, float best_score, float threshold,
+                      time_t start, time_t max_time,
                       uint16_t counter, uint16_t max_counter) {
     if (threshold > 0 && best_score >= threshold)
         return true;

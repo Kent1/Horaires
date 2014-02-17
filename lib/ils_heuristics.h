@@ -50,8 +50,8 @@ void swap_timeslots(array_exams *candidate, uint8_t *swaps);
 bool acceptance_criterion(array_exams *candidate, float best_score,
                           float candidate_score);
 
-bool termination_condition(array_exams *best, float best_score,
-                      time_t start, time_t max_time, float threshold,
+bool termination_condition(array_exams *best, float best_score, float threshold,
+                      time_t start, time_t max_time,
                       uint16_t counter, uint16_t max_counter);
 
 #endif /*ILS_HEURISTICS_H_*/
