@@ -10,6 +10,8 @@
 #define ILS_HEURISTICS_H_
 
 #include "graph_heuristics.h"
+#include "room_assign.h"
+#include <time.h>
 
 /**
  * This function tries to return a better solution than the given
@@ -23,27 +25,33 @@
  * @param exams An array of exams with a feasible schedule(struct array_exams).
  * @return A feasible schedule not worse than the given one.
  */
-array_exams* iterative_local_search(array_exams *exams, uint8_t max_timeslot);
+array_exams *iterative_local_search(array_exams *exams, matrix_rooms *rooms,
+                                    uint8_t max_timeslot, uint16_t faculty_size,
+                                    uint16_t max_room_type);
 
-float fitness(array_exams *exams, exam **worst, float *exam_fitness, float min_threshold_fitness);
+float fitness(array_exams *exams, exam **worst, float *exam_fitness,
+              float min_threshold_fitness);
 
 float fitness_bis(array_exams *exams);
 
 float local_fitness(array_exams *exams, uint16_t index);
 
 void
-perturbation(array_exams *current, uint16_t id_worst,
-             float initial_fitness, uint8_t max_timeslot,
-             matrix_rooms *rooms, uint16_t faculty_size,
-             uint16_t max_room_type);
+perturbation(array_exams **current_best, exam *worst,
+             uint8_t max_timeslot, matrix_rooms **current_rbest,
+             uint16_t faculty_size, uint16_t max_room_type);
 
 bool check_conflict(array_exams *candidate, uint16_t exam_id, uint8_t timeslot);
 bool check_preds(array_exams *candidate, uint16_t exam_id, uint8_t timeslot);
-void kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot, uint8_t *swaps);
+void kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
+                  uint8_t *swaps);
 void swap_timeslots(array_exams *candidate, uint8_t *swaps);
 
-bool acceptance_criterion(array_exams *candidate, float best_score, float candidate_score);
+bool acceptance_criterion(array_exams *candidate, float best_score,
+                          float candidate_score);
 
-bool termination_condition(array_exams *best, float best_score);
+bool termination_condition(array_exams *best, float best_score,
+                      time_t start, time_t max_time, float threshold,
+                      uint16_t counter, uint16_t max_counter);
 
 #endif /*ILS_HEURISTICS_H_*/

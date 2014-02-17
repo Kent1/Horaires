@@ -54,6 +54,15 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms);
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
                          uint8_t faculty_size, uint8_t max_timeslot);
 
+void reset_room_by_timeslot(array_exams *exams, matrix_rooms *rooms,
+                            uint8_t timeslot);
+
+bool assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
+                        uint8_t timeslot);
+
+bool is_valid(array_exams *exams, matrix_rooms *rooms,
+                                uint8_t timeslot1, uint8_t timeslot2);
+
 bool valid_assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                                 uint8_t timeslot);
 

@@ -14,30 +14,54 @@
 #include "structs.h"
 #include "ils_heuristics.h"
 
+// Use parameters to return values (exams and rooms)
 array_exams *
-iterative_local_search(array_exams *exams, uint8_t max_timeslot) {
-    // array_exams *best, *candidate;
-    // float best_score, candidate_score;
+iterative_local_search(array_exams *exams, matrix_rooms *rooms,
+                       uint8_t max_timeslot, uint16_t faculty_size,
+                       uint16_t max_room_type) {
+    // Declare variables
+    exam *worst;
+    array_exams *best_exams, *candidate;
+    matrix_rooms *best_rooms, *rcandidate;
+    float best_score, candidate_score, worst_score;
+    time_t start = time(NULL);
+    time_t max_time = 60; // in seconds
+    float threshold = 0;
+    uint16_t counter = 0, max_counter = 10000;
+    // Initializes variables
+    best_exams = exams;
+    best_score = fitness(best_exams, &worst, &worst_score, 0);
+    best_rooms = rooms;
 
-    // best = exams;
-    // best_score = fitness(best);
+    do {
+        // candidate = best, rcandidate = rooms
+        // candidate = perturbation(best, worst, max_timeslot, rooms,
+        //                          faculty_size, max_room_type);
+        candidate = best_exams;
+        rcandidate = best_rooms;
+        perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size, max_room_type);
 
-    // do {
-    //     candidate = perturbation(best);
-    //     candidate_score = fitness(candidate);
+        candidate_score = fitness_bis(candidate);
 
-    //     if(acceptance_criterion(candidate, best_score, candidate_score)) {
-    //         free_exams(best);
+        if (acceptance_criterion(candidate, best_score, candidate_score)) {
+            free_exams(best_exams);
 
-    //         best = candidate;
-    //         best_score = candidate_score;
-    //     } else {
-    //         free_exams(candidate);
-    //     }
-    // } while(termination_condition(best, best_score));
+            best_exams = candidate;
+            best_score = candidate_score;
+            best_rooms = rcandidate;
 
-    // return best;
-    return 0;
+            worst_score = 0;
+            counter = 0;
+        } else {
+            free_exams(candidate);
+            // Select the next worst exam
+            // Join the 2 last parameters by handling that in the function
+            fitness(candidate, &worst, &worst_score, worst_score);
+        }
+    } while (termination_condition(best_exams, best_score, start, max_time, threshold,
+                                   counter, max_counter));
+
+    return best_exams;
 }
 
 float
@@ -103,12 +127,14 @@ local_fitness(array_exams *exams, uint16_t index) {
 }
 
 void
-perturbation(array_exams *current, uint16_t id_worst,
-             float initial_fitness, uint8_t max_timeslot,
-             matrix_rooms *rooms, uint16_t faculty_size,
-             uint16_t max_room_type) {
-    array_exams *best_candidate = NULL;
+perturbation(array_exams **current_best, exam *worst,
+             uint8_t max_timeslot, matrix_rooms **current_rbest,
+             uint16_t faculty_size, uint16_t max_room_type) {
+
+    array_exams *best_candidate = NULL, *current = *current_best;
+    matrix_rooms *best_rcandidate = NULL, *rooms = *current_rbest;
     float best_candidate_score = FLT_MIN;
+    uint16_t id_worst = worst->exam_id;
 
     /* For each timeslot, search a better solution by spreading the exam with the next
        worst fitness known, test by deplacing to each timeslot available and check that
@@ -118,12 +144,13 @@ perturbation(array_exams *current, uint16_t id_worst,
         uint8_t timeslot_after  = i;
 
         // If the new timeslot is not possible
-        if(!check_preds(current, id_worst, timeslot_after))
+        if (!check_preds(current, id_worst, timeslot_after))
             continue;
 
         float candidate_score = 0;
         array_exams *candidate = clone_array_exams(current, max_timeslot);
-        matrix_rooms *rcandidate = clone_matrix_rooms(rooms, max_timeslot, faculty_size, max_room_type);
+        matrix_rooms *rcandidate = clone_matrix_rooms(rooms, max_timeslot, faculty_size,
+                                   max_room_type);
 
         /* Check if there exists a conflict with exams scheduled
          in the timeslot i. If not, just move, otherwhise use
@@ -138,40 +165,50 @@ perturbation(array_exams *current, uint16_t id_worst,
             reset_room_by_timeslot(candidate, rcandidate, timeslot_before);
             reset_room_by_timeslot(candidate, rcandidate, timeslot_after);
             // Launch assign room on both timeslot
-            bool status_reassign = assign_by_timeslot(candidate, rcandidate, timeslot_before);
-            if(!status_reassign) {
+            bool status_reassign = assign_by_timeslot(candidate, rcandidate,
+                                   timeslot_before);
+
+            if (!status_reassign) {
                 free_exams(candidate);
                 free_matrix_rooms(rcandidate, faculty_size, max_room_type);
                 continue;
             }
 
             status_reassign = assign_by_timeslot(candidate, rcandidate, timeslot_after);
-            if(!status_reassign) {
+
+            if (!status_reassign) {
                 free_exams(candidate);
                 free_matrix_rooms(rcandidate, faculty_size, max_room_type);
                 continue;
             }
 
         } else { // No conflict, just move
-            exam *worst = candidate->data[id_worst];
             worst->timeslot = timeslot_after;
 
-            for(uint16_t j = 0; j < rcandidate->size[worst->faculty][worst->room_type]; j++) {
-                if(rcandidate->data[worst->faculty][worst->room_type][j]->room_id == worst->room_id) {
-                    rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_before] = NOT_ASSIGNED;
+            for (uint16_t j = 0; j < rcandidate->size[worst->faculty][worst->room_type];
+                    j++) {
+                if (rcandidate->data[worst->faculty][worst->room_type][j]->room_id ==
+                        worst->room_id) {
+                    rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_before]
+                        = NOT_ASSIGNED;
 
-                    if(rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_after] == NOT_ASSIGNED)
-                        rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_after] = worst->exam_id;
+                    if (rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_after]
+                            == NOT_ASSIGNED)
+                        rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_after]
+                            = worst->exam_id;
                 }
             }
 
             // Desassignation room if not ok
-            bool must_reassign = !is_valid(candidate, rcandidate, timeslot_before, timeslot_after);
+            bool must_reassign = !is_valid(candidate, rcandidate, timeslot_before,
+                                           timeslot_after);
 
-            if(must_reassign) {
+            if (must_reassign) {
                 reset_room_by_timeslot(candidate, rcandidate, timeslot_after);
-                bool status_reassign = assign_by_timeslot(candidate, rcandidate, timeslot_after);
-                if(!status_reassign) {
+                bool status_reassign = assign_by_timeslot(candidate, rcandidate,
+                                       timeslot_after);
+
+                if (!status_reassign) {
                     free_exams(candidate);
                     free_matrix_rooms(rcandidate, faculty_size, max_room_type);
                     continue;
@@ -184,16 +221,20 @@ perturbation(array_exams *current, uint16_t id_worst,
         // Saves best permutation
         if (best_candidate_score < candidate_score) {
             free_exams(best_candidate);
-            free_matrix_rooms(rooms, faculty_size, max_room_type);
+            free_matrix_rooms(best_rcandidate, faculty_size, max_room_type);
 
             best_candidate = candidate;
             best_candidate_score = candidate_score;
-            rooms = rcandidate;
+            best_rcandidate = rcandidate;
         } else {
             free_exams(candidate);
             free_matrix_rooms(rcandidate, faculty_size, max_room_type);
         }
     }
+
+    // Set pointer to the best
+    *current_best = best_candidate;
+    *current_rbest = best_rcandidate;
 }
 
 bool
@@ -210,7 +251,8 @@ check_conflict(array_exams *candidate, uint16_t exam_id,
 
 bool
 check_preds(array_exams *candidate, uint16_t exam_id, uint8_t timeslot) {
-    uint8_t min_timeslot = compute_min_timeslot(candidate->data[exam_id], candidate);
+    uint8_t min_timeslot = compute_min_timeslot(candidate->data[exam_id],
+                           candidate);
 
     return min_timeslot < timeslot;
 }
@@ -240,12 +282,21 @@ swap_timeslots(array_exams *candidate, uint8_t *swaps) {
 bool
 acceptance_criterion(array_exams *candidate, float best_score,
                      float candidate_score) {
-    // ToDo
-    return false;
+    return (candidate_score > best_score);
 }
 
 bool
-termination_condition(array_exams *best, float best_score) {
-    // ToDo
-    return true;
+termination_condition(array_exams *best, float best_score,
+                      time_t start, time_t max_time, float threshold,
+                      uint16_t counter, uint16_t max_counter) {
+    if (threshold > 0 && best_score >= threshold)
+        return true;
+
+    if ((time(NULL) - start) > max_time)
+        return true;
+
+    if (counter > max_counter)
+        return true;
+
+    return false;
 }
