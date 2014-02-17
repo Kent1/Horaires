@@ -114,33 +114,69 @@ perturbation(array_exams *current, uint16_t id_worst,
        worst fitness known, test by deplacing to each timeslot available and check that
        the result remains feasible. */
     for (uint8_t i = 0; i < max_timeslot; i++) {
+        uint8_t timeslot_before = current->data[id_worst]->timeslot;
+        uint8_t timeslot_after  = i;
+
+        // If the new timeslot is not possible
+        if(!check_preds(current, id_worst, timeslot_after))
+            continue;
+
         float candidate_score = 0;
         array_exams *candidate = clone_array_exams(current, max_timeslot);
         matrix_rooms *rcandidate = clone_matrix_rooms(rooms, max_timeslot, faculty_size, max_room_type);
 
-        if(!check_preds(candidate, id_worst, i)) {
-            free_exams(candidate);
-            free_matrix_rooms(rcandidate, faculty_size, max_room_type);
-            continue;
-        }
-
         /* Check if there exists a conflict with exams scheduled
          in the timeslot i. If not, just move, otherwhise use
          Kempe Chains algorithm. */
-        if (check_conflict(candidate, id_worst, i)) { // KC
+        if (check_conflict(candidate, id_worst, timeslot_after)) { // KC
             uint8_t *swaps = calloc(candidate->size, sizeof(uint8_t));
-            kempe_chains(candidate, id_worst, i, swaps);
+            kempe_chains(candidate, id_worst, timeslot_after, swaps);
 
             swap_timeslots(candidate, swaps);
 
             //Reset rcandidate for both timeslots i and old_timeslot
-
+            reset_room_by_timeslot(candidate, rcandidate, timeslot_before);
+            reset_room_by_timeslot(candidate, rcandidate, timeslot_after);
             // Launch assign room on both timeslot
+            bool status_reassign = assign_by_timeslot(candidate, rcandidate, timeslot_before);
+            if(!status_reassign) {
+                free_exams(candidate);
+                free_matrix_rooms(rcandidate, faculty_size, max_room_type);
+                continue;
+            }
+
+            status_reassign = assign_by_timeslot(candidate, rcandidate, timeslot_after);
+            if(!status_reassign) {
+                free_exams(candidate);
+                free_matrix_rooms(rcandidate, faculty_size, max_room_type);
+                continue;
+            }
 
         } else { // No conflict, just move
-            candidate->data[id_worst]->timeslot = i;
+            exam *worst = candidate->data[id_worst];
+            worst->timeslot = timeslot_after;
 
-            // Desassignation room
+            for(uint16_t j = 0; j < rcandidate->size[worst->faculty][worst->room_type]; j++) {
+                if(rcandidate->data[worst->faculty][worst->room_type][j]->room_id == worst->room_id) {
+                    rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_before] = NOT_ASSIGNED;
+
+                    if(rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_after] == NOT_ASSIGNED)
+                        rcandidate->data[worst->faculty][worst->room_type][j]->assignation[timeslot_after] = worst->exam_id;
+                }
+            }
+
+            // Desassignation room if not ok
+            bool must_reassign = !is_valid(candidate, rcandidate, timeslot_before, timeslot_after);
+
+            if(must_reassign) {
+                reset_room_by_timeslot(candidate, rcandidate, timeslot_after);
+                bool status_reassign = assign_by_timeslot(candidate, rcandidate, timeslot_after);
+                if(!status_reassign) {
+                    free_exams(candidate);
+                    free_matrix_rooms(rcandidate, faculty_size, max_room_type);
+                    continue;
+                }
+            }
         }
 
         candidate_score = fitness_bis(candidate);
