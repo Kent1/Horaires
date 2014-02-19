@@ -88,7 +88,7 @@ bool assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                         uint8_t timeslot) {
     for(uint16_t i = 0; i < exams->size; i++) {
         if(exams->data[i]->timeslot == timeslot) {
-            if(!room_assign_single_exam(exams->data[i], rooms));
+            if(!room_assign_single_exam(exams->data[i], rooms))
                 return false;
         }
     }
@@ -108,7 +108,7 @@ bool is_valid(array_exams *exams, matrix_rooms *rooms,
     bool valid_t2 = valid_assign_by_timeslot(exams, rooms, timeslot2);
     if(!valid_t2) {
         reset_room_by_timeslot(exams, rooms, timeslot2);
-        valid_t2 = assign_by_timeslot(exams, rooms, timeslot1);
+        valid_t2 = assign_by_timeslot(exams, rooms, timeslot2);
     }
     return (valid_t1 && valid_t2);
 }
