@@ -9,6 +9,7 @@ exam *exam1, *exam2, *exam3, *exam4, *exam5, *exam6, *exam7, *exam8;
 array_exams *exams;
 room *room1, *room2, *room3, *room4, *room5;
 array_rooms *rooms;
+matrix_rooms *mrooms;
 
 void init_test_exam(void) {
 
@@ -117,6 +118,25 @@ void init_test_array_exams(uint16_t exams_size, exam **test_exams) {
     exams = init_array_exams(exams_size, test_exams);
 }
 
+void print_array_exams(array_exams *exams) {
+    printf("\n\n");
+    for(uint8_t i = 0; i < exams->size; i++) {
+        printf("Exam %d\n========\n", i);
+        printf("Exam ID :\t%d\n", exams->data[i]->exam_id);
+        printf("Teacher ID :\t%d\n", exams->data[i]->teacher_id);
+        printf("Enrollment :\t%d\n", exams->data[i]->enrollment);
+
+        printf("\tStudents : ");
+        for(uint8_t j = 0; j < exams->data[i]->enrollment; j++)
+            printf("%d, ", exams->data[i]->students[j]);
+        printf("\n\n");
+
+        printf("Room ID : \t%d\n", exams->data[i]->room_id);
+        printf("Timeslot : \t%d\n\n", exams->data[i]->timeslot);
+
+    }
+}
+
 void clean_test_exam(void) {
     free_exam(exam1);
     free_exam(exam2);
@@ -144,7 +164,6 @@ void clean_array_exams_2(void) {
     free(exams);
 }
 
-
 void init_test_room(void) {
     // Room 1 - Salon Bleu
     room1 = init_room(1, classroom, 1, 1, MAX_TIMESLOT);
@@ -164,6 +183,12 @@ void init_test_array_rooms(void) {
     rooms = init_array_rooms(MAX_ROOM, test_rooms);
 }
 
+void init_test_matrix_rooms(void) {
+    init_test_array_rooms();
+    size_t **rooms_limits = get_rooms_sizes(FACULTY_SIZE, rooms);
+    mrooms = get_rooms_matrix(FACULTY_SIZE, rooms, rooms_limits);
+}
+
 void clean_test_room(void) {
     free(room1);
     free(room2);
@@ -175,4 +200,3 @@ void clean_test_room(void) {
 void clean_array_rooms(void) {
     free_rooms(rooms);
 }
-

@@ -270,8 +270,8 @@ array_exams *clone_array_exams(array_exams *exams, uint8_t max_timeslot) {
     clone->data = malloc(exams->size * sizeof(exam *));
     clone->size = exams->size;
 
-    for(uint16_t i = 0; i < exams->size; i++)
-        clone->data[i] = clone_exam(exams->data[i], exams->size, max_timeslot);
+    for(uint16_t i = 0; i < clone->size; i++)
+        clone->data[i] = clone_exam(exams->data[i], clone->size, max_timeslot);
 
     return clone;
 }

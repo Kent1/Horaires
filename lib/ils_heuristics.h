@@ -42,9 +42,9 @@ perturbation(array_exams **current_best, exam *worst,
              uint16_t faculty_size, uint16_t max_room_type);
 
 bool check_conflict(array_exams *candidate, uint16_t exam_id, uint8_t timeslot);
-bool check_preds(array_exams *candidate, uint16_t exam_id, uint8_t timeslot);
-void kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
+bool kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
                   uint8_t *swaps);
+uint8_t* swap_initialization(size_t size);
 void swap_timeslots(array_exams *candidate, uint8_t *swaps);
 
 bool acceptance_criterion(array_exams *candidate, float best_score,
