@@ -35,7 +35,7 @@ def main():
                                   room['capacity'], room['room_type'])
         rooms[room['room_id']] = temp
 
-    timetable = examtimetable.Timetable(data['max_timeslot'], exams, rooms)
+    timetable = examtimetable.Timetable(data['timeslots'], exams, rooms)
     timetable.schedule()
     timetable.print_timetable()
 
