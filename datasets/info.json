@@ -27,7 +27,7 @@
     ],
     "exams": [
         {
-            "teacher_id": 555000,
+            "teacher_id": 501458,
             "dependencies": [],
             "exam_id": 0,
             "name": "Mathématiques pour l'info I",
@@ -72,7 +72,7 @@
             ]
         },
         {
-            "teacher_id": 555001,
+            "teacher_id": 530788,
             "dependencies": [],
             "exam_id": 1,
             "name": "Physique Générale",
@@ -117,7 +117,7 @@
             ]
         },
         {
-            "teacher_id": 555002,
+            "teacher_id": 501409,
             "dependencies": [],
             "exam_id": 2,
             "name": "Programmation et algorithmique I",
@@ -162,7 +162,7 @@
             ]
         },
         {
-            "teacher_id": 555003,
+            "teacher_id": 501235,
             "dependencies": [],
             "exam_id": 3,
             "name": "Mathématiques élémentaires",
@@ -207,7 +207,7 @@
             ]
         },
         {
-            "teacher_id": 555004,
+            "teacher_id": 500724,
             "dependencies": [],
             "exam_id": 4,
             "name": "Structure de données I",
@@ -252,7 +252,7 @@
             ]
         },
         {
-            "teacher_id": 555005,
+            "teacher_id": 500284,
             "dependencies": [],
             "exam_id": 5,
             "name": "Système d'exploitation - Écrit",
@@ -297,7 +297,7 @@
             ]
         },
         {
-            "teacher_id": 555006,
+            "teacher_id": 503083,
             "dependencies": [],
             "exam_id": 6,
             "name": "Économie politique",
@@ -342,7 +342,7 @@
             ]
         },
         {
-            "teacher_id": 555005,
+            "teacher_id": 500284,
             "dependencies": [],
             "exam_id": 7,
             "name": "Système d'exploitation - Oral",
@@ -387,7 +387,7 @@
             ]
         },
         {
-            "teacher_id": 555008,
+            "teacher_id": 501239,
             "dependencies": [],
             "exam_id": 8,
             "name": "Base de données I",
@@ -432,7 +432,7 @@
             ]
         },
         {
-            "teacher_id": 555009,
+            "teacher_id": 500303,
             "dependencies": [8],
             "exam_id": 9,
             "name": "Base de données I - SQL",
@@ -477,7 +477,7 @@
             ]
         },
         {
-            "teacher_id": 5550010,
+            "teacher_id": 503120,
             "dependencies": [],
             "exam_id": 10,
             "name": "Génie logiciel",
@@ -522,7 +522,7 @@
             ]
         },
         {
-            "teacher_id": 5550011,
+            "teacher_id": 531809,
             "dependencies": [],
             "exam_id": 11,
             "name": "Optimisation",
@@ -567,7 +567,7 @@
             ]
         },
         {
-            "teacher_id": 5550012,
+            "teacher_id": 531817,
             "dependencies": [],
             "exam_id": 12,
             "name": "Anglais",
@@ -612,7 +612,7 @@
             ]
         },
         {
-            "teacher_id": 5550013,
+            "teacher_id": 530164,
             "dependencies": [],
             "exam_id": 13,
             "name": "Traitement du signal",
@@ -657,7 +657,7 @@
             ]
         },
         {
-            "teacher_id": 5550010,
+            "teacher_id": 503120,
             "dependencies": [],
             "exam_id": 14,
             "name": "Programmtion déclarative",
@@ -702,7 +702,7 @@
             ]
         },
         {
-            "teacher_id": 555002,
+            "teacher_id": 501409,
             "dependencies": [],
             "exam_id": 15,
             "name": "Intelligence Artificielle",
@@ -747,7 +747,7 @@
             ]
         },
         {
-            "teacher_id": 555004,
+            "teacher_id": 500724,
             "dependencies": [],
             "exam_id": 16,
             "name": "Structure de données II",
@@ -792,7 +792,7 @@
             ]
         },
         {
-            "teacher_id": 555014,
+            "teacher_id": 500214,
             "dependencies": [],
             "exam_id": 17,
             "name": "Proba et théorie des erreurs",
@@ -837,7 +837,7 @@
             ]
         },
         {
-            "teacher_id": 555015,
+            "teacher_id": 530054,
             "dependencies": [],
             "exam_id": 18,
             "name": "Informatique temps réel",
@@ -882,7 +882,7 @@
             ]
         },
         {
-            "teacher_id": 555016,
+            "teacher_id": 501116,
             "dependencies": [],
             "exam_id": 19,
             "name": "Comptabilité",
@@ -927,7 +927,7 @@
             ]
         },
         {
-            "teacher_id": 555004,
+            "teacher_id": 500724,
             "dependencies": [],
             "exam_id": 20,
             "name": "Calculabilité & Complexité",
@@ -972,7 +972,7 @@
             ]
         },
         {
-            "teacher_id": 555017,
+            "teacher_id": 530438,
             "dependencies": [],
             "exam_id": 21,
             "name": "Réseaux II",
@@ -1017,7 +1017,7 @@
             ]
         },
         {
-            "teacher_id": 555018,
+            "teacher_id": 501112,
             "dependencies": [],
             "exam_id": 22,
             "name": "Management",
@@ -1062,7 +1062,7 @@
             ]
         },
         {
-            "teacher_id": 555009,
+            "teacher_id": 500303,
             "dependencies": [],
             "exam_id": 23,
             "name": "Sécurité des système informatiques",

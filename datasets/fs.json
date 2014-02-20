@@ -1,20 +1,211 @@
 {
-	"max_timeslot" : 30,
-	"exams" : [
-		{
-			"faculty"        : 0,
-			"teacher_id"     : 0,
-			"students"       : [0, 1, 2],
-			"room_type"      : 0,
-			"availabilities" : [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]
-		}
-	],
-	"rooms" : [
-		{
-			"room_id"   : 0,
-			"room_type" : 0,
-			"faculty"   : 0,
-			"capacity"  : 10
-		}
-	]
+    "rooms": [
+        {
+            "capacity": 10,
+            "room_id": 0,
+            "room_type": 0,
+            "faculty": 0
+        },
+        {
+            "capacity": 10,
+            "room_id": 1,
+            "room_type": 0,
+            "faculty": 0
+        },
+        {
+            "capacity": 10,
+            "room_id": 2,
+            "room_type": 0,
+            "faculty": 0
+        },
+        {
+            "capacity": 10,
+            "room_id": 3,
+            "room_type": 0,
+            "faculty": 0
+        }
+    ],
+    "exams": [
+        {
+            "teacher_id": 555000,
+            "dependencies": [],
+            "exam_id": 0,
+            "name": "coucou",
+            "faculty": 0,
+            "students": [
+                10000,
+                10001,
+                10002
+            ],
+            "room_type": 0,
+            "availabilities": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        },
+        {
+            "teacher_id": 555001,
+            "dependencies": [],
+            "exam_id": 1,
+            "name": "coucou",
+            "faculty": 0,
+            "students": [
+                10000,
+                10001,
+                10002
+            ],
+            "room_type": 0,
+            "availabilities": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        },
+        {
+            "teacher_id": 555002,
+            "dependencies": [],
+            "exam_id": 2,
+            "name": "coucou",
+            "faculty": 0,
+            "students": [
+                10000,
+                10001,
+                10002
+            ],
+            "room_type": 0,
+            "availabilities": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        },
+        {
+            "teacher_id": 555003,
+            "dependencies": [],
+            "exam_id": 3,
+            "name": "coucou",
+            "faculty": 0,
+            "students": [
+                10000,
+                10001,
+                10002
+            ],
+            "room_type": 0,
+            "availabilities": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        }
+    ],
+    "timeslots": 30
 }
