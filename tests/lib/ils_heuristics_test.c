@@ -99,17 +99,14 @@ static void test_perturbation(void) {
 
     exam *worst;
     float exam_fitness;
-    float global_fitness = fitness(exams, &worst, &exam_fitness, 0);
-    /* Small change for the test, so that the perturbation must
-       return a solution with a fitness of 9.5. */
-    exams->data[1]->availabilities[MAX_TIMESLOT-1] = true;
+    fitness(exams, &worst, &exam_fitness, 0);
     // Apply perturbation function
     perturbation(&exams, worst, MAX_TIMESLOT, &mrooms, FACULTY_SIZE, MAX_ROOM_TYPE);
 
     /* Checking time */
-    // Expected : 3 + 2.5 + 2 + 2
-    CU_ASSERT_DOUBLE_EQUAL(fitness_bis(exams), 9.5, 1E-5);
-    CU_ASSERT_EQUAL(exams->data[1]->timeslot, 4);
+    // Expected : 7/3 + 3/2 + 2 + 2
+    CU_ASSERT_DOUBLE_EQUAL(fitness_bis(exams), 7.83333, 1E-5);
+    CU_ASSERT_EQUAL(exams->data[1]->timeslot, 2);
 
     /* Clean Up */
     clean_array_exams();
