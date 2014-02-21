@@ -78,3 +78,18 @@ color_graph_backtrack.restype = ctypes.c_bool
 color_graph_backtrack.argtypes = [p(c_structs.ArrayExams),
                                   p(c_structs.MatrixRooms),
                                   ctypes.c_uint8, ctypes.c_uint8]
+
+# void iterative_local_search(array_exams **exams, matrix_rooms **rooms,
+#                             uint8_t max_timeslot, uint16_t faculty_size,
+#                             uint16_t max_room_type)
+iterative_local_search = lib.iterative_local_search
+iterative_local_search.restype = None
+iterative_local_search.argtypes = [p(p(c_structs.ArrayExams)),
+                                   p(p(c_structs.MatrixRooms)),
+                                   ctypes.c_uint8, ctypes.c_uint16,
+                                   ctypes.c_uint16]
+
+# float fitness_bis(array_exams *exams)
+fitness_bis = lib.fitness_bis
+fitness_bis.restype = ctypes.c_float
+fitness_bis.argtypes = [p(c_structs.ArrayExams)]

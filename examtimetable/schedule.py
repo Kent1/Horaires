@@ -122,5 +122,11 @@ def schedule(timetable):
 
     if c_fun.color_graph_backtrack(c_array_exams, c_rooms_matrix,
                                    faculty_size, timetable.timeslots):
+        #print 'Before:', c_fun.fitness_bis(c_array_exams)
+        # Max_room_type not computed at this point, temp : hard entry
+        c_fun.iterative_local_search(ctypes.byref(c_array_exams),
+                                     ctypes.byref(c_rooms_matrix),
+                                     timetable.timeslots, faculty_size, 1)
+        #print 'After:', c_fun.fitness_bis(c_array_exams)
         update_exams(timetable.timeslots, timetable.exams,
                      timetable.rooms, c_array_exams)
