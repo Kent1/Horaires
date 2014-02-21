@@ -174,6 +174,7 @@ void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_ro
     }
     free(rooms->size);
     free(rooms->data);
+    free(rooms);
 }
 
 /* Functions associated with the type exam */
@@ -289,5 +290,6 @@ void free_exams(array_exams *exams) {
     for (int i = 0; i < exams->size; i++)
         free_exam(exams->data[i]);
 
+    free(exams->data);
     free(exams);
 }
