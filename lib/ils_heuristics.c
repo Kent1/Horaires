@@ -23,7 +23,7 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
     exam *worst;
     array_exams *best_exams, *candidate;
     matrix_rooms *best_rooms, *rcandidate;
-    float best_score, candidate_score, worst_score;
+    float best_score, candidate_score, worst_score = -FLT_MAX;
     time_t start = time(NULL);
     time_t max_time = 60; // in seconds
     float threshold = 0;
@@ -39,6 +39,9 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
         rcandidate = best_rooms;
 
         fitness(best_exams, &worst, &worst_score);
+        if(!worst) // worst is NULL, no new worst to process
+            break;
+
         perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size, max_room_type);
 
         candidate_score = fitness_bis(candidate);
@@ -51,7 +54,7 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
             best_score = candidate_score;
             best_rooms = rcandidate;
 
-            worst_score = 0;
+            worst_score = -FLT_MAX;
             counter = 0;
         } else {
             free_exams(candidate);
@@ -72,6 +75,7 @@ fitness(array_exams *exams, exam **worst, float *exam_fitness) {
     float fitness = 0;
     float min_threshold_fitness = *exam_fitness;
     float worst_fitness = FLT_MAX;
+    *worst = NULL;
 
     for (uint16_t i = 0; i < exams->size; i++) {
         float l_fitness = local_fitness(exams, i);
@@ -105,7 +109,7 @@ float
 local_fitness(array_exams *exams, uint16_t index) {
     exam *exam = exams->data[index];
     uint16_t conflicts = 0;
-    uint16_t distance = 0;
+    int32_t distance = 0;
 
     for (uint16_t i = 0; i < exams->size; i++) {
         /* Skip if i is index */
@@ -117,6 +121,14 @@ local_fitness(array_exams *exams, uint16_t index) {
 
             if (dist < 0)
                 dist *= -1;
+
+            if (dist == 1) {
+                if( ((exam->timeslot % 2) == 0 && exam->timeslot < exams->data[i]->timeslot)
+                    || ((exam->timeslot % 2) == 1 && exams->data[i]->timeslot < exam->timeslot))
+                    dist = -10;
+                else
+                    dist = -5;
+            }
 
             distance += dist;
             conflicts++;
@@ -135,12 +147,15 @@ perturbation(array_exams **current_best, exam *worst,
              uint16_t faculty_size, uint16_t max_room_type) {
 
     // Variables declaration & initialization
-    array_exams  *best_candidate  = NULL, *current = *current_best;
-    matrix_rooms *best_rcandidate = NULL, *rooms = *current_rbest;
+    array_exams  *current = *current_best;
+    matrix_rooms *rooms   = *current_rbest;
+    array_exams  *best_candidate  = clone_array_exams(current, max_timeslot);
+    matrix_rooms *best_rcandidate = clone_matrix_rooms(rooms, max_timeslot,
+                                                       faculty_size, max_room_type);
 
     // Numeric variables
     uint16_t id_worst;
-    float    best_candidate_score = FLT_MIN;
+    float    best_candidate_score = -FLT_MAX;
 
     for(uint8_t i = 0; i < current->size; i++) {
         if(current->data[i] == worst) {
@@ -149,7 +164,6 @@ perturbation(array_exams **current_best, exam *worst,
         }
     }
     uint8_t min_timeslot = compute_min_timeslot(current->data[id_worst], current);
-
     /* For each timeslot, search a better solution by spreading the exam with the next
        worst fitness known, test by deplacing to each timeslot available and keep in
        mind that the result must remain feasible. */
@@ -230,10 +244,8 @@ perturbation(array_exams **current_best, exam *worst,
 
         // Saves best permutation
         if (best_candidate_score < candidate_score) {
-            if(best_candidate) {
-                free_exams(best_candidate);
-                free_matrix_rooms(best_rcandidate, faculty_size, max_room_type);
-            }
+            free_exams(best_candidate);
+            free_matrix_rooms(best_rcandidate, faculty_size, max_room_type);
 
             best_candidate       = candidate;
             best_candidate_score = candidate_score;
