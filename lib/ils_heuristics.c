@@ -15,8 +15,8 @@
 #include "ils_heuristics.h"
 
 // Use parameters to return values (exams and rooms)
-array_exams *
-iterative_local_search(array_exams *exams, matrix_rooms *rooms,
+void
+iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                        uint8_t max_timeslot, uint16_t faculty_size,
                        uint16_t max_room_type) {
     // Declare variables
@@ -28,10 +28,11 @@ iterative_local_search(array_exams *exams, matrix_rooms *rooms,
     time_t max_time = 60; // in seconds
     float threshold = 0;
     uint16_t counter = 0, max_counter = 10000;
+
     // Initializes variables
-    best_exams = exams;
+    best_exams = *exams;
     best_score = fitness(best_exams, &worst, &worst_score, 0);
-    best_rooms = rooms;
+    best_rooms = *rooms;
 
     do {
         candidate = best_exams;
@@ -51,14 +52,18 @@ iterative_local_search(array_exams *exams, matrix_rooms *rooms,
             counter = 0;
         } else {
             free_exams(candidate);
-            // Select the next worst exam
-            // Join the 2 last parameters by handling that in the function
-            fitness(candidate, &worst, &worst_score, worst_score);
+            counter++;
         }
-    } while (termination_condition(best_exams, best_score, start, max_time, threshold,
-                                   counter, max_counter));
 
-    return best_exams;
+        // Join the 2 last parameters by handling that in the function
+        fitness(best_exams, &worst, &worst_score, worst_score);
+
+    } while (!termination_condition(best_exams, best_score, threshold,
+                                    start, max_time, counter, max_counter));
+
+    // Set pointer to the best
+    *exams = best_exams;
+    *rooms = best_rooms;
 }
 
 float
@@ -315,7 +320,7 @@ termination_condition(array_exams *best, float best_score, float threshold,
     if (threshold > 0 && best_score >= threshold)
         return true;
 
-    if ((time(NULL) - start) > max_time)
+    if ((time(NULL) - max_time) > start)
         return true;
 
     if (counter > max_counter)

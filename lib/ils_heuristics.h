@@ -25,7 +25,7 @@
  * @param exams An array of exams with a feasible schedule(struct array_exams).
  * @return A feasible schedule not worse than the given one.
  */
-array_exams *iterative_local_search(array_exams *exams, matrix_rooms *rooms,
+void iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                                     uint8_t max_timeslot, uint16_t faculty_size,
                                     uint16_t max_room_type);
 
