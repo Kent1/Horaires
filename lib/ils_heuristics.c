@@ -14,6 +14,9 @@
 #include "structs.h"
 #include "ils_heuristics.h"
 
+#define PAYOFF_SAMEDAY -20
+#define PAYOFF_NEXTDAY -10
+
 // Use parameters to return values (exams and rooms)
 void
 iterative_local_search(array_exams **exams, matrix_rooms **rooms,
@@ -125,9 +128,9 @@ local_fitness(array_exams *exams, uint16_t index) {
             if (dist == 1) {
                 if( ((exam->timeslot % 2) == 0 && exam->timeslot < exams->data[i]->timeslot)
                     || ((exam->timeslot % 2) == 1 && exams->data[i]->timeslot < exam->timeslot))
-                    dist = -10;
+                    dist = PAYOFF_SAMEDAY;
                 else
-                    dist = -5;
+                    dist = PAYOFF_NEXTDAY;
             }
 
             distance += dist;
