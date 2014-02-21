@@ -27,22 +27,25 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
     time_t start = time(NULL);
     time_t max_time = 60; // in seconds
     float threshold = 0;
-    uint16_t counter = 0, max_counter = 10000;
+    uint32_t counter = 0, max_counter = 100000;
 
     // Initializes variables
     best_exams = *exams;
-    best_score = fitness(best_exams, &worst, &worst_score, 0);
     best_rooms = *rooms;
+    best_score = fitness_bis(best_exams);
 
     do {
         candidate = best_exams;
         rcandidate = best_rooms;
+
+        fitness(best_exams, &worst, &worst_score);
         perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size, max_room_type);
 
         candidate_score = fitness_bis(candidate);
 
         if (acceptance_criterion(candidate, best_score, candidate_score)) {
             free_exams(best_exams);
+            free_matrix_rooms(best_rooms, faculty_size, max_room_type);
 
             best_exams = candidate;
             best_score = candidate_score;
@@ -52,11 +55,9 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
             counter = 0;
         } else {
             free_exams(candidate);
+            free_matrix_rooms(rcandidate, faculty_size, max_room_type);
             counter++;
         }
-
-        // Join the 2 last parameters by handling that in the function
-        fitness(best_exams, &worst, &worst_score, worst_score);
 
     } while (!termination_condition(best_exams, best_score, threshold,
                                     start, max_time, counter, max_counter));
@@ -67,9 +68,9 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
 }
 
 float
-fitness(array_exams *exams, exam **worst, float *exam_fitness,
-        float min_threshold_fitness) {
+fitness(array_exams *exams, exam **worst, float *exam_fitness) {
     float fitness = 0;
+    float min_threshold_fitness = *exam_fitness;
     float worst_fitness = FLT_MAX;
 
     for (uint16_t i = 0; i < exams->size; i++) {
@@ -180,6 +181,7 @@ perturbation(array_exams **current_best, exam *worst,
             }
 
             swap_timeslots(candidate, swaps);
+            free(swaps);
 
             // Reset rcandidate for both timeslots i and old_timeslot
             reset_room_by_timeslot(candidate, rcandidate, timeslot_before);
@@ -316,7 +318,7 @@ acceptance_criterion(array_exams *candidate, float best_score,
 bool
 termination_condition(array_exams *best, float best_score, float threshold,
                       time_t start, time_t max_time,
-                      uint16_t counter, uint16_t max_counter) {
+                      uint32_t counter, uint32_t max_counter) {
     if (threshold > 0 && best_score >= threshold)
         return true;
 

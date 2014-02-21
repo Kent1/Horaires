@@ -29,8 +29,7 @@ void iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                                     uint8_t max_timeslot, uint16_t faculty_size,
                                     uint16_t max_room_type);
 
-float fitness(array_exams *exams, exam **worst, float *exam_fitness,
-              float min_threshold_fitness);
+float fitness(array_exams *exams, exam **worst, float *exam_fitness);
 
 float fitness_bis(array_exams *exams);
 
@@ -52,6 +51,6 @@ bool acceptance_criterion(array_exams *candidate, float best_score,
 
 bool termination_condition(array_exams *best, float best_score, float threshold,
                       time_t start, time_t max_time,
-                      uint16_t counter, uint16_t max_counter);
+                      uint32_t counter, uint32_t max_counter);
 
 #endif /*ILS_HEURISTICS_H_*/
