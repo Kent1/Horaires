@@ -44,7 +44,8 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot);
  * @param max_timeslot Maximum timeslot
  * @return A bool array of real available timeslots.
  */
-bool *set_possible_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslot);
+bool *set_possible_timeslot(exam *exam_, array_exams *exams,
+                            uint8_t max_timeslot);
 
 /**
  * Computes the minimum timeslot that can be used for the exam
@@ -67,11 +68,14 @@ uint8_t compute_min_timeslot(exam *exam_, array_exams *exams);
  *               the faculty of the room. The second indice is the type of
  *               the room (struct matrix_rooms).
  * @param  faculty_size The number of different faculties.
+ * @param  max_room_type Maximum number of room type.
  * @param  max_timeslot Maximum available timeslots.
  * @return true if a correct assignement is found, false otherwise.
  *         The algorithm also assign a timeslot and a room to all exams if
  *         true is returned.
  */
-bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_timeslot);
+bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
+                           uint8_t faculty_size, uint8_t max_room_type,
+                           uint8_t max_timeslot);
 
 #endif /*GRAPH_HEURISTICS_H_*/

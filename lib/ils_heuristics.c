@@ -21,7 +21,7 @@
 void
 iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                        uint8_t max_timeslot, uint16_t faculty_size,
-                       uint16_t max_room_type) {
+                       uint8_t max_room_type) {
     // Declare variables
     exam *worst;
     array_exams *best_exams, *candidate;
@@ -147,7 +147,7 @@ local_fitness(array_exams *exams, uint16_t index) {
 void
 perturbation(array_exams **current_best, exam *worst,
              uint8_t max_timeslot, matrix_rooms **current_rbest,
-             uint16_t faculty_size, uint16_t max_room_type) {
+             uint16_t faculty_size, uint8_t max_room_type) {
 
     // Variables declaration & initialization
     array_exams  *current = *current_best;

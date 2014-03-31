@@ -32,7 +32,7 @@
  */
 void iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                             uint8_t max_timeslot, uint16_t faculty_size,
-                            uint16_t max_room_type);
+                            uint8_t max_room_type);
 
 /**
  * This function is used to compute the score of the given schedule and to
@@ -92,7 +92,7 @@ float local_fitness(array_exams *exams, uint16_t index);
  */
 void perturbation(array_exams **current_best, exam *worst,
                   uint8_t max_timeslot, matrix_rooms **current_rbest,
-                  uint16_t faculty_size, uint16_t max_room_type);
+                  uint16_t faculty_size, uint8_t max_room_type);
 
 /**
  * This function checks if there exists a conflict in a candidate schedule,

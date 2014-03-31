@@ -68,13 +68,13 @@ array_rooms *clone_array_rooms(array_rooms *rooms, uint8_t max_timeslot) {
     return clone;
 }
 
-size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms) {
+size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms) {
 
     // Allocation of the 2-dim array
     size_t **rooms_limits = malloc(faculty_size * sizeof(size_t *));
 
     for(uint8_t f = 0; f < faculty_size; f++)
-        rooms_limits[f] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
+        rooms_limits[f] = calloc(max_room_type, sizeof(size_t));
 
     // Filling the limits in this 2-dim array
     for(uint8_t f = 0; f < rooms->size; f++)
@@ -83,7 +83,7 @@ size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms) {
     return rooms_limits;
 }
 
-matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits) {
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms, size_t **rooms_limits) {
     // Allocation of the struct matrix
     matrix_rooms *matrix = malloc(sizeof(matrix_rooms));
     // Allocation of an array of counters for each array of rooms (3rd dimension)
@@ -93,10 +93,10 @@ matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t 
 
     // Allocates/Initializes the other dimensions
     for (uint8_t i = 0; i < faculty_size; i++) {
-        counters[i] = calloc(MAX_ROOM_TYPE, sizeof(size_t));
+        counters[i] = calloc(max_room_type, sizeof(size_t));
 
-        rooms_3d[i] = malloc(MAX_ROOM_TYPE * sizeof(room**));
-        for (uint8_t j = 0; j < MAX_ROOM_TYPE; j++)
+        rooms_3d[i] = malloc(max_room_type * sizeof(room**));
+        for (uint8_t j = 0; j < max_room_type; j++)
             rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room*));
     }
 

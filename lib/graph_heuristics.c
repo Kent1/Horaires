@@ -135,13 +135,14 @@ uint8_t compute_min_timeslot(exam *exam_, array_exams *exams) {
 
 
 bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
-                           uint8_t faculty_size, uint8_t max_timeslot) {
+                           uint8_t faculty_size, uint8_t max_room_type,
+                           uint8_t max_timeslot) {
     // Pick up the next exam to schedule
     exam *exam_ = get_first_exam(exams, max_timeslot);
 
     // A solution has been found, then compute a room assignement
     if (exam_ == NULL)
-        return room_assign(exams, rooms, faculty_size, max_timeslot);
+        return room_assign(exams, rooms, faculty_size, max_room_type, max_timeslot);
 
     // Initializes some variables for the process part
     uint8_t i = 0;
@@ -168,7 +169,7 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
         backtrack = (i == max_timeslot);
 
         if (!backtrack) { // No backtrack needed, process the next schedule
-            success = color_graph_backtrack(exams, rooms, faculty_size, max_timeslot);
+            success = color_graph_backtrack(exams, rooms, faculty_size, max_room_type, max_timeslot);
 
             if (!success) { // failed, must pick the next timeslot available
                 min_timeslot = exam_->timeslot + 1;

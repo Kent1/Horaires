@@ -21,12 +21,13 @@
  *               the faculty of the room. The second indice is the type of
  *               the room (struct matrix_rooms).
  * @param  faculty_size The number of different faculties.
+ * @param  max_room_type Maximum number of room type.
  * @param  max_timeslot Maximum available timeslots.
  * @return true if the algorithm was able to find a correct assignement,
  *         false otherwise. If true is return, rooms are assigned to all exams.
  */
 bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
-                 uint8_t max_timeslot);
+                 uint8_t max_room_type, uint8_t max_timeslot);
 
 /**
  * This function tries to find a free room for the exam given.
@@ -48,10 +49,11 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms);
  *                     is the faculty of the room. The second indice is the
  *                     type of the room (struct matrix_rooms).
  * @param faculty_size The number of different faculties.
+ * @param max_room_type Maximum number of room type.
  * @param max_timeslot Maximum available timeslots.
  */
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
-                         uint8_t faculty_size, uint8_t max_timeslot);
+                         uint8_t faculty_size, uint8_t max_room_type, uint8_t max_timeslot);
 
 /**
  * This function sets to NOT_ASSIGNED all romms and all exams which was assigned

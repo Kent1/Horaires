@@ -14,7 +14,7 @@
 
 
 bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
-                 uint8_t max_timeslot) {
+                 uint8_t max_room_type, uint8_t max_timeslot) {
     /* For each exam, having is own faculty and room_type, we'll select a room
        not assigned, corresponding with these parameters. If an exam has no
        room after the research, then the room assignation failed and another
@@ -25,10 +25,10 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
         /* If true, the reseach has failed and all values are reset before
            launching the backtrack for the schedule. */
         if (!room_assign_single_exam(exam_, rooms)) {
-            reset_room_assigned(exams, rooms, faculty_size, max_timeslot);
+            reset_room_assigned(exams, rooms, faculty_size, max_room_type, max_timeslot);
             return false;
         }
-    }
+    }  /// Coucou, repercuter room_assign
 
     // Only if a room assignement has been found
     return true;
@@ -54,12 +54,12 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms) {
 }
 
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
-                         uint8_t faculty_size, uint8_t max_timeslot) {
+                         uint8_t faculty_size, uint8_t max_room_type, uint8_t max_timeslot) {
     for (uint16_t i = 0; i < exams->size; i++)
         exams->data[i]->room_id = NOT_ASSIGNED;
 
     for (uint8_t i = 0; i < faculty_size; i++)
-        for (uint16_t j = 0; j < MAX_ROOM_TYPE; j++)
+        for (uint16_t j = 0; j < max_room_type; j++)
             for (uint16_t k = 0; k < rooms->size[i][j]; k++)
                 for (uint16_t l = 0; l < max_timeslot; l++)
                     rooms->data[i][j][k]->assignation[l] = NOT_ASSIGNED;

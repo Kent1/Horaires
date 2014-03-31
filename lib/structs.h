@@ -12,7 +12,6 @@
 #include "util.h"
 
 /* Constants */
-#define MAX_ROOM_TYPE 3
 #define NOT_ASSIGNED UINT16_MAX
 #define NOT_SCHEDULED UINT8_MAX
 
@@ -218,10 +217,11 @@ array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms);
  * dimension).
  *
  * @param faculty_size Number of faculties.
+ * @param max_room_type Maximum number of room type.
  * @param rooms An array of room (struct array_rooms).
  * @return Limits for the 3-dimensional array containing categorized rooms.
  */
-size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms);
+size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms);
 
 /**
  * Sorts the rooms in a 3-dim array, categorized by faculty and type.
@@ -229,11 +229,12 @@ size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms);
  * the 3rd contains an array of rooms verifying this faculty and type.
  *
  * @param faculty_size Number of faculties.
+ * @param max_room_type Maximum number of room type.
  * @param rooms An array of rooms (struct array_rooms).
  * @param rooms_limits Limits of the different arrays of room (3rd dimension).
  * @return A sorted 3-dim array containing the rooms (struct matrix_rooms).
  */
-matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms,
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms,
                                size_t **rooms_limits);
 
 /**
