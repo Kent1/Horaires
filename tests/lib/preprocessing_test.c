@@ -10,10 +10,16 @@ static void test_compute_conflict(void) {
     CU_ASSERT_TRUE(compute_conflict(exam1, exam1));
     /* Conflict with students */
     CU_ASSERT_TRUE(compute_conflict(exam1, exam2));
+    CU_ASSERT_TRUE(compute_conflict(exam2, exam1));
     /* Conflict with professor */
     CU_ASSERT_TRUE(compute_conflict(exam2, exam6));
-    /* COnflict with professor and students */
+    CU_ASSERT_TRUE(compute_conflict(exam6, exam2));
+    /* Conflict with professor and students */
     CU_ASSERT_TRUE(compute_conflict(exam2, exam5));
+    CU_ASSERT_TRUE(compute_conflict(exam5, exam2));
+    /* No conflicts */
+    CU_ASSERT_FALSE(compute_conflict(exam1, exam4));
+    CU_ASSERT_FALSE(compute_conflict(exam4, exam1));
     clean_test_exam();
 }
 

@@ -27,16 +27,28 @@ static void test_local_fitness_with_conflicts(void) {
     exams->data[1]->timeslot = 1;
     exams->data[2]->timeslot = 2;
     exams->data[3]->timeslot = 3;
-    /* 3 conflicts (E2, 3, 5), dist : 1 + 2 + 3, expected : 6/3 = 2 */
+    /* 3 conflitcs (E2, E3, E5) dist :
+     * E1 - E2 : 1 (SAME_DAY) = -20
+     * E1 - E3 : 2
+     * E1 - E5 : 3
+     * Expected : (-20 + 2 + 3)/3 = -15/3 = -5 */
     float fitness = local_fitness(exams, 0);
-    CU_ASSERT_DOUBLE_EQUAL(fitness, 2, 1E-5);
-    /* 2 conflicts (E1, E5) dist : 1 + 2 , expected : 3/2 */
+    CU_ASSERT_DOUBLE_EQUAL(fitness, -5, 1E-5);
+    /* 2 conflicts (E1, E5) dist :
+     * E2 - E1 : 1 (SAME_DAY) = -20
+     * E2 - E5 : 2
+     * Expected : (-20+2)/2 = -9 */
     fitness = local_fitness(exams, 1);
-    CU_ASSERT_DOUBLE_EQUAL(fitness, 1.5, 1E-5);
-    /* 1 conflict (E1) dist : 2, expected : 2 */
+    CU_ASSERT_DOUBLE_EQUAL(fitness, -9, 1E-5);
+    /* 1 conflict (E1) dist :
+     * E3 - E1 : 2
+     * Expected : 2/1 = 2 */
     fitness = local_fitness(exams, 2);
     CU_ASSERT_DOUBLE_EQUAL(fitness, 2, 1E-5);
-    /* 2 conflict (E1, E2) dist : 3 + 2 , expected : 5/2 */
+    /* 2 conflict (E1, E2) dist :
+     * E3 - E1 : 3
+     * E3 - E2 : 2
+     * Expected : (2+3)/2 = 5/2 */
     fitness = local_fitness(exams, 3);
     CU_ASSERT_DOUBLE_EQUAL(fitness, 2.5, 1E-5);
     clean_array_exams();
@@ -51,7 +63,7 @@ static void test_fitness_without_conflict(void) {
     exams->data[1]->timeslot = 1;
     exam *worst = NULL;
     float exam_fitness;
-    float global_fitness = fitness(exams, &worst, &exam_fitness, 0);
+    float global_fitness = fitness(exams, &worst, &exam_fitness);
     /* No conflicts, global fitness = 0 */
     CU_ASSERT_DOUBLE_EQUAL(global_fitness, 0, 1E-5);
     /* There is no worst fitness exam */
@@ -71,13 +83,13 @@ static void test_fitness_with_conflicts(void) {
     exams->data[2]->timeslot = 2;
     exams->data[3]->timeslot = 3;
     exam *worst;
-    float exam_fitness;
-    float global_fitness = fitness(exams, &worst, &exam_fitness, 0);
+    float exam_fitness = -FLT_MAX;
+    float global_fitness = fitness(exams, &worst, &exam_fitness);
 
-    /* Expected : 2 + 1.5 + 2 + 2.5 */
-    CU_ASSERT_DOUBLE_EQUAL(global_fitness, 8, 1E-5);
+    /* Expected : - 5 - 9 + 2 + 2.5 */
+    CU_ASSERT_DOUBLE_EQUAL(global_fitness, -9.5, 1E-5);
     /* t fitness : 1.5 (Exam 2) */
-    CU_ASSERT_DOUBLE_EQUAL(exam_fitness, 1.5, 1E-5);
+    CU_ASSERT_DOUBLE_EQUAL(exam_fitness, -9, 1E-5);
     CU_ASSERT_PTR_EQUAL(worst, exams->data[1]);
     clean_array_exams();
 }
@@ -98,14 +110,35 @@ static void test_perturbation(void) {
         printf("Error during room assignation.\n");
 
     exam *worst;
-    float exam_fitness;
-    fitness(exams, &worst, &exam_fitness, 0);
+    float exam_fitness = -FLT_MAX;
+    fitness(exams, &worst, &exam_fitness);
     // Apply perturbation function
-    perturbation(&exams, worst, MAX_TIMESLOT, &mrooms, FACULTY_SIZE, MAX_ROOM_TYPE);
+    perturbation(&exams, worst, MAX_TIMESLOT, &mrooms, FACULTY_SIZE,
+                    MAX_ROOM_TYPE);
 
     /* Checking time */
-    // Expected : 7/3 + 3/2 + 2 + 2
-    CU_ASSERT_DOUBLE_EQUAL(fitness_bis(exams), 7.83333, 1E-5);
+    /* Worst fitness : E2 (-9), moving E2 to T2 */
+    /* New E1 fitness :
+     * E1 - E2 : 2
+     * E1 - E3 : 2
+     * E1 - E5 : 3
+     * E1 fitness : (2+2+3)/3 = 7/3
+     * --
+     * New E2 fitness :
+     * E2 - E1 : 2
+     * E2 - E5 : 1 (SAME_DAY) = -20
+     * E2 fitness : (2-20)/2 = -9
+     * --
+     * No change to E3 fitness : 2
+     * --
+     * New E5 fitness :
+     * E5 - E1 : 3
+     * E5 - E2 : 1 (SAME_DAY) = -20
+     * E5 fitness : (3 - 20)/2 = -17/2
+     * Global fitness expected : 7/3 - 9 + 2 - 17/2 = (14 - 54 + 12 - 51)/6
+     *                                              = -79/6
+     */
+    CU_ASSERT_DOUBLE_EQUAL(fitness_bis(exams), -79.0/6, 1E-5);
     CU_ASSERT_EQUAL(exams->data[1]->timeslot, 2);
 
     /* Clean Up */
