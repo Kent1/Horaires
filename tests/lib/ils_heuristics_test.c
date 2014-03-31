@@ -99,6 +99,7 @@ static void test_perturbation(void) {
     init_test_exam();
     exam *test_exams[] = {exam1, exam2, exam3, exam5};
     init_test_array_exams(4, test_exams);
+    uint8_t max_room_type = 3;
     preprocess(exams);
     exams->data[0]->timeslot = 0;
     exams->data[1]->timeslot = 1;
@@ -106,7 +107,7 @@ static void test_perturbation(void) {
     exams->data[3]->timeslot = 3;
 
     init_test_matrix_rooms();
-    if(!room_assign(exams, mrooms, FACULTY_SIZE, MAX_TIMESLOT))
+    if(!room_assign(exams, mrooms, FACULTY_SIZE, max_room_type, MAX_TIMESLOT))
         printf("Error during room assignation.\n");
 
     exam *worst;
@@ -114,7 +115,7 @@ static void test_perturbation(void) {
     fitness(exams, &worst, &exam_fitness);
     // Apply perturbation function
     perturbation(&exams, worst, MAX_TIMESLOT, &mrooms, FACULTY_SIZE,
-                    MAX_ROOM_TYPE);
+                    max_room_type);
 
     /* Checking time */
     /* Worst fitness : E2 (-9), moving E2 to T2 */

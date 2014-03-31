@@ -185,8 +185,9 @@ void init_test_array_rooms(void) {
 
 void init_test_matrix_rooms(void) {
     init_test_array_rooms();
-    size_t **rooms_limits = get_rooms_sizes(FACULTY_SIZE, rooms);
-    mrooms = get_rooms_matrix(FACULTY_SIZE, rooms, rooms_limits);
+    uint8_t max_room_type = 3;
+    size_t **rooms_limits = get_rooms_sizes(FACULTY_SIZE, max_room_type, rooms);
+    mrooms = get_rooms_matrix(FACULTY_SIZE, max_room_type, rooms, rooms_limits);
 }
 
 void clean_test_room(void) {

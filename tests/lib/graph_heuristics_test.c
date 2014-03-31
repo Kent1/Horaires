@@ -134,10 +134,11 @@ static void test_color_graph_backtrack(void) {
     init_test_array_exams(3, test_exams);
     preprocess(exams);
     init_test_array_rooms();
-    size_t **rooms_limit = get_rooms_sizes(FACULTY_SIZE, rooms);
-    matrix_rooms *matrix_rooms = get_rooms_matrix(FACULTY_SIZE, rooms,
+    uint8_t max_room_type = 3;
+    size_t **rooms_limit = get_rooms_sizes(FACULTY_SIZE, max_room_type, rooms);
+    matrix_rooms *matrix_rooms = get_rooms_matrix(FACULTY_SIZE, max_room_type, rooms,
                                  rooms_limit);
-    bool result = color_graph_backtrack(exams, matrix_rooms, FACULTY_SIZE,
+    bool result = color_graph_backtrack(exams, matrix_rooms, FACULTY_SIZE, max_room_type,
                                         MAX_TIMESLOT);
     CU_ASSERT_TRUE(result);
     /* Expected : E1 : 1, E2: 3, E3 : 2 */
