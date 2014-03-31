@@ -29,7 +29,7 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
                  uint8_t max_timeslot);
 
 /**
- * This function try to find a free room for the exam given.
+ * This function tries to find a free room for the exam given.
  *
  * @param  exam_        The exam which a room must be find
  * @param  rooms        An 3-dimensional array of rooms. The first given indice
@@ -42,7 +42,8 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
 bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms);
 
 /**
- * This function set to NO_ASSIGNED all rooms et all exams given in parameters.
+ * This function sets to NOT_ASSIGNED all rooms and all exams given
+ * in parameters.
  *
  * @param exams        An array of scheduled exams (struct array_exams).
  * @param rooms        An 3-dimensional array of rooms. The first given indice
@@ -54,15 +55,63 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms);
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
                          uint8_t faculty_size, uint8_t max_timeslot);
 
+/**
+ * This function sets to NOT_ASSIGNED all romms and all exams which was assigned
+ * by the given timeslot.
+ *
+ * @param exams        An array of scheduled exams (struct array_exams).
+ * @param rooms        An 3-dimensional array of rooms. The first given indice
+ *                     is the faculty of the room. The second indice is the
+ *                     type of the room (struct matrix_rooms).
+ * @param timeslot     The selected timeslot.
+ */
 void reset_room_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                             uint8_t timeslot);
 
+/**
+ * This function tries to assign a room to every exam with the given timeslot.
+ *
+ * @param exams        An array of scheduled exams (struct array_exams).
+ * @param rooms        An 3-dimensional array of rooms. The first given indice
+ *                     is the faculty of the room. The second indice is the
+ *                     type of the room (struct matrix_rooms).
+ * @param timeslot     The selected timeslot.
+ * @return             True if all room with the given timeslot gets
+ *                     a room assigned.
+ */
 bool assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                         uint8_t timeslot);
 
+/**
+ * This function checks if all exams in the selected timeslots have
+ * no conflitcs.
+ * If T1 or T2 have a conflict, the rooms of the conflicted timeslot are reset.
+ * The function tries to reassign the rooms without conflict.
+ *
+ * @param exams        An array of scheduled exams (struct array_exams).
+ * @param rooms        An 3-dimensional array of rooms. The first given indice
+ *                     is the faculty of the room. The second indice is the
+ *                     type of the room (struct matrix_rooms).
+ * @param timeslot1    First timeslot to check.
+ * @param timeslot2    Second timeslot to check.
+ *
+ * @return             True if there is no conflicts or rooms reassignation
+ *                     leads to a solution.
+ */
 bool is_valid(array_exams *exams, matrix_rooms *rooms,
                                 uint8_t timeslot1, uint8_t timeslot2);
 
+/**
+ * This function checks if all exams in the same timeslot don't have
+ * any conflict (i.e., students, professors, rooms).
+ *
+ * @param exams        An array of scheduled exams (struct array_exams).
+ * @param rooms        An 3-dimensional array of rooms. The first given indice
+ *                     is the faculty of the room. The second indice is the
+ *                     type of the room (struct matrix_rooms).
+ * @param timeslot     The selected timeslot.
+ * @return             True if there is no conflicts.
+ */
 bool valid_assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                                 uint8_t timeslot);
 
