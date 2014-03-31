@@ -157,7 +157,7 @@ perturbation(array_exams **current_best, exam *worst,
                                                        faculty_size, max_room_type);
 
     // Numeric variables
-    uint16_t id_worst;
+    uint16_t id_worst = 0;
     float    best_candidate_score = -FLT_MAX;
 
     for(uint8_t i = 0; i < current->size; i++) {
