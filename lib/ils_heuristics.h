@@ -23,7 +23,7 @@
  * without getting a better solution and a threshold to reach.
  *
  * @param exams An array_exams struct with a feasible schedule.
- * @param matrix_rooms A matrix_rooms struct with feasible room assignment.
+ * @param rooms A matrix_rooms struct with feasible room assignment.
  * @param max_timeslot Maximum available timeslots.
  * @param faculty_size The number of different faculties.
  * @param max_room_type Maximum room type available.
