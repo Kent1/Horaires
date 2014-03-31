@@ -22,7 +22,7 @@ class Timetable(object):
         for exam in self.exams.values():
             if exam.timeslot == timeslot:
                 print("  Exam %d :" % exam.id)
-                print("\t-> Prof : %d" % exam.teacher)
+                print("\t-> Prof : %d" % exam.professor)
                 print("\t-> Timeslots available : %s" % exam.availabilities)
                 print("\t-> Conflicts detected : %s" % exam.conflicts)
                 print("\t-> Students : %s" % exam.students)

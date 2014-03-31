@@ -20,7 +20,7 @@ def get_array_exams(timeslots, exams):
         c_exam = c_fun.init_exam(
             exam.id,
             exam.faculty,
-            exam.teacher,
+            exam.professor,
             (ctypes.c_uint32 * len(exam.students))(*exam.students),
             len(exam.students),
             exam.room_type,
@@ -36,20 +36,6 @@ def get_array_exams(timeslots, exams):
                             p(p(c_structs.Exam)))
 
     return c_fun.init_array_exams(len(c_exams), c_exams_p)
-
-
-def update_exams(timeslots, exams, rooms, c_array_exams):
-    '''
-    Update exams python objects from c_array_exams which contains
-    exams C structure.
-    '''
-
-    for i in range(c_array_exams.contents.size):
-        c_exam = c_array_exams.contents.data[i].contents
-        exam = exams[c_exam.exam_id]
-        exam.room = rooms[c_exam.room_id]
-        exam.timeslot = c_exam.timeslot
-        exam.conflicts = [c_exam.conflicts[i] for i in range(len(exams))]
 
 
 def get_faculty_size(rooms):
@@ -110,6 +96,20 @@ def update_rooms(timeslots, exams, rooms, faculty_size, room_type_size,
                     room.exams[l] = []
                 for l in range(timeslots):
                     room.exams[l].append(exams[c_room.assignation[l]])
+
+
+def update_exams(timeslots, exams, rooms, c_array_exams):
+    '''
+    Update exams python objects from c_array_exams which contains
+    exams C structure.
+    '''
+
+    for i in range(c_array_exams.contents.size):
+        c_exam = c_array_exams.contents.data[i].contents
+        exam = exams[c_exam.exam_id]
+        exam.room = rooms[c_exam.room_id]
+        exam.timeslot = c_exam.timeslot
+        exam.conflicts = [c_exam.conflicts[i] for i in range(len(exams))]
 
 
 def schedule(timetable):

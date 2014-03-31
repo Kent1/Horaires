@@ -8,12 +8,6 @@ class Room(object):
         self.room_type = room_type
         self.exams = exams or []
 
-    def is_reserved(self):
-        pass
-
-    def reserve(self, timeslot):
-        pass
-
 
 class RoomType(object):
 

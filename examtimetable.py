@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 
 import argparse
 import json
@@ -23,17 +23,19 @@ def main():
 
     exams = {}
     for exam in data['exams']:
-        temp = examtimetable.Exam(exam['exam_id'], '', exam['faculty'],
-                                  exam['room_type'], exam['teacher_id'],
-                                  exam['students'], exam['availabilities'],
-                                  exam['dependencies'])
-        exams[exam['exam_id']] = temp
+        temp = examtimetable.Exam(exam['id'], exam['name'], exam['faculty'],
+                                  exam['professor'], exam['room_type'],
+                                  exam['students'],
+                                  availabilities=exam['availabilities'],
+                                  dependencies=exam['dependencies'])
+        exams[exam['id']] = temp
 
     rooms = {}
     for room in data['rooms']:
-        temp = examtimetable.Room(room['room_id'], '', room['faculty'],
-                                  room['capacity'], room['room_type'])
-        rooms[room['room_id']] = temp
+        temp = examtimetable.Room(room['id'], room['name'],
+                                  room['faculty'], room['capacity'],
+                                  room['room_type'])
+        rooms[room['id']] = temp
 
     timetable = examtimetable.Timetable(data['timeslots'], exams, rooms)
     timetable.schedule()
