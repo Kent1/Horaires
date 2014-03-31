@@ -82,7 +82,7 @@ typedef struct {
  * Sizes of the matrix pointed by @see data.
  */
 typedef struct {
-    room ****data;
+    room ** **data;
     size_t **size;
 } matrix_rooms;
 
@@ -175,15 +175,40 @@ typedef struct {
  * @param type The room type.
  * @param capacity The capacity of the room.
  * @param faculty The faculty in charge of the room.
+ * @param max_timeslot Maximum timeslot available.
  * @return A struct room allocated and initialized.
  */
 room *init_room(uint16_t id, room_type type, uint16_t capacity,
                 uint8_t faculty, uint8_t max_timeslot);
 
+/**
+ * Clone a room and all its specifications.
+ *
+ * @param room Room to be cloned.
+ * @param max_timeslot Maximum timeslot available.
+ *
+ * @return A pointer of the cloned room.
+ */
 room *clone_room(room *room, uint8_t max_timeslot);
 
+/**
+ * Clone an array of rooms (the rooms are also cloned).
+ *
+ * @param rooms An array of room (struct array_rooms).
+ * @param max_timeslot Maximum timeslot available.
+ *
+ * @return A pointer of the cloned array.
+ */
 array_rooms *clone_array_rooms(array_rooms *rooms, uint8_t max_timeslot);
 
+/**
+ * Initialize an array of rooms (struct array_rooms).
+ *
+ * @param rooms_size Number of rooms.
+ * @param rooms Array of pointer of each room's pointer.
+ *
+ * @return A pointer of the struct array_rooms initialized.
+ */
 array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms);
 
 /**
@@ -204,13 +229,25 @@ size_t **get_rooms_sizes(uint8_t faculty_size, array_rooms *rooms);
  * the 3rd contains an array of rooms verifying this faculty and type.
  *
  * @param faculty_size Number of faculties.
- * @param rooms An array of room (struct array_rooms).
+ * @param rooms An array of rooms (struct array_rooms).
  * @param rooms_limits Limits of the different arrays of room (3rd dimension).
  * @return A sorted 3-dim array containing the rooms (struct matrix_rooms).
  */
-matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms, size_t **rooms_limits);
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, array_rooms *rooms,
+                               size_t **rooms_limits);
 
-matrix_rooms *clone_matrix_rooms(matrix_rooms *rooms, uint8_t max_timeslot, uint8_t faculty_size, uint8_t max_room_type);
+/**
+ * Clone a struct matrix_rooms and its specifications.
+ *
+ * @param rooms Struct matrix_rooms to be cloned.
+ * @param max_timeslot Maximum timeslot available.
+ * @param faculty_size Number of faculties.
+ * @param max_room_type Maximum different type of room.
+ *
+ * @return A pointer of the cloned matrix_rooms.
+ */
+matrix_rooms *clone_matrix_rooms(matrix_rooms *rooms, uint8_t max_timeslot,
+                                 uint8_t faculty_size, uint8_t max_room_type);
 
 /**
  * Frees all the memory used by a room r.
@@ -223,39 +260,81 @@ void free_room(room *r);
  * Frees each room of the given array, and the array itself.
  *
  * @param rooms Array of rooms (struct array_rooms).
- * @param rooms_size Number of rooms, also size of rooms.
  */
 void free_rooms(array_rooms *rooms);
 
-void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_room_type);
+/**
+ * Frees the pointer of struct matrix_rooms. This function frees also the rooms
+ * (using the free_room function).
+ *
+ * @param rooms Struct matrix_rooms to be freed.
+ * @param faculty_size Number of faculties.
+ * @param max_room_type Maximum different type of room.
+ */
+void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size,
+                       uint8_t max_room_type);
 
 /**
- * Makes the allocation and initialization of an exam. The parameters are
- * length variable, to have this function dynamic. It takes, in this order,
- * the 'exam id', the 'teacher id', the 'number of enrollment' followed by
- * the specified number of enrollment, the 'number of availabilities'
- * followed by the specified number of availabilities and the 'number of
- * exams'.
+ * This function initializes an array of examinations (struct array_exams).
  *
- * @param id The exam id.
- * @return A struct exam allocated and initialized.
+ * @param  exams_size Number of exminations (size of the exams array).
+ * @param  exams Array of pointer of each pointer of examination.
+ *
+ * @return A pointer of the array exam initialized (struct array_exams).
  */
-
 array_exams *init_array_exams(uint16_t exams_size, exam **exams);
 
+/**
+ * This function initalizes a struct exam with the specifications
+ * given in parameters.
+ *
+ * @param exam_id ID of the examination.
+ * @param faculty ID of the faculty offering the examination.
+ * @param teacher_id ID (reference number) of the professor giving the
+ *                 examination.
+ * @param students Array of students enrolled in the examination.
+ * @param enrollment Number of students enrolled in the examination.
+ * @param type Type of the room needed for the examination.
+ * @param availabilities Array of boolean specifying the availabilities
+ *                       of the professor (true for available).
+ * @param max_timeslot Maximum timeslot available
+ *                    (size of the availabilities array).
+ * @param exams_size Number of examinations to schedule
+ *                   (size of the conflict array).
+ * @param deps Array of dependencies (prerequisite) for this examination.
+ *             The dependencies is specified by the examination's ID.
+ * @param deps_size Number of dependencies (size of the deps array).
+ */
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
                 uint32_t *students, uint16_t enrollment, room_type type,
                 bool *availabilities, uint8_t max_timeslot, uint16_t exams_size,
                 uint16_t *deps, uint8_t deps_size);
 
+/**
+ * This function clones a struct exam and its specifications.
+ *
+ * @param  exam_ Examination to be cloned (struct exam).
+ * @param  exams_size Number of exams this session.
+ * @param max_timeslot Maximum timeslot available.
+ *
+ * @return A pointer of the examination (struct exam) cloned.
+ */
 exam *clone_exam(exam *exam_, uint16_t exams_size, uint8_t max_timeslot);
 
+/**
+ * The function clones a struct array_exams and its specifications.
+ *
+ * @param  exams Array of exams (struct array_exams) to be cloned.
+ * @param max_timeslot Maximum timeslot available.
+ *
+ * @return A pointer of the array of exams (struct array_exams) cloned.
+ */
 array_exams *clone_array_exams(array_exams *exams, uint8_t max_timeslot);
 
 /**
  * Frees all the memory used by a room r.
  *
- * @param r Pointer to the room to free.
+ * @param e Pointer to the room to free.
  */
 void free_exam(exam *e);
 
@@ -263,7 +342,6 @@ void free_exam(exam *e);
  * Frees each exam of the given array, and the array itself.
  *
  * @param exams Array of exams (struct array_exams).
- * @param exams_size Number of exams, also size of exams.
  */
 void free_exams(array_exams *exams);
 
