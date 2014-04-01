@@ -6,6 +6,8 @@ p = ctypes.POINTER
 
 
 class Room(ctypes.Structure):
+    NOT_ASSIGNED = 65535
+
     _fields_ = [
         ("room_id",     ctypes.c_uint16),
         ("room_type",   ctypes.c_uint8),

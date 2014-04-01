@@ -1,6 +1,6 @@
 class Room(object):
 
-    def __init__(self, id, name, faculty, capacity, room_type, exams=[]):
+    def __init__(self, id, name, faculty, capacity, room_type, exams=None):
         self.id = id
         self.name = name
         self.faculty = faculty

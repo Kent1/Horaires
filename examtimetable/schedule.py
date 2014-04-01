@@ -50,8 +50,10 @@ def get_faculty_size(rooms):
 
     return faculty_size + 1
 
+
 def get_max_room_type(rooms):
-    return 1
+    return max([room.room_type for room in rooms.values()]) + 1
+
 
 def get_rooms_matrix(timeslots, rooms, faculty_size):
     '''
@@ -79,12 +81,12 @@ def get_rooms_matrix(timeslots, rooms, faculty_size):
     c_rooms_sizes = c_fun.get_rooms_sizes(faculty_size, max_room_type,
                                           c_array_rooms)
     c_rooms_matrix = c_fun.get_rooms_matrix(faculty_size, max_room_type,
-                                          c_array_rooms, c_rooms_sizes)
+                                            c_array_rooms, c_rooms_sizes)
 
     return c_rooms_matrix
 
 
-def update_rooms(timeslots, exams, rooms, faculty_size, room_type_size,
+def update_rooms(timeslots, exams, rooms, faculty_size, max_room_type,
                  c_rooms_matrix):
     '''
     Update rooms python objects from c_rooms_matrix which contains
@@ -92,14 +94,14 @@ def update_rooms(timeslots, exams, rooms, faculty_size, room_type_size,
     '''
 
     for i in range(faculty_size):
-        for j in range(room_type_size):
+        for j in range(max_room_type):
             for k in range(c_rooms_matrix.contents.size[i][j]):
                 c_room = c_rooms_matrix.contents.data[i][j][k].contents
                 room = rooms[c_room.room_id]
+                room.exams = [c_structs.Room.NOT_ASSIGNED] * timeslots
                 for l in range(timeslots):
-                    room.exams[l] = []
-                for l in range(timeslots):
-                    room.exams[l].append(exams[c_room.assignation[l]])
+                    if c_room.assignation[l] != c_structs.Room.NOT_ASSIGNED:
+                        room.exams[l] = exams[c_room.assignation[l]].id
 
 
 def update_exams(timeslots, exams, rooms, c_array_exams):
@@ -117,9 +119,9 @@ def update_exams(timeslots, exams, rooms, c_array_exams):
 
 
 def schedule(timetable):
-    max_room_type = get_max_room_type(timetable.rooms)
     c_array_exams = get_array_exams(timetable.timeslots, timetable.exams)
     faculty_size = get_faculty_size(timetable.rooms)
+    max_room_type = get_max_room_type(timetable.rooms)
     c_rooms_matrix = get_rooms_matrix(
         timetable.timeslots, timetable.rooms, faculty_size)
 
@@ -135,5 +137,8 @@ def schedule(timetable):
                                      timetable.timeslots, faculty_size,
                                      max_room_type)
         #print 'After:', c_fun.fitness_bis(c_array_exams)
+        update_rooms(timetable.timeslots, timetable.exams,
+                     timetable.rooms, faculty_size, max_room_type,
+                     c_rooms_matrix)
         update_exams(timetable.timeslots, timetable.exams,
                      timetable.rooms, c_array_exams)
