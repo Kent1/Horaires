@@ -95,21 +95,21 @@ void init_test_exam_2(void) {
     {
         uint32_t students[] = {100000};
         bool availabilities[] = {true, false, true};
-        exam1 = init_exam(10, 1, 555000, students, 3, classroom, availabilities,
+        exam1 = init_exam(10, 1, 555000, students, 1, classroom, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
     {
         uint32_t students[] = {100000};
         bool availabilities[] = {false, true, true};
-        exam2 = init_exam(20, 1, 555001, students, 2, lab, availabilities,
+        exam2 = init_exam(20, 1, 555001, students, 1, lab, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 
     {
         uint32_t students[] = {100000};
         bool availabilities[] = {true, true, false};
-        exam3 = init_exam(30, 0, 555002, students, 2, computer_room, availabilities,
+        exam3 = init_exam(30, 0, 555002, students, 1, computer_room, availabilities,
                           MAX_TIMESLOT, MAX_EXAM, NULL, 0);
     }
 }
