@@ -1,7 +1,7 @@
 try:
-    from setuptools import setup
+    from setuptools import setup, Extension
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, Extension
 
 readme_file = "README.md"
 license_file = "LICENSE"
@@ -16,6 +16,10 @@ with open(license_file) as f:
 with open(authors_file) as f:
     authors = f.read()
 
+lib = Extension('lib.libtimetable',
+    ['lib/graph_heuristics.c', 'lib/ils_heuristics.c', 'lib/room_assign.c', 'lib/structs.c', 'lib/preprocessing.c'],
+    extra_compile_args=['-Wall -O -std=c99'])
+
 setup(
     name='Umons Examination Timetable',
     description='Tool for generating examination timetable',
@@ -24,8 +28,6 @@ setup(
     url='',
     version='0.1',
     packages=['examtimetable', 'examtimetable.c'],
-    data_files=[
-        ('lib', ['lib/libtimetable.so']),
-    ],
+    ext_modules=[lib],
     license=license,
 )
