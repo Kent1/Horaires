@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# encoding: utf-8
-
 import ctypes
 p = ctypes.POINTER
 
@@ -9,10 +6,12 @@ from c import structs as c_structs
 
 
 def get_array_exams(timeslots, exams):
-    '''
-    Creates exam C structure given the data in parameters
+    """
+    Creates exam C structures given the data in parameters
     and returns an array_exams C structure with initialized exams.
-    '''
+
+    :param dict exams: Dictionnary of exams.
+    """
 
     c_exams = []
 
@@ -38,28 +37,11 @@ def get_array_exams(timeslots, exams):
     return c_fun.init_array_exams(len(c_exams), c_exams_p)
 
 
-def get_faculty_size(rooms):
-    '''
-    Returns the number of different faculties in the given data.
-    '''
-
-    faculty_size = 0
-
-    for room in rooms.values():
-        faculty_size = max(faculty_size, room.faculty)
-
-    return faculty_size + 1
-
-
-def get_max_room_type(rooms):
-    return max([room.room_type for room in rooms.values()]) + 1
-
-
 def get_rooms_matrix(timeslots, rooms, faculty_size):
-    '''
+    """
     Create room C structure given the data in parameters and
     returns rooms_matrix C structure.
-    '''
+    """
 
     max_room_type = get_max_room_type(rooms)
     c_rooms = []
@@ -86,12 +68,28 @@ def get_rooms_matrix(timeslots, rooms, faculty_size):
     return c_rooms_matrix
 
 
+def get_faculty_size(rooms):
+    """Returns the number of different faculties in the given data."""
+
+    faculty_size = 0
+
+    for room in rooms.values():
+        faculty_size = max(faculty_size, room.faculty)
+
+    return faculty_size + 1
+
+
+def get_max_room_type(rooms):
+    """Return the max number of room types."""
+    return max([room.room_type for room in rooms.values()]) + 1
+
+
 def update_rooms(timeslots, exams, rooms, faculty_size, max_room_type,
                  c_rooms_matrix):
-    '''
+    """
     Update rooms python objects from c_rooms_matrix which contains
     rooms C structure.
-    '''
+    """
 
     for i in range(faculty_size):
         for j in range(max_room_type):
@@ -105,10 +103,10 @@ def update_rooms(timeslots, exams, rooms, faculty_size, max_room_type,
 
 
 def update_exams(timeslots, exams, rooms, c_array_exams):
-    '''
+    """
     Update exams python objects from c_array_exams which contains
     exams C structure.
-    '''
+    """
 
     for i in range(c_array_exams.contents.size):
         c_exam = c_array_exams.contents.data[i].contents
@@ -119,6 +117,7 @@ def update_exams(timeslots, exams, rooms, c_array_exams):
 
 
 def schedule(timetable):
+    """Schedule the given timetable with correct timeslots and rooms."""
     c_array_exams = get_array_exams(timetable.timeslots, timetable.exams)
     faculty_size = get_faculty_size(timetable.rooms)
     max_room_type = get_max_room_type(timetable.rooms)

@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# encoding: utf-8
-
 import ctypes
 p = ctypes.POINTER
 

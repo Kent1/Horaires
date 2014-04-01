@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# encoding: utf-8
-
 # Python imports
 import os
 import ctypes

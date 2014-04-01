@@ -4,11 +4,17 @@ import schedule
 class Timetable(object):
 
     def __init__(self, timeslots, exams={}, rooms={}):
+        """
+        :param int timeslots: Maximum timeslots available.
+        :param dict exams: Exams dictionnary. Contains exams mapped with id.
+        :param dict rooms: Rooms dictionnary. Contains rooms mapped with id.
+        """
         self.timeslots = timeslots
         self.exams = exams or {}
         self.rooms = rooms or {}
 
     def print_timetable(self):
+        """Display timetable."""
         print("Timetable")
         print("=========")
 
@@ -16,6 +22,9 @@ class Timetable(object):
             self.print_timeslot(timeslot)
 
     def print_timeslot(self, timeslot):
+        """Display all exams given a timeslot.
+        :param int timeslot: timeslot to display.
+        """
         print "timeslot %d" % timeslot
         print "----------"
         print
@@ -30,4 +39,7 @@ class Timetable(object):
         print
 
     def schedule(self):
+        """Schedule the timetable.
+        Give correct timeslot and room to all exams.
+        """
         schedule.schedule(self)
