@@ -53,7 +53,8 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms);
  * @param max_timeslot Maximum available timeslots.
  */
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
-                         uint8_t faculty_size, uint8_t max_room_type, uint8_t max_timeslot);
+                         uint8_t faculty_size, uint8_t max_room_type,
+                         uint8_t max_timeslot);
 
 /**
  * This function sets to NOT_ASSIGNED all romms and all exams which was assigned
@@ -98,8 +99,8 @@ bool assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
  * @return             True if there is no conflicts or rooms reassignation
  *                     leads to a solution.
  */
-bool is_valid(array_exams *exams, matrix_rooms *rooms,
-                                uint8_t timeslot1, uint8_t timeslot2);
+bool is_valid(array_exams *exams, matrix_rooms *rooms, uint8_t timeslot1,
+              uint8_t timeslot2);
 
 /**
  * This function checks if all exams in the same timeslot don't have
@@ -113,6 +114,6 @@ bool is_valid(array_exams *exams, matrix_rooms *rooms,
  * @return             True if there is no conflicts.
  */
 bool valid_assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
-                                uint8_t timeslot);
+                              uint8_t timeslot);
 
 #endif /*ROOM_ASSIGN_H_*/

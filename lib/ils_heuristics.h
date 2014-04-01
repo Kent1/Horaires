@@ -168,7 +168,7 @@ bool acceptance_criterion(array_exams *candidate, float best_score,
  * elapsed since start of iterative local search or a certain amount of
  * candidate non improving the fitness.
  *
- * @param best An array_exals struct with the best current schedule.
+ * @param best An array_exams struct with the best current schedule.
  * @param best_score The fitness score of the best current schedule.
  * @param threshold A specific value that the best_score must reach,
  *                  if 0 then threshold condition is not considered.
@@ -183,7 +183,7 @@ bool acceptance_criterion(array_exams *candidate, float best_score,
  * @return True if the iterative_local_search must stop, False otherwise.
  */
 bool termination_condition(array_exams *best, float best_score, float threshold,
-                           time_t start, time_t max_time,
-                           uint32_t counter, uint32_t max_counter);
+                           time_t start, time_t max_time, uint32_t counter,
+                           uint32_t max_counter);
 
 #endif /*ILS_HEURISTICS_H_*/

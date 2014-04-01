@@ -77,8 +77,8 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
             uint8_t min_timeslot = compute_min_timeslot(exams->data[i], exams);
 
             /* Then substract a degree for each timeslot unavailable or for each
-               timeslot available but strictly less than the min_timeslot (equals
-               to a timeslot unavailable). */
+               timeslot available but strictly less than the min_timeslot
+               (equals to a timeslot unavailable). */
             for (uint16_t j = 0; j < max_timeslot; j++) {
                 if (exams->data[i]->availabilities[j] == false ||
                         (exams->data[i]->availabilities[j] && j < min_timeslot))
@@ -169,7 +169,8 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
         backtrack = (i == max_timeslot);
 
         if (!backtrack) { // No backtrack needed, process the next schedule
-            success = color_graph_backtrack(exams, rooms, faculty_size, max_room_type, max_timeslot);
+            success = color_graph_backtrack(exams, rooms, faculty_size,
+                                            max_room_type, max_timeslot);
 
             if (!success) { // failed, must pick the next timeslot available
                 min_timeslot = exam_->timeslot + 1;

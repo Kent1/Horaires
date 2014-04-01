@@ -42,10 +42,12 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
         rcandidate = best_rooms;
 
         fitness(best_exams, &worst, &worst_score);
-        if(!worst) // worst is NULL, no new worst to process
+
+        if (!worst) // worst is NULL, no new worst to process
             break;
 
-        perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size, max_room_type);
+        perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size,
+                     max_room_type);
 
         candidate_score = fitness_bis(candidate);
 
@@ -126,8 +128,10 @@ local_fitness(array_exams *exams, uint16_t index) {
                 dist *= -1;
 
             if (dist == 1) {
-                if( ((exam->timeslot % 2) == 0 && exam->timeslot < exams->data[i]->timeslot)
-                    || ((exam->timeslot % 2) == 1 && exams->data[i]->timeslot < exam->timeslot))
+                if (((exam->timeslot % 2) == 0 &&
+                        exam->timeslot < exams->data[i]->timeslot) ||
+                        ((exam->timeslot % 2) == 1 &&
+                         exams->data[i]->timeslot < exam->timeslot))
                     dist = PAYOFF_SAMEDAY;
                 else
                     dist = PAYOFF_NEXTDAY;
@@ -145,31 +149,33 @@ local_fitness(array_exams *exams, uint16_t index) {
 }
 
 void
-perturbation(array_exams **current_best, exam *worst,
-             uint8_t max_timeslot, matrix_rooms **current_rbest,
-             uint16_t faculty_size, uint8_t max_room_type) {
+perturbation(array_exams **current_best, exam *worst, uint8_t max_timeslot,
+             matrix_rooms **current_rbest, uint16_t faculty_size,
+             uint8_t max_room_type) {
 
     // Variables declaration & initialization
     array_exams  *current = *current_best;
     matrix_rooms *rooms   = *current_rbest;
     array_exams  *best_candidate  = clone_array_exams(current, max_timeslot);
     matrix_rooms *best_rcandidate = clone_matrix_rooms(rooms, max_timeslot,
-                                                       faculty_size, max_room_type);
+                                    faculty_size, max_room_type);
 
     // Numeric variables
     uint16_t id_worst = 0;
     float    best_candidate_score = -FLT_MAX;
 
-    for(uint8_t i = 0; i < current->size; i++) {
-        if(current->data[i] == worst) {
+    for (uint8_t i = 0; i < current->size; i++) {
+        if (current->data[i] == worst) {
             id_worst = i;
             break;
         }
     }
+
     uint8_t min_timeslot = compute_min_timeslot(current->data[id_worst], current);
-    /* For each timeslot, search a better solution by spreading the exam with the next
-       worst fitness known, test by deplacing to each timeslot available and keep in
-       mind that the result must remain feasible. */
+
+    /* For each timeslot, search a better solution by spreading the exam with
+       the next worst fitness known, test by deplacing to each timeslot
+       available and keep in mind that the result must remain feasible. */
     for (uint8_t i = min_timeslot; i < max_timeslot; i++) {
         // Variables (again)
         uint8_t timeslot_before = current->data[id_worst]->timeslot;
@@ -178,20 +184,20 @@ perturbation(array_exams **current_best, exam *worst,
                             || timeslot_before == timeslot_after;
 
         if (op_status)
-            continue; // If the new timeslot is not available, go to next timeslot
+            continue; // If the timeslot is not available, go to next timeslot
 
         float candidate_score    = 0;
         array_exams  *candidate  = clone_array_exams(current, max_timeslot);
         matrix_rooms *rcandidate = clone_matrix_rooms(rooms, max_timeslot,
-                                                      faculty_size, max_room_type);
+                                   faculty_size, max_room_type);
 
-        /* Check if there exists a conflict with exams scheduled in the timeslot i.
-           If not, just move, otherwhise use Kempe Chains algorithm. */
+        /* Check if there exists a conflict with exams scheduled in the timeslot
+           i. If not, just move, otherwhise use Kempe Chains algorithm. */
         if (check_conflict(candidate, id_worst, timeslot_after)) {
             uint8_t *swaps = swap_initialization(candidate->size);
             op_status = kempe_chains(candidate, id_worst, timeslot_after, swaps);
 
-            if(!op_status) {
+            if (!op_status) {
                 free_exams(candidate);
                 free_matrix_rooms(rcandidate, faculty_size, max_room_type);
                 continue;
@@ -207,7 +213,7 @@ perturbation(array_exams **current_best, exam *worst,
             // Launch assign room on both timeslot
             op_status = assign_by_timeslot(candidate, rcandidate, timeslot_before);
 
-            if(op_status) // The first reassign has to pass to reassign the second
+            if (op_status) // The first reassign has to pass to do the second
                 op_status = assign_by_timeslot(candidate, rcandidate, timeslot_after);
 
         } else {
@@ -216,7 +222,8 @@ perturbation(array_exams **current_best, exam *worst,
             // Move the room if possible, otherwhise reassignation
             room **rooms_ = rcandidate->data[worst->faculty][worst->room_type];
 
-            for (uint16_t j = 0; j < rcandidate->size[worst->faculty][worst->room_type]; j++) {
+            for (uint16_t j = 0; j < rcandidate->size[worst->faculty][worst->room_type];
+                    j++) {
                 if (rooms_[j]->room_id == worst->room_id) {
                     rooms_[j]->assignation[timeslot_before] = NOT_ASSIGNED;
 
@@ -236,7 +243,8 @@ perturbation(array_exams **current_best, exam *worst,
             }
         }
 
-        // If one of the reassignation has failed, then stop the current iteration
+        // If one of the reassignation has failed,
+        // then stop the current iteration
         if (!op_status) {
             free_exams(candidate);
             free_matrix_rooms(rcandidate, faculty_size, max_room_type);
@@ -296,10 +304,11 @@ kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
                 && candidate->data[i]->timeslot == swap_slot
                 && swaps[i] == NOT_SCHEDULED) {
 
-            if(candidate->data[i]->availabilities[timeslot])
-                status = kempe_chains(candidate, i, candidate->data[exam_id]->timeslot, swaps);
+            if (candidate->data[i]->availabilities[timeslot])
+                status = kempe_chains(candidate, i,
+                                      candidate->data[exam_id]->timeslot, swaps);
 
-            if(!candidate->data[i]->availabilities[timeslot] || !status)
+            if (!candidate->data[i]->availabilities[timeslot] || !status)
                 return false;
         }
     }
@@ -307,10 +316,11 @@ kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
     return true;
 }
 
-uint8_t*
+uint8_t *
 swap_initialization(size_t size) {
     uint8_t *swaps = malloc(size * sizeof(uint8_t));
-    for(uint8_t j = 0; j < size; j++)
+
+    for (uint8_t j = 0; j < size; j++)
         swaps[j] = NOT_SCHEDULED;
 
     return swaps;

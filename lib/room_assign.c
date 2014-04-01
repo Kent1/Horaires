@@ -25,10 +25,11 @@ bool room_assign(array_exams *exams, matrix_rooms *rooms, uint8_t faculty_size,
         /* If true, the reseach has failed and all values are reset before
            launching the backtrack for the schedule. */
         if (!room_assign_single_exam(exam_, rooms)) {
-            reset_room_assigned(exams, rooms, faculty_size, max_room_type, max_timeslot);
+            reset_room_assigned(exams, rooms, faculty_size, max_room_type,
+                                max_timeslot);
             return false;
         }
-    }  /// Coucou, repercuter room_assign
+    }
 
     // Only if a room assignement has been found
     return true;
@@ -54,7 +55,8 @@ bool room_assign_single_exam(exam *exam_, matrix_rooms *rooms) {
 }
 
 void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
-                         uint8_t faculty_size, uint8_t max_room_type, uint8_t max_timeslot) {
+                         uint8_t faculty_size, uint8_t max_room_type,
+                         uint8_t max_timeslot) {
     for (uint16_t i = 0; i < exams->size; i++)
         exams->data[i]->room_id = NOT_ASSIGNED;
 
@@ -68,17 +70,19 @@ void reset_room_assigned(array_exams *exams, matrix_rooms *rooms,
 void reset_room_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                             uint8_t timeslot) {
     for (uint16_t i = 0; i < exams->size; i++) {
-        if(exams->data[i]->timeslot == timeslot) {
+        if (exams->data[i]->timeslot == timeslot) {
             uint8_t faculty = exams->data[i]->faculty;
             uint16_t type = exams->data[i]->room_type;
-            for(uint16_t j = 0; j < rooms->size[faculty][type]; j++) {
-                if(rooms->data[faculty][type][j]->room_id
+
+            for (uint16_t j = 0; j < rooms->size[faculty][type]; j++) {
+                if (rooms->data[faculty][type][j]->room_id
                         == exams->data[i]->room_id) {
                     rooms->data[faculty][type][j]->assignation[timeslot] =
-                                                                NOT_ASSIGNED;
+                        NOT_ASSIGNED;
                     break;
                 }
             }
+
             exams->data[i]->room_id = NOT_ASSIGNED;
         }
     }
@@ -86,50 +90,61 @@ void reset_room_by_timeslot(array_exams *exams, matrix_rooms *rooms,
 
 bool assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
                         uint8_t timeslot) {
-    for(uint16_t i = 0; i < exams->size; i++) {
-        if(exams->data[i]->timeslot == timeslot) {
-            if(!room_assign_single_exam(exams->data[i], rooms))
+    for (uint16_t i = 0; i < exams->size; i++) {
+        if (exams->data[i]->timeslot == timeslot) {
+            if (!room_assign_single_exam(exams->data[i], rooms))
                 return false;
         }
     }
+
     return true;
 }
 
 bool is_valid(array_exams *exams, matrix_rooms *rooms,
-                                uint8_t timeslot1, uint8_t timeslot2) {
+              uint8_t timeslot1, uint8_t timeslot2) {
     /* Is there a conflict ? */
     bool valid_t1 = valid_assign_by_timeslot(exams, rooms, timeslot1);
+
     /* Room assigned is valid */
-    if(!valid_t1) {
+    if (!valid_t1) {
         /* Reset room assignement for this timeslot */
         reset_room_by_timeslot(exams, rooms, timeslot1);
         valid_t1 = assign_by_timeslot(exams, rooms, timeslot1);
     }
+
     bool valid_t2 = valid_assign_by_timeslot(exams, rooms, timeslot2);
-    if(!valid_t2) {
+
+    if (!valid_t2) {
         reset_room_by_timeslot(exams, rooms, timeslot2);
         valid_t2 = assign_by_timeslot(exams, rooms, timeslot2);
     }
+
     return (valid_t1 && valid_t2);
 }
 
 
 bool valid_assign_by_timeslot(array_exams *exams, matrix_rooms *rooms,
-                                uint8_t timeslot) {
+                              uint8_t timeslot) {
     uint16_t already_assigned[exams->size];
-    for(uint16_t i = 0; i < exams->size; i++) {
+
+    for (uint16_t i = 0; i < exams->size; i++) {
         already_assigned[i] = NOT_ASSIGNED;
-        if(exams->data[i]->timeslot == timeslot) {
+
+        if (exams->data[i]->timeslot == timeslot) {
             uint16_t k = 0;
-            while(already_assigned[k] != NOT_ASSIGNED) {
-                if(already_assigned[k] == exams->data[i]->room_id) {
+
+            while (already_assigned[k] != NOT_ASSIGNED) {
+                if (already_assigned[k] == exams->data[i]->room_id) {
                     /* Conflict ! */
                     return false;
                 }
+
                 k++;
             }
+
             already_assigned[k] = exams->data[i]->room_id;
         }
     }
+
     return true;
 }

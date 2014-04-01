@@ -210,7 +210,8 @@ array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms);
  * @param rooms An array of room (struct array_rooms).
  * @return Limits for the 3-dimensional array containing categorized rooms.
  */
-size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms);
+size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type,
+                         array_rooms *rooms);
 
 /**
  * Sorts the rooms in a 3-dim array, categorized by faculty and type.
@@ -223,7 +224,8 @@ size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type, array_room
  * @param rooms_limits Limits of the different arrays of room (3rd dimension).
  * @return A sorted 3-dim array containing the rooms (struct matrix_rooms).
  */
-matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms,
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type,
+                               array_rooms *rooms,
                                size_t **rooms_limits);
 
 /**

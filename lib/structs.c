@@ -19,7 +19,7 @@ room *init_room(uint16_t id, uint16_t type, uint16_t capacity,
     new_room->type     = type;
     new_room->capacity = capacity;
     new_room->faculty  = faculty;
-    /* Allocates an array such that for each input (corresponding to a timeslot),
+    /* Allocates an array such that for each input(corresponding to a timeslot),
        the constant NOT_ASSIGNED at initial time.*/
     new_room->assignation = malloc(max_timeslot * sizeof(uint16_t));
 
@@ -36,7 +36,7 @@ room *clone_room(room *room_, uint8_t max_timeslot) {
     clone->type     = room_->type;
     clone->capacity = room_->capacity;
     clone->faculty  = room_->faculty;
-    /* Allocates an array such that for each input (corresponding to a timeslot),
+    /* Allocates an array such that for each input(corresponding to a timeslot),
        the constant NOT_ASSIGNED at initial time.*/
     clone->assignation = malloc(max_timeslot * sizeof(uint16_t));
 
@@ -51,7 +51,7 @@ array_rooms *init_array_rooms(uint16_t rooms_size, room **rooms) {
     array->data = malloc(rooms_size * sizeof(room *));
     array->size = rooms_size;
 
-    for(uint16_t i = 0; i < rooms_size; i++)
+    for (uint16_t i = 0; i < rooms_size; i++)
         array->data[i] = rooms[i];
 
     return array;
@@ -62,42 +62,45 @@ array_rooms *clone_array_rooms(array_rooms *rooms, uint8_t max_timeslot) {
     clone->data = malloc(rooms->size * sizeof(room *));
     clone->size = rooms->size;
 
-    for(uint16_t i = 0; i < rooms->size; i++)
+    for (uint16_t i = 0; i < rooms->size; i++)
         clone->data[i] = clone_room(rooms->data[i], max_timeslot);
 
     return clone;
 }
 
-size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms) {
+size_t **get_rooms_sizes(uint8_t faculty_size, uint8_t max_room_type,
+                         array_rooms *rooms) {
 
     // Allocation of the 2-dim array
     size_t **rooms_limits = malloc(faculty_size * sizeof(size_t *));
 
-    for(uint8_t f = 0; f < faculty_size; f++)
+    for (uint8_t f = 0; f < faculty_size; f++)
         rooms_limits[f] = calloc(max_room_type, sizeof(size_t));
 
     // Filling the limits in this 2-dim array
-    for(uint8_t f = 0; f < rooms->size; f++)
+    for (uint8_t f = 0; f < rooms->size; f++)
         rooms_limits[rooms->data[f]->faculty][rooms->data[f]->type]++;
 
     return rooms_limits;
 }
 
-matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type, array_rooms *rooms, size_t **rooms_limits) {
+matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type,
+                               array_rooms *rooms, size_t **rooms_limits) {
     // Allocation of the struct matrix
     matrix_rooms *matrix = malloc(sizeof(matrix_rooms));
-    // Allocation of an array of counters for each array of rooms (3rd dimension)
+    // Allocation of an array of counters for each array of rooms(3rd dimension)
     size_t **counters  = malloc(faculty_size * sizeof(size_t *));
     // rooms_matrix initializes the 3-dim array
-    room ****rooms_3d = malloc(faculty_size * sizeof(room***));
+    room ** **rooms_3d = malloc(faculty_size * sizeof(room ** *));
 
     // Allocates/Initializes the other dimensions
     for (uint8_t i = 0; i < faculty_size; i++) {
         counters[i] = calloc(max_room_type, sizeof(size_t));
 
-        rooms_3d[i] = malloc(max_room_type * sizeof(room**));
+        rooms_3d[i] = malloc(max_room_type * sizeof(room **));
+
         for (uint8_t j = 0; j < max_room_type; j++)
-            rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room*));
+            rooms_3d[i][j] = malloc(rooms_limits[i][j] * sizeof(room *));
     }
 
     // Fills the 3-dim array using the counters
@@ -109,6 +112,7 @@ matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type, arra
     // Frees counters
     for (uint8_t i = 0; i < faculty_size; i++)
         free(counters[i]);
+
     free(counters);
     // Frees the array_rooms and its array only, not the datas
     free(rooms->data);
@@ -120,22 +124,23 @@ matrix_rooms *get_rooms_matrix(uint8_t faculty_size, uint8_t max_room_type, arra
     return matrix;
 }
 
-matrix_rooms *clone_matrix_rooms(matrix_rooms *rooms, uint8_t max_timeslot, uint8_t faculty_size, uint8_t max_room_type) {
+matrix_rooms *clone_matrix_rooms(matrix_rooms *rooms, uint8_t max_timeslot,
+                                 uint8_t faculty_size, uint8_t max_room_type) {
     // Allocation of the struct matrix
     matrix_rooms *clone = malloc(sizeof(matrix_rooms));
-    size_t **clone_size = malloc(faculty_size * sizeof(size_t*));
+    size_t **clone_size = malloc(faculty_size * sizeof(size_t *));
     // rooms_matrix initializes the 3-dim array
-    room ****rooms_3d = malloc(faculty_size * sizeof(room***));
+    room ** **rooms_3d = malloc(faculty_size * sizeof(room ** *));
 
     // Allocates/Initializes the other dimensions
     for (uint8_t i = 0; i < faculty_size; i++) {
         clone_size[i] = malloc(max_room_type * sizeof(size_t));
 
-        rooms_3d[i] = malloc(max_room_type * sizeof(room**));
+        rooms_3d[i] = malloc(max_room_type * sizeof(room **));
 
         for (uint8_t j = 0; j < max_room_type; j++) {
             clone_size[i][j] = rooms->size[i][j];
-            rooms_3d[i][j] = malloc(rooms->size[i][j] * sizeof(room*));
+            rooms_3d[i][j] = malloc(rooms->size[i][j] * sizeof(room *));
 
             for (size_t k = 0; k < rooms->size[i][j]; k++) {
                 rooms_3d[i][j][k] = clone_room(rooms->data[i][j][k], max_timeslot);
@@ -162,16 +167,20 @@ void free_rooms(array_rooms *rooms) {
 }
 
 
-void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size, uint8_t max_room_type) {
-    for(uint8_t i = 0; i < faculty_size; i++) {
-        for(uint8_t j = 0; j < max_room_type; j++) {
-            for(uint16_t k = 0; k < rooms->size[i][j]; k++)
+void free_matrix_rooms(matrix_rooms *rooms, uint8_t faculty_size,
+                       uint8_t max_room_type) {
+    for (uint8_t i = 0; i < faculty_size; i++) {
+        for (uint8_t j = 0; j < max_room_type; j++) {
+            for (uint16_t k = 0; k < rooms->size[i][j]; k++)
                 free_room(rooms->data[i][j][k]);
+
             free(rooms->data[i][j]);
         }
+
         free(rooms->size[i]);
         free(rooms->data[i]);
     }
+
     free(rooms->size);
     free(rooms->data);
     free(rooms);
@@ -184,7 +193,7 @@ array_exams *init_array_exams(uint16_t exams_size, exam **exams) {
     array->data = malloc(exams_size * sizeof(exam *));
     array->size = exams_size;
 
-    for(uint16_t i = 0; i < exams_size; i++)
+    for (uint16_t i = 0; i < exams_size; i++)
         array->data[i] = exams[i];
 
     return array;
@@ -222,9 +231,11 @@ exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
     }
 
     new_exam->deps = malloc(deps_size * sizeof(uint16_t));
+
     for (uint8_t i = 0; i < deps_size; i++) {
         new_exam->deps[i] = deps[i];
     }
+
     return new_exam;
 }
 
@@ -260,9 +271,11 @@ exam *clone_exam(exam *exam_, uint16_t exams_size, uint8_t max_timeslot) {
     }
 
     clone->deps = malloc(exam_->deps_size * sizeof(uint16_t));
+
     for (uint8_t i = 0; i < exam_->deps_size; i++) {
         clone->deps[i] = exam_->deps[i];
     }
+
     return clone;
 }
 
@@ -271,7 +284,7 @@ array_exams *clone_array_exams(array_exams *exams, uint8_t max_timeslot) {
     clone->data = malloc(exams->size * sizeof(exam *));
     clone->size = exams->size;
 
-    for(uint16_t i = 0; i < clone->size; i++)
+    for (uint16_t i = 0; i < clone->size; i++)
         clone->data[i] = clone_exam(exams->data[i], clone->size, max_timeslot);
 
     return clone;
