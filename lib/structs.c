@@ -10,7 +10,7 @@
 
 /* Functions associated with the type room */
 
-room *init_room(uint16_t id, room_type type, uint16_t capacity,
+room *init_room(uint16_t id, uint16_t type, uint16_t capacity,
                 uint8_t faculty, uint8_t max_timeslot) {
     room *new_room = malloc(sizeof(room));
 
@@ -191,7 +191,7 @@ array_exams *init_array_exams(uint16_t exams_size, exam **exams) {
 }
 
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
-                uint32_t *students, uint16_t enrollment, room_type type,
+                uint32_t *students, uint16_t enrollment, uint16_t type,
                 bool *availabilities, uint8_t max_timeslot, uint16_t exams_size,
                 uint16_t *deps, uint8_t deps_size) {
 

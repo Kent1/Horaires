@@ -1,3 +1,13 @@
+/**
+ * @enum room_type
+ *
+ * enumeration type for the different room types.
+ */
+typedef enum {
+    classroom,
+    lab,
+    computer_room,
+} room_type;
 
 /**
  * Pointer to examination 1 (initialized in init_test_exam() or
@@ -75,7 +85,7 @@ extern uint8_t  MAX_TIMESLOT;
  * Defines the number of examinations to schedule
  * (initialized in init_test_exam() or init_test_exam_2()).
  */
-extern uint16_t MAX_EXAM
+extern uint16_t MAX_EXAM;
 /**
  * Defines the maximum rooms available.
  * (initialized in init_test_exam() or init_test_exam_2()).

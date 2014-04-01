@@ -70,7 +70,7 @@ void reset_room_by_timeslot(array_exams *exams, matrix_rooms *rooms,
     for (uint16_t i = 0; i < exams->size; i++) {
         if(exams->data[i]->timeslot == timeslot) {
             uint8_t faculty = exams->data[i]->faculty;
-            room_type type = exams->data[i]->room_type;
+            uint16_t type = exams->data[i]->room_type;
             for(uint16_t j = 0; j < rooms->size[faculty][type]; j++) {
                 if(rooms->data[faculty][type][j]->room_id
                         == exams->data[i]->room_id) {

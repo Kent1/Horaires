@@ -1,5 +1,11 @@
 #include "structs.h"
 
+typedef enum {
+    classroom,
+    lab,
+    computer_room,
+} room_type;
+
 uint8_t  MAX_TIMESLOT = 5;
 uint16_t MAX_EXAM     = 8;
 uint16_t MAX_ROOM     = 5;

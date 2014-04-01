@@ -15,17 +15,6 @@
 #define NOT_ASSIGNED UINT16_MAX
 #define NOT_SCHEDULED UINT8_MAX
 
-/**
- * @enum room_type
- *
- * enumeration type for the different room types.
- */
-typedef enum {
-    classroom,
-    lab,
-    computer_room,
-} room_type;
-
 
 /**
  * @struct room
@@ -49,7 +38,7 @@ typedef enum {
  */
 typedef struct {
     uint16_t  room_id;
-    room_type type;
+    uint16_t type;
     uint8_t   faculty;
     uint16_t  capacity;
     uint16_t  *assignation;
@@ -137,7 +126,7 @@ typedef struct {
     uint32_t  *students;
     uint16_t  enrollment;
 
-    room_type room_type;
+    uint16_t room_type;
     uint16_t  room_id;
 
     uint8_t   timeslot;
@@ -177,7 +166,7 @@ typedef struct {
  * @param max_timeslot Maximum timeslot available.
  * @return A struct room allocated and initialized.
  */
-room *init_room(uint16_t id, room_type type, uint16_t capacity,
+room *init_room(uint16_t id, uint16_t type, uint16_t capacity,
                 uint8_t faculty, uint8_t max_timeslot);
 
 /**
@@ -307,7 +296,7 @@ array_exams *init_array_exams(uint16_t exams_size, exam **exams);
  * @param deps_size Number of dependencies (size of the deps array).
  */
 exam *init_exam(uint16_t exam_id, uint8_t faculty, uint32_t teacher_id,
-                uint32_t *students, uint16_t enrollment, room_type type,
+                uint32_t *students, uint16_t enrollment, uint16_t type,
                 bool *availabilities, uint8_t max_timeslot, uint16_t exams_size,
                 uint16_t *deps, uint8_t deps_size);
 
