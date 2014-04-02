@@ -120,8 +120,7 @@ float
 local_fitness(array_exams *exams, uint16_t index) {
     exam *exam = exams->data[index];
     uint16_t conflicts = 0;
-    int64_t total_payoff = 0;
-    // printf("New Local Fitness\n");
+    uint64_t total_payoff = 0;
 
     for (uint16_t i = 0; i < exams->size; i++) {
         /* Skip if i is index */
@@ -134,29 +133,28 @@ local_fitness(array_exams *exams, uint16_t index) {
             if (dist < 0)
                 dist *= -1;
 
-            // printf("  Exam : %d vs. %d\n", index, i);
-            // printf("  I got the powa : %d\n", (int64_t)(pow(dist, 4.0)));
+            uint64_t payoff = 0;
 
-            int64_t payoff = (int64_t)((-1.0) * pow(30 - dist, 4.0));
-            //int64_t payoff = dist;
+            if (dist < 48)
+                payoff = (uint64_t)(pow(2, (48-dist)));
 
             if (dist == 1) {
                 if (((exam->timeslot % 2) == 0 &&
                         exam->timeslot < exams->data[i]->timeslot) ||
                         ((exam->timeslot % 2) == 1 &&
                          exams->data[i]->timeslot < exam->timeslot))
-                    payoff = PAYOFF_SAMEDAY;
+                    payoff = payoff;
                 else
-                    payoff = PAYOFF_NEXTDAY;
+                    payoff = payoff/2;
             }
 
-            total_payoff -= payoff;
+            total_payoff += payoff;
             conflicts++;
         }
     }
 
     if (conflicts)
-        return 1.0 * total_payoff / conflicts;
+        return -1.0 * total_payoff / conflicts;
     else
         return 0;
 }

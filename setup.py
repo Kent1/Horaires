@@ -27,7 +27,7 @@ src = [
 lib = Extension(
     'lib.libtimetable',
     sources=src,
-    extra_compile_args=['-Wall', '-O', '-std=c99', '-fPIC', '-fshort-enums']
+    extra_compile_args=['-Wall', '-O', '-std=c99', '-fPIC'],
 )
 
 setup(
