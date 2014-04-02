@@ -18,7 +18,7 @@
 #define PAYOFF_NEXTDAY -10
 
 // Use parameters to return values (exams and rooms)
-void
+uint8_t
 iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                        uint8_t max_timeslot, uint16_t faculty_size,
                        uint8_t max_room_type) {
@@ -31,6 +31,7 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
     time_t max_time = 60; // in seconds
     float threshold = 0;
     uint32_t counter = 0, max_counter = 100000;
+    uint8_t final_condition = 0;
 
     // Initializes variables
     best_exams = *exams;
@@ -43,8 +44,11 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
 
         fitness(best_exams, &worst, &worst_score);
 
-        if (!worst) // worst is NULL, no new worst to process
-            break;
+        if (!worst) { // worst is NULL, no new worst to process
+            *exams = best_exams;
+            *rooms = best_rooms;
+            return 4;
+        }
 
         perturbation(&candidate, worst, max_timeslot, &rcandidate, faculty_size,
                      max_room_type);
@@ -67,12 +71,14 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
             counter++;
         }
 
-    } while (!termination_condition(best_exams, best_score, threshold,
-                                    start, max_time, counter, max_counter));
+    } while (!(final_condition = termination_condition(best_exams, best_score, threshold,
+                                    start, max_time, counter, max_counter)));
 
     // Set pointer to the best
     *exams = best_exams;
     *rooms = best_rooms;
+
+    return final_condition;
 }
 
 float
@@ -129,10 +135,10 @@ local_fitness(array_exams *exams, uint16_t index) {
                 dist *= -1;
 
             // printf("  Exam : %d vs. %d\n", index, i);
-            // printf("  I got the powa : %d\n", (int64_t)(pow(dist, 2.0)));
+            // printf("  I got the powa : %d\n", (int64_t)(pow(dist, 4.0)));
 
-            //int64_t payoff = (int64_t)(pow(dist, 4.0));
-            int64_t payoff = dist;
+            int64_t payoff = (int64_t)(pow(dist, 4.0));
+            //int64_t payoff = dist;
 
             if (dist == 1) {
                 if (((exam->timeslot % 2) == 0 &&
@@ -356,18 +362,18 @@ acceptance_criterion(array_exams *candidate, float best_score,
     return (candidate_score > best_score);
 }
 
-bool
+uint8_t
 termination_condition(array_exams *best, float best_score, float threshold,
                       time_t start, time_t max_time,
                       uint32_t counter, uint32_t max_counter) {
     if (threshold > 0 && best_score >= threshold)
-        return true;
+        return 1;
 
     if ((time(NULL) - max_time) > start)
-        return true;
+        return 2;
 
     if (counter > max_counter)
-        return true;
+        return 3;
 
-    return false;
+    return 0;
 }

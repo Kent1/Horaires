@@ -80,7 +80,7 @@ color_graph_backtrack.argtypes = [p(c_structs.ArrayExams),
 #                             uint8_t max_timeslot, uint16_t faculty_size,
 #                             uint8_t max_room_type)
 iterative_local_search = lib.iterative_local_search
-iterative_local_search.restype = None
+iterative_local_search.restype = ctypes.c_uint8
 iterative_local_search.argtypes = [p(p(c_structs.ArrayExams)),
                                    p(p(c_structs.MatrixRooms)),
                                    ctypes.c_uint8, ctypes.c_uint16,

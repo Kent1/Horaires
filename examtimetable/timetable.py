@@ -38,8 +38,4 @@ class Timetable(object):
                 print("\t-> Room : %d" % exam.room.id)
         print
 
-    def schedule(self):
-        """Schedule the timetable.
-        Give correct timeslot and room to all exams.
-        """
-        schedule.schedule(self)
+    schedule = schedule.schedule

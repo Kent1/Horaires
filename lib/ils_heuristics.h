@@ -21,7 +21,9 @@
  * the respect of the soft constraints.
  *
  * The stop condition can be of 3 types : total time, number of iteration
- * without getting a better solution and a threshold to reach.
+ * without getting a better solution and a threshold to reach. (cf.
+ * termination condition). A feasible schedule not worse than the given
+ * one, is returned by pointer.
  *
  * @param exams An array_exams struct with a feasible schedule.
  * @param rooms A matrix_rooms struct with feasible room assignment.
@@ -29,9 +31,10 @@
  * @param faculty_size The number of different faculties.
  * @param max_room_type Maximum room type available.
  *
- * @return A feasible schedule not worse than the given one.
+ * @return the status of the termination, which condition has caused the
+ *  ILS to stop.
  */
-void iterative_local_search(array_exams **exams, matrix_rooms **rooms,
+uint8_t iterative_local_search(array_exams **exams, matrix_rooms **rooms,
                             uint8_t max_timeslot, uint16_t faculty_size,
                             uint8_t max_room_type);
 
@@ -181,9 +184,12 @@ bool acceptance_criterion(array_exams *candidate, float best_score,
  * @param max_counter Maximum number of iteration the iterative_local_search
  *                can do, without improving its best score before stop.
  *
- * @return True if the iterative_local_search must stop, False otherwise.
+ * @return if the iterative_local_search must stop caused by:
+ * 			-The threshold : 1;
+ * 			-The maximum time : 2;
+ * 			-The maximum non improvement : 3.
  */
-bool termination_condition(array_exams *best, float best_score, float threshold,
+uint8_t termination_condition(array_exams *best, float best_score, float threshold,
                            time_t start, time_t max_time, uint32_t counter,
                            uint32_t max_counter);
 

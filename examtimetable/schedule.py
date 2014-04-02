@@ -126,12 +126,14 @@ def schedule(timetable):
 
     c_fun.preprocess(c_array_exams)
 
-    if c_fun.color_graph_backtrack(c_array_exams, c_rooms_matrix,
-                                   faculty_size, max_room_type,
-                                   timetable.timeslots):
+    success_color = c_fun.color_graph_backtrack(c_array_exams, c_rooms_matrix,
+                                                faculty_size, max_room_type,
+                                                timetable.timeslots)
+
+    if success_color:
         #print 'Before:', c_fun.fitness_bis(c_array_exams)
         # Max_room_type not computed at this point, temp : hard entry
-        c_fun.iterative_local_search(ctypes.byref(c_array_exams),
+        ILS_status = c_fun.iterative_local_search(ctypes.byref(c_array_exams),
                                      ctypes.byref(c_rooms_matrix),
                                      timetable.timeslots, faculty_size,
                                      max_room_type)
@@ -141,3 +143,8 @@ def schedule(timetable):
                      c_rooms_matrix)
         update_exams(timetable.timeslots, timetable.exams,
                      timetable.rooms, c_array_exams)
+
+        return ILS_status
+
+    return -1
+
