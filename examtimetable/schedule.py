@@ -118,11 +118,11 @@ def update_exams(timeslots, exams, rooms, c_array_exams):
 
 def schedule(timetable):
     """Schedule the given timetable with correct timeslots and rooms."""
-    c_array_exams = get_array_exams(timetable.timeslots, timetable.exams)
-    faculty_size = get_faculty_size(timetable.rooms)
-    max_room_type = get_max_room_type(timetable.rooms)
-    c_rooms_matrix = get_rooms_matrix(
-        timetable.timeslots, timetable.rooms, faculty_size)
+    c_array_exams  = get_array_exams(timetable.timeslots, timetable.exams)
+    faculty_size   = get_faculty_size(timetable.rooms)
+    max_room_type  = get_max_room_type(timetable.rooms)
+    c_rooms_matrix = get_rooms_matrix(timetable.timeslots, timetable.rooms,
+                                      faculty_size)
 
     c_fun.preprocess(c_array_exams)
 

@@ -16,9 +16,19 @@ with open(license_file) as f:
 with open(authors_file) as f:
     authors = f.read()
 
-lib = Extension('lib.libtimetable',
-    ['lib/graph_heuristics.c', 'lib/ils_heuristics.c', 'lib/room_assign.c', 'lib/structs.c', 'lib/preprocessing.c'],
-    extra_compile_args=['-Wall -O -std=c99'])
+src = [
+    'lib/graph_heuristics.c',
+    'lib/ils_heuristics.c',
+    'lib/room_assign.c',
+    'lib/structs.c',
+    'lib/preprocessing.c'
+]
+
+lib = Extension(
+    'lib.libtimetable',
+    sources=src,
+    extra_compile_args=['-Wall', '-O', '-std=c99', '-fPIC', '-fshort-enums']
+)
 
 setup(
     name='Umons Examination Timetable',
