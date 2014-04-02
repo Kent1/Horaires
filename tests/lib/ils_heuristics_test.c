@@ -173,16 +173,17 @@ static void test_check_conflict(void) {
 static void test_kempe_chains(void) {
     /* Setup */
     init_test_exam();
-    exam *test_exams[] = {exam1, exam2, exam3, exam5};
-    init_test_array_exams(4, test_exams);
+    exam *test_exams[] = {exam1, exam2, exam3, exam5, exam8};
+    init_test_array_exams(5, test_exams);
     preprocess(exams);
     exams->data[0]->timeslot = 1;
     exams->data[1]->timeslot = 2;
     exams->data[2]->timeslot = 2;
     exams->data[3]->timeslot = 3;
+    exams->data[4]->timeslot = 4;
     // Init swap
-    uint8_t swaps[]  = {NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED};
-    uint8_t swaps2[] = {NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED};
+    uint8_t swaps[]  = {NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED};
+    uint8_t swaps2[] = {NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED, NOT_SCHEDULED};
     // Apply Kempe Chains - Swaps exam3 (exams->data[2]) to timeslot 1
     bool op_status  = kempe_chains(exams, 2, 1, swaps);
     bool op_status2 = kempe_chains(exams, 3, 1, swaps2);
@@ -194,6 +195,7 @@ static void test_kempe_chains(void) {
     CU_ASSERT_EQUAL(swaps[1], 1);
     CU_ASSERT_EQUAL(swaps[2], 1);
     CU_ASSERT_EQUAL(swaps[3], NOT_SCHEDULED);
+    CU_ASSERT_EQUAL(swaps[4], NOT_SCHEDULED);
 
     // Second Kempe Chain - Fail (Exam1 cannot go to timeslot 3)
     // Exam5 can not go to timeslot 1, but for this test.
@@ -202,6 +204,7 @@ static void test_kempe_chains(void) {
     CU_ASSERT_EQUAL(swaps2[1], NOT_SCHEDULED);
     CU_ASSERT_EQUAL(swaps2[2], NOT_SCHEDULED);
     CU_ASSERT_EQUAL(swaps2[3], 1);
+    CU_ASSERT_EQUAL(swaps2[4], NOT_SCHEDULED);
 
     /* Clean Up */
     clean_array_exams();

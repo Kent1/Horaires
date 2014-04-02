@@ -1,6 +1,6 @@
 CC       = gcc
-CFLAGS   = -Wall -O -std=c99 -fPIC -fshort-enums
-LDFLAGS  =
+CFLAGS   = -Wall -O -std=c99 -fPIC
+LDFLAGS  = -lm
 LIB_NAME = libtimetable.so
 OBJ_DIR  = obj
 SRC      = $(wildcard *.c)

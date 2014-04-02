@@ -48,14 +48,29 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams,
                             uint8_t max_timeslot);
 
 /**
- * Computes the minimum timeslot that can be used for the exam
- * exam_, following its dependencies.
+ * Computes the inferior timeslot that can be used for the exam exam_,
+ * following its dependencies. It means that exam_ cannot be scheduled
+ * before the inferior timeslot, otherwise exam_ would be scheduled before
+ * one of its dependencies.
  *
- * @param exam_ The exam to know the minimum timeslot.
+ * @param exam_ The exam to know the inferior timeslot.
  * @param exams An array of exams (struct array_exams).
- * @return The minimum timeslot that can be used according to the dependencies.
+ * @return The inferior timeslot that can be used according to the dependencies.
  */
-uint8_t compute_min_timeslot(exam *exam_, array_exams *exams);
+uint8_t compute_inf_timeslot(exam *exam_, array_exams *exams);
+
+/**
+ * Computes the superior timeslot that can be used for the exam exam_,
+ * following dependencies to which it belongs. It means that exam_ cannot be
+ * scheduled after the superior timeslot, otherwise exam_ would be scheduled
+ * after an exam having this (exam_) as a dependency.
+ *
+ * @param exam_ The exam to know the superior timeslot.
+ * @param exams An array of exams (struct array_exams).
+ * @return The superior timeslot that can be used according to the dependencies.
+ */
+uint8_t compute_sup_timeslot(exam *exam_, array_exams *exams,
+                             uint8_t max_timeslot);
 
 /**
  * Try to set a correct timeslot to all exams and then assign them a room.

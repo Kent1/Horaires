@@ -73,15 +73,15 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
         if (compute_sat) {
             // Initially saturation degree is maximum
             sat_degree[i] = max_timeslot;
-            // Min_timeslot for the i-th exam
-            uint8_t min_timeslot = compute_min_timeslot(exams->data[i], exams);
+            // inf_timeslot for the i-th exam
+            uint8_t inf_timeslot = compute_inf_timeslot(exams->data[i], exams);
 
             /* Then substract a degree for each timeslot unavailable or for each
-               timeslot available but strictly less than the min_timeslot
+               timeslot available but strictly less than the inf_timeslot
                (equals to a timeslot unavailable). */
             for (uint16_t j = 0; j < max_timeslot; j++) {
                 if (exams->data[i]->availabilities[j] == false ||
-                        (exams->data[i]->availabilities[j] && j < min_timeslot))
+                        (exams->data[i]->availabilities[j] && j < inf_timeslot))
                     sat_degree[i]--;
             }
 
@@ -92,7 +92,7 @@ uint8_t *get_exams_saturation_degree(array_exams *exams, uint8_t max_timeslot) {
             for (uint16_t j = 0; j < exams->size; j++) {
                 if (exams->data[i]->conflicts[j] &&
                         exams->data[j]->timeslot != NOT_SCHEDULED &&
-                        exams->data[j]->timeslot >= min_timeslot &&
+                        exams->data[j]->timeslot >= inf_timeslot &&
                         exams->data[i]->availabilities[exams->data[j]->timeslot])
                     sat_degree[i]--;
             }
@@ -123,16 +123,29 @@ bool *set_possible_timeslot(exam *exam_, array_exams *exams,
 }
 
 
-uint8_t compute_min_timeslot(exam *exam_, array_exams *exams) {
-    uint8_t min_timeslot = 0;
+uint8_t compute_inf_timeslot(exam *exam_, array_exams *exams) {
+    uint8_t inf_timeslot = 0;
 
     for (uint8_t i = 0; i < exam_->deps_size; i++) {
-        min_timeslot = MAX(min_timeslot, exams->data[exam_->deps[i]]->timeslot + 1);
+        inf_timeslot = MAX(inf_timeslot, exams->data[exam_->deps[i]]->timeslot + 1);
     }
 
-    return min_timeslot;
+    return inf_timeslot;
 }
 
+uint8_t compute_sup_timeslot(exam *exam_, array_exams *exams, uint8_t max_timeslot) {
+    uint8_t sup_timeslot = max_timeslot;
+
+    for(uint16_t i = 0; i < exams->size; i++) {
+        for(uint8_t j = 0; j < exams->data[i]->deps_size; j++) {
+            exam *tmp = exams->data[exams->data[i]->deps[j]];
+            if(exam_->exam_id == tmp->exam_id)
+                sup_timeslot = MIN(sup_timeslot, exams->data[i]->timeslot);
+        }
+    }
+
+    return sup_timeslot;
+}
 
 bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
                            uint8_t faculty_size, uint8_t max_room_type,
@@ -146,7 +159,7 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
 
     // Initializes some variables for the process part
     uint8_t i = 0;
-    uint8_t min_timeslot = compute_min_timeslot(exam_, exams);
+    uint8_t inf_timeslot = compute_inf_timeslot(exam_, exams);
     bool success         = false;
     bool backtrack       = false;
 
@@ -157,7 +170,7 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
     do {
         /* Iterate the available timeslots to search the next minimal timeslot
            available and set it to the exam. */
-        for (i = min_timeslot; i < max_timeslot; i++) {
+        for (i = inf_timeslot; i < max_timeslot; i++) {
             if (timeslots_available[i] == true) {
                 exam_->timeslot = i;
                 break;
@@ -173,7 +186,7 @@ bool color_graph_backtrack(array_exams *exams, matrix_rooms *rooms,
                                             max_room_type, max_timeslot);
 
             if (!success) { // failed, must pick the next timeslot available
-                min_timeslot = exam_->timeslot + 1;
+                inf_timeslot = exam_->timeslot + 1;
             }
         }
     } while (!backtrack && !success);

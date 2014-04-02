@@ -5,19 +5,19 @@
 #include "preprocessing.h"
 #include "CUnit/Basic.h"
 
-static void test_compute_min_timeslot(void) {
+static void test_compute_inf_timeslot(void) {
     init_test_exam();
     exam *test_exams[] = {exam1, exam2, exam3, exam4,
                             exam5, exam6, exam7, exam8};
     init_test_array_exams(8, test_exams);
     preprocess(exams);
-    CU_ASSERT_EQUAL(compute_min_timeslot(exam1, exams), 0);
-    CU_ASSERT_EQUAL(compute_min_timeslot(exam7, exams), 0);
+    CU_ASSERT_EQUAL(compute_inf_timeslot(exam1, exams), 0);
+    CU_ASSERT_EQUAL(compute_inf_timeslot(exam7, exams), 0);
     /* Schedule Exam 1 at timeslot 2 (index 1)*/
     exams->data[0]->timeslot = 1;
-    CU_ASSERT_EQUAL(compute_min_timeslot(exams->data[0], exams), 0);
+    CU_ASSERT_EQUAL(compute_inf_timeslot(exams->data[0], exams), 0);
     /* First timeslot expected for Exam 7 (depends on Exam 1) : 3 (index 2) */
-    CU_ASSERT_EQUAL(compute_min_timeslot(exams->data[6], exams), 2);
+    CU_ASSERT_EQUAL(compute_inf_timeslot(exams->data[6], exams), 2);
     clean_array_exams();
 }
 
@@ -151,7 +151,7 @@ static void test_color_graph_backtrack(void) {
 
 int graph_heuristics_test_suite(void) {
     CU_TestInfo tests[] = {
-        {"compute_min_timeslot()", test_compute_min_timeslot},
+        {"compute_inf_timeslot()", test_compute_inf_timeslot},
         {"set_possible_timeslot()", test_set_possible_timeslot},
         {"get_exams_saturation_degree() (first iteration)",
             test_get_exams_saturation_degree_init},

@@ -114,7 +114,8 @@ float
 local_fitness(array_exams *exams, uint16_t index) {
     exam *exam = exams->data[index];
     uint16_t conflicts = 0;
-    int32_t distance = 0;
+    int64_t total_payoff = 0;
+    // printf("New Local Fitness\n");
 
     for (uint16_t i = 0; i < exams->size; i++) {
         /* Skip if i is index */
@@ -127,23 +128,29 @@ local_fitness(array_exams *exams, uint16_t index) {
             if (dist < 0)
                 dist *= -1;
 
+            // printf("  Exam : %d vs. %d\n", index, i);
+            // printf("  I got the powa : %d\n", (int64_t)(pow(dist, 2.0)));
+
+            //int64_t payoff = (int64_t)(pow(dist, 4.0));
+            int64_t payoff = dist;
+
             if (dist == 1) {
                 if (((exam->timeslot % 2) == 0 &&
                         exam->timeslot < exams->data[i]->timeslot) ||
                         ((exam->timeslot % 2) == 1 &&
                          exams->data[i]->timeslot < exam->timeslot))
-                    dist = PAYOFF_SAMEDAY;
+                    payoff = PAYOFF_SAMEDAY;
                 else
-                    dist = PAYOFF_NEXTDAY;
+                    payoff = PAYOFF_NEXTDAY;
             }
 
-            distance += dist;
+            total_payoff += payoff;
             conflicts++;
         }
     }
 
     if (conflicts)
-        return 1.0 * distance / conflicts;
+        return 1.0 * total_payoff / conflicts;
     else
         return 0;
 }
@@ -171,12 +178,14 @@ perturbation(array_exams **current_best, exam *worst, uint8_t max_timeslot,
         }
     }
 
-    uint8_t min_timeslot = compute_min_timeslot(current->data[id_worst], current);
+    uint8_t inf_timeslot = compute_inf_timeslot(current->data[id_worst], current);
+    uint8_t sup_timeslot = compute_sup_timeslot(current->data[id_worst], current,
+                                                    max_timeslot);
 
     /* For each timeslot, search a better solution by spreading the exam with
        the next worst fitness known, test by deplacing to each timeslot
        available and keep in mind that the result must remain feasible. */
-    for (uint8_t i = min_timeslot; i < max_timeslot; i++) {
+    for (uint8_t i = inf_timeslot; i < sup_timeslot; i++) {
         // Variables (again)
         uint8_t timeslot_before = current->data[id_worst]->timeslot;
         uint8_t timeslot_after  = i;
@@ -311,6 +320,13 @@ kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
             if (!candidate->data[i]->availabilities[timeslot] || !status)
                 return false;
         }
+    }
+
+    // If an exam with dependencies is involved at the end of the computation
+    // then, we must ensure that no prerequisite will be swapped with the exam.
+    for (uint16_t i = 0; i < candidate->data[exam_id]->deps_size; i++) {
+        if(swaps[candidate->data[exam_id]->deps[i]] != NOT_SCHEDULED)
+            return false;
     }
 
     return true;

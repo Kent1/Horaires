@@ -11,6 +11,7 @@
 
 #include "graph_heuristics.h"
 #include "room_assign.h"
+#include <math.h>
 #include <time.h>
 
 /**
