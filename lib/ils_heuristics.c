@@ -71,8 +71,8 @@ iterative_local_search(array_exams **exams, matrix_rooms **rooms,
             counter++;
         }
 
-    } while (!(final_condition = termination_condition(best_exams, best_score, threshold,
-                                    start, max_time, counter, max_counter)));
+    } while (!(final_condition = termination_condition(best_exams, best_score,
+                                 threshold, start, max_time, counter, max_counter)));
 
     // Set pointer to the best
     *exams = best_exams;
@@ -137,7 +137,7 @@ local_fitness(array_exams *exams, uint16_t index) {
             // printf("  Exam : %d vs. %d\n", index, i);
             // printf("  I got the powa : %d\n", (int64_t)(pow(dist, 4.0)));
 
-            int64_t payoff = (int64_t)(pow(dist, 4.0));
+            int64_t payoff = (int64_t)((-1.0) * pow(30 - dist, 4.0));
             //int64_t payoff = dist;
 
             if (dist == 1) {
@@ -150,7 +150,7 @@ local_fitness(array_exams *exams, uint16_t index) {
                     payoff = PAYOFF_NEXTDAY;
             }
 
-            total_payoff += payoff;
+            total_payoff -= payoff;
             conflicts++;
         }
     }
@@ -186,7 +186,7 @@ perturbation(array_exams **current_best, exam *worst, uint8_t max_timeslot,
 
     uint8_t inf_timeslot = compute_inf_timeslot(current->data[id_worst], current);
     uint8_t sup_timeslot = compute_sup_timeslot(current->data[id_worst], current,
-                                                    max_timeslot);
+                           max_timeslot);
 
     /* For each timeslot, search a better solution by spreading the exam with
        the next worst fitness known, test by deplacing to each timeslot
@@ -310,6 +310,15 @@ kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
     // Set swap for the current exam
     swaps[exam_id]   = swap_slot;
 
+    // Verify the exam, referenced by exam_id, can be moved to swap_slot
+    uint8_t inf_timeslot = compute_inf_timeslot(candidate->data[exam_id],
+                                                candidate);
+    uint8_t sup_timeslot = compute_sup_timeslot(candidate->data[exam_id],
+                                                candidate, swap_slot);
+
+    if (inf_timeslot > swap_slot || swap_slot > sup_timeslot)
+        return false;
+
     /* For each exam, check if it is conflicting with the current exam.
        If it is the case, check if this exam is in the timeslot to swap,
        and not handled yet. Each exam that is going to swap must be
@@ -326,13 +335,6 @@ kempe_chains(array_exams *candidate, uint16_t exam_id, uint8_t swap_slot,
             if (!candidate->data[i]->availabilities[timeslot] || !status)
                 return false;
         }
-    }
-
-    // If an exam with dependencies is involved at the end of the computation
-    // then, we must ensure that no prerequisite will be swapped with the exam.
-    for (uint16_t i = 0; i < candidate->data[exam_id]->deps_size; i++) {
-        if(swaps[candidate->data[exam_id]->deps[i]] != NOT_SCHEDULED)
-            return false;
     }
 
     return true;
