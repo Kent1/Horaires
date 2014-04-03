@@ -136,16 +136,21 @@ local_fitness(array_exams *exams, uint16_t index) {
             uint64_t payoff = 0;
 
             if (dist < 48)
-                payoff = (uint64_t)(pow(2, (48-dist)));
+                payoff = (uint64_t)(pow(2, (48 - dist)));
 
             if (dist == 1) {
-                if (((exam->timeslot % 2) == 0 &&
-                        exam->timeslot < exams->data[i]->timeslot) ||
-                        ((exam->timeslot % 2) == 1 &&
-                         exams->data[i]->timeslot < exam->timeslot))
+                if ((exam->timeslot < exams->data[i]->timeslot &&
+                        (exam->timeslot % 10) == 9) ||
+                        (exams->data[i]->timeslot < exam->timeslot &&
+                         (exams->data[i]->timeslot % 10) == 9))
+                    payoff = 0;
+                else if (((exam->timeslot % 2) == 0 &&
+                          exam->timeslot < exams->data[i]->timeslot) ||
+                         ((exam->timeslot % 2) == 1 &&
+                          exams->data[i]->timeslot < exam->timeslot))
                     payoff = payoff;
                 else
-                    payoff = payoff/2;
+                    payoff = payoff / 2;
             }
 
             total_payoff += payoff;
