@@ -122,6 +122,9 @@ local_fitness(array_exams *exams, uint16_t index) {
     uint16_t conflicts = 0;
     uint64_t total_payoff = 0;
 
+    if((exam->timeslot % 12) == 10)
+        return -1.0 * pow(2, 60);
+
     for (uint16_t i = 0; i < exams->size; i++) {
         /* Skip if i is index */
         if (i == index)
@@ -139,17 +142,19 @@ local_fitness(array_exams *exams, uint16_t index) {
                 payoff = (uint64_t)(pow(2, (48 - dist)));
 
             if (dist == 1) {
-                if ((exam->timeslot < exams->data[i]->timeslot &&
-                        (exam->timeslot % 10) == 9) ||
-                        (exams->data[i]->timeslot < exam->timeslot &&
-                         (exams->data[i]->timeslot % 10) == 9))
+                uint8_t min_timeslot = MIN(exam->timeslot, exams->data[i]->timeslot);
+                uint8_t max_timeslot = MAX(exam->timeslot, exams->data[i]->timeslot);
+
+                if ((exams->data[i]->timeslot % 12) == 10)
+                    payoff = (uint64_t)(pow(2, 48));
+                // Friday and Monday are more appreciable
+                else if ((min_timeslot % 12) == 9 && (max_timeslot % 12) == 0)
                     payoff = 0;
-                else if (((exam->timeslot % 2) == 0 &&
-                          exam->timeslot < exams->data[i]->timeslot) ||
-                         ((exam->timeslot % 2) == 1 &&
-                          exams->data[i]->timeslot < exam->timeslot))
+                // Same day, to avoid
+                else if ((min_timeslot % 2) == 0)
                     payoff = payoff;
-                else
+                // Afternoon and next morning, to avoid
+                else if ((min_timeslot % 2) == 1)
                     payoff = payoff / 2;
             }
 
